@@ -1,0 +1,137 @@
+/* You can add global styles to this file, and also import other style files */
+@import 'vars';
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font: 1rem $mainFont;
+    outline: none;
+}
+
+html {
+    font-size: 16px;
+}
+
+body,html {
+    height: 100%;
+}
+
+.flex {
+    display: flex;
+
+    &-col {
+        padding: 0 1rem;
+
+        &_4 {
+            width: 40%;
+        }
+
+        &_8 {
+            width: 80%;
+        }
+    }
+
+    &-center {
+        align-items: center;
+    }
+
+    &-around {
+        justify-content: space-between;
+    }
+}
+
+.btn {
+    text-transform: uppercase;
+    display: inline-block;
+    background: transparent;
+    cursor: pointer;
+
+    &_default {
+        background: $mainColor;
+        color: #fff;
+    }
+
+    &_md {
+        padding: 1rem 2rem;
+        border-radius: .5rem;
+    }
+}
+
+.fullHeight {
+    height: 100%;
+}
+
+.form {
+    width: 100%;
+
+    &__box {
+        margin-top: 1rem;
+    }
+
+    &__input {
+        height: 50px;
+        display: block;
+        width: 100%;
+        font: 1rem $mainFont;
+        padding-left: .5rem;
+    }
+
+    &__title {
+        text-align: center;
+        font: 1.2rem $mainFont;
+        text-transform: uppercase;
+    }
+
+    &__submit {
+        height: 50px;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 2rem;
+        font: 1rem $mainFont;
+    }
+
+    &-checkboxes {
+        &__label {
+            display: flex;
+            width: 100%;
+            align-items: center;
+            text-transform: uppercase;
+            margin-top: .5rem;
+
+            input {
+                position: absolute;
+                opacity: 0;
+                width: 0;
+                height: 0;
+
+                &:checked + span::after {
+                    background: $mainColor;
+                }
+            }
+        }
+
+        &__box {
+            display: block;
+            width: 1rem;
+            height: 1rem;
+            box-shadow: 0 0 0 1px rgba(0, 0, 0, .6);
+            border-radius: 50%;
+            margin-right: 1rem;
+            position: relative;
+
+            &::after {
+                content: '';
+                position: absolute;
+                width: 70%;
+                height: 70%;
+                top: 50%;
+                left: 50%;
+                border-radius: 50%;
+                transform: translate(-50%, -50%);
+            }
+        }
+    }
+}

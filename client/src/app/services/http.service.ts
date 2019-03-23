@@ -1,0 +1,40 @@
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+
+declare const io: any;
+
+@Injectable({
+    providedIn: 'root',
+})
+export class HttpService {
+    instance;
+
+    constructor() {
+        this.instance = io('http://localhost:3000'); 
+    }
+
+    sendMessage(eventName: string, msg: any) {
+        console.log( 'send', eventName, msg );
+        this.instance.emit(eventName, JSON.stringify(msg));
+    }
+
+    listenPromise(eventName) {
+        return new Promise(res => {
+            this.instance.on(eventName, (event) => {
+                const data = JSON.parse(event);
+                res(data);
+                console.log( 'listenPromise', eventName, data );
+            })
+        })
+    }
+
+    listen(eventName) {
+        return new Observable(obs => {
+            this.instance.on(eventName, (event) => {
+                const data = JSON.parse(event);
+                obs.next(data);
+                console.log( 'listen', eventName, data );
+            })
+        })
+    }
+}

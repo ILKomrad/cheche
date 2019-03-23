@@ -1,0 +1,38 @@
+@import 'vars';
+
+.meeting {
+    padding: 1rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .5);
+    border-radius: 1rem;
+    margin-top: 1rem;
+
+    &__title {
+        font: 1rem $mainFont;
+        text-transform: uppercase;
+    }
+
+    &__user {
+        margin-top: .5rem;
+
+        span {
+            display: inline-block;
+            padding: 0 .5rem;
+            font: 1rem $mainFont;
+
+            &:first-child {
+                padding-left: 0;
+            }
+
+            &:last-child {
+                padding-right: 0;
+            }
+        }
+    }
+}
+
+:host {
+    height: 100%;
+    overflow: auto;
+    display: block;
+    padding: .35rem
+}

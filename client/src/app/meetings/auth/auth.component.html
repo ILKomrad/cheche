@@ -1,0 +1,21 @@
+<form [formGroup]="authForm" class="form" (submit)="onSubmit()">
+    <h5 class="form__title">{{formTitle}}</h5>
+    <p class="form__box">
+        <input type="text" required formControlName="email" class="form__input" placeholder="email" autocomplete="off">
+    </p>
+    <p class="form__box">
+        <input type="text" required formControlName="password" class="form__input" placeholder="пароль" autocomplete="off">
+    </p>
+    <ng-container *ngIf="state === 'checkIn'">
+        <p class="form__box">
+            <input type="text" formControlName="category" class="form__input" placeholder="разряд" autocomplete="off">
+        </p>
+        <p class="form__box">
+            <input type="text" required formControlName="name" class="form__input" placeholder="имя" autocomplete="off">
+        </p>
+    </ng-container>
+    <p class="form__box">
+        <button class="btn form__submit">{{buttonLabel}}</button>
+    </p>
+    <a class="form__box authForm__toggle" (click)="authToggle()">{{toggleTitle}}</a>
+</form>

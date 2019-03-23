@@ -1,0 +1,16 @@
+<form *ngIf="types.length" [formGroup]="meetingForm" class="form" (submit)="onSubmit()">
+    <h5 class="form__title">Создайте встречу</h5>
+    <div class="form__box">
+        <p>Выберите тип:</p>
+        <div class="form__box form-checkboxes">
+          <label class="form-checkboxes__label" *ngFor="let _type of types">
+              <input type="radio" formControlName="type" [value]="_type.alias">
+              <span class="form-checkboxes__box"></span>
+              {{_type.label}}
+          </label>
+        </div>
+    </div>
+    <p class="form__box">
+        <button class="btn form__submit">создать встречу</button>
+    </p>
+</form>
