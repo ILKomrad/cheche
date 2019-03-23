@@ -51,7 +51,17 @@ export class AppComponent {
 
         this.httpService.listen('removeMeeting')
         .subscribe((id: any) => {
-          this.dataService.removeData(id);
+          const currentMeetinId = this.authService.getCurrentMeetingId();
+          console.log( currentMeetinId, id );
+
+          if (currentMeetinId !== id) {
+            this.dataService.removeData(id);
+          }
+        });
+
+        this.httpService.listen('startMeeting')
+        .subscribe((data: any) => {
+          console.log( data )
         });
       });
     }

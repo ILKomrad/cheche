@@ -91,6 +91,10 @@ export class AuthService {
         return this.user;
     }
 
+    getCurrentMeetingId() {
+        return this.user.currentMeetingId;
+    }
+
     getTocken() {
         return localStorage.getItem('checkers_playerId');
     }

@@ -74,7 +74,12 @@ io.on('connection', (socket) => {
             const data = JSON.parse(event);
             controller.selectMeeting(data.playerId, data.meetingId)
             .then((data) => {
-                // console.log(data)
+                if (data) {
+                    socket.broadcast.emit('removeMeeting', JSON.stringify(data.meeting.id));
+                    socket.emit('startMeeting', JSON.stringify(data.meeting));
+                    console.log( data.socketId );
+                    io.to(data.socketId + '').emit('startMeeting', JSON.stringify(data.meeting));
+                }
             });
         }
     });

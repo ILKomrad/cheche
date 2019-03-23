@@ -30,11 +30,10 @@ class Controller {
             this.checkTocken(token)
             .then(decoded => {
                 if (decoded) {
-                    this.model.getUser(decoded.id)
-                    .then(event => {
-                        if (event && (event !== '0 results')) {
-                            const data = JSON.parse(event)[0];
-                            res(data);
+                    this.getUser(decoded.id)
+                    .then(user => {
+                        if (user) {
+                            res(user);
                         } else {
                             res();
                         }
@@ -64,15 +63,27 @@ class Controller {
         });
     }
 
-    login(player, socketId) {
-        return new Promise((res, rej) => {
-            this.model.getUser(null, player.email)
+    getUser(id, email = null) {
+        return new Promise(res => {
+            this.model.getUser(id, email)
             .then((event) => {
                 if (event === '0 results') {
-                   res(false); //player not finded
+                    res(false); //player not finded
                 } else {
                     const user = JSON.parse(event)[0];
- 
+                    res(user);
+                }
+            });
+        })
+    }
+
+    login(player, socketId) {
+        return new Promise((res, rej) => {
+            this.getUser(null, player.email)
+            .then((user) => {
+                if (!user) {
+                   res(false); //player not finded
+                } else {
                     if (player.password === user.password) {
                         const token = jwt.sign({
                             id: user.id,
@@ -130,7 +141,8 @@ class Controller {
 
         if (user) {
             const data = await this.getMeetingById(meetingId),
-                meeting = this.transformMeeting(data)[0];
+                meeting = this.transformMeeting(data[0]);
+               
             const currentGame = await this.getGame(meeting.currentGame.id);
             this.model.setMeetingToUser(user.id, meeting.id, currentGame.id);
 
@@ -146,8 +158,14 @@ class Controller {
                     currentGame.players.push({ id: user.id, range: 'b' });
                 }
                 this.model.startGame(currentGame);
-                
-                return Promise.resolve(meeting);
+
+                const firstPlayer = await this.getUser(meeting.firstPlayer);
+            
+                if (firstPlayer) {
+                    return Promise.resolve({meeting, socketId: firstPlayer.socketId});
+                } else {
+                    return Promise.resolve(null);
+                }
             } else {
                 return Promise.resolve(null);
             }
@@ -201,7 +219,7 @@ class Controller {
         this.model.removeMeeting(user.currentMeetingId);
         this.model.removeGame(user.inGame);
         this.model.leaveMeeting(user.id);
-        
+
         return Promise.resolve(user.currentMeetingId);
     }
 
@@ -237,15 +255,8 @@ class Controller {
         
         const parseData = JSON.parse(data);
         const meetings = parseData.map(m => {
-            const meeting = {
-                id: m.id,
-                isStart: m.isStart,
-                score: JSON.parse(m.score),
-                firstPlayer: m.firstPlayer,
-                secondPlayer: m.secondPlayer,
-                currentGame: JSON.parse(m.currentGame)
-            }
-
+            const meeting = this.transformMeeting(m);
+           
             if (currentGame && (m.id === user.currentMeetingId)) {
                 meeting.currentGame = currentGame;
             }
@@ -257,20 +268,16 @@ class Controller {
     }
 
     transformMeeting(data) {
-        const meetings = data.map(m => {
-            const meeting = {
-                id: m.id,
-                isStart: m.isStart,
-                score: JSON.parse(m.score),
-                firstPlayer: m.firstPlayer,
-                secondPlayer: m.secondPlayer,
-                currentGame: JSON.parse(m.currentGame)
-            }
+        const meeting = {
+            id: data.id,
+            isStart: data.isStart,
+            score: JSON.parse(data.score),
+            firstPlayer: data.firstPlayer,
+            secondPlayer: data.secondPlayer,
+            currentGame: JSON.parse(data.currentGame)
+        }
 
-            return meeting;
-        });
-
-        return meetings;
+        return meeting;
     }
 }
 
@@ -286,124 +293,3 @@ class User {
 }
 
 module.exports = (model) => new Controller(model);
-
-/*
-страница списка встреч
-  client
-    берем айди playerId из кук и шлем на сервер хелло {cmd: 'helloFromList', playerId: playerId}
-  server
-    если playerId есть то находим игрока player из базы, проверяем player.token, если все ок то обновялем сокетайди в базе;
-    берем встречи из бд, фильтруем те в которых есть клиент и шлем на клиент {cmd: 'helloFromServer', meetings: meetings}
-  client
-    на событие helloFromServer показыавем встречи
-нажали создать игру
-  client
-    если есть playerId то шлем {cmd: 'newGame', gameType: 'classic', playerId: playerId}
-  server
-    проверяем игрока
-    создаем встречу meeting, создаем игру game, устанавливаем meeting.currentGame = game, meeting.games.push(game),
-    meeting.score.push({id: playerId(айди создателя), wins: 0}) шлем всем (кроме создателя) эту новую встречу. 
-    Записываем в базу новую встречу, на сервере нигде не храним; записываем в базу игроку currentMeetingId айди этой новой встречи *1
-нажали start
-  client
-    {cmd: 'startMeeting', meetingId: meetingId, playerId: playerId}
-  server
-    находим игрока player по playerId; находим встречу meeting по meetingId если meeting.score.length === 1 
-    то meeting.score.push({id: player.id, wins: 2});
-    находим игру game по meeting.currentGameId, устанавливаем meeting.currentGame = game;
-    меняем meeting.score в базе данных, перебираем игроков встречи meeting.score и устанавливаем у всех игроков 
-    currentMeetingId = meeting.id;
-    шлем {cmd: 'startMeeting', meeting: meeting} всем из списка meeting.score;
-  client
-    на событие startMeeting переходим на страницу игры и устанавливаем в модель model.meeting = meeting;
-страница игры
-  client
-    берем айди playerId из кук и {cmd: 'helloFromGame', playerId: playerId}
-  server
-    находим игрока player по playerId, находим встречу meeting по player.currentMeetingId, находим игру game по meeting.currentGameId
-    и устанавливаем meeting.currentGame = game;
-    устанавливаем свежий сокет айди у игрока в базе
-    шлем {cmd: 'hello', meeting: meeting}
-  client 
-    устанавливаем model.meeting = meeting, model.game = model.meeting.currentGame на событие hello
-делаем шаг
-  client 
-    {cmd: 'makeStep', playerId: playerId, gameId: model.game.id, step: step}
-  server
-    находим игру game по gameId;
-    находим игрока player по playerId, проверяем игрока, сравниваем game.whosTurnId и playerId чтобы проверить что его ли шаг
-    проверяем валидность шага, если все ок то меняем paths в game.paths, меняем game.whosTurnId на айди второго игрока
-    записываем в базу game.paths и game.whosTurnId, 
-    шлем игрокам {cmd: 'step', game: game} *2
-
-база данных
-  player
-    id, currentMeetingId, name, разряд, описание(необязательно), socketId
-    id - генерируем на серваке через uniqid
-    если socketId === 0 то офлайн
-  game
-    id, score, paths, hits, whosTurn, whosWin, type
-    score - количество убитых шашек
-  meeting
-    id, currentGameId, games, score
-    score - количество побед
-
-class Meeting {
-  constructor() {
-    this.games = [];
-  }
-
-  setCurrentGame(game) {
-    this.currentGame = game;
-  }
-
-  addGame(game) {
-    this.games.push(game);
-  }
-
-  addPlayer(playerId) {
-    this.score.push({
-      id: playerId,
-      win: 0
-    })
-  }
-}
-
-*1 - сервер в ответ на {cmd: 'newGame', gameType: 'classic', playerId: playerId}
-  получаем игрока из бд
-    проверяем игрока;
-  создаем игру 
-    var game = new Game(gameType);
-    записываем в базу данных игру, и получаем айди игры gameId;
-  создаем встречу
-    var meeting = new Meeting();
-    meeting.addPlayer(playerId); 
-    meeting.addGame(gameId);
-    meeting.setCurrentGame(game);
-    записываем в базу данных встречу
-  устанавливаем игроку currentMeetingId в базе данных
-  
-  {cmd: 'newGame', meeting: meeting}
-
-*2 - сервер в ответ на {cmd: 'makeStep', playerId: playerId, gameId: gameId, step: step}
-  находим игрока player по playerId;
-  проверяем игрока;
-  находим игру game по gameId;
-  проверяем имеет ли право игрок ходить
-  создаем обьект шашек checkers по game.type
-  проверяем валидность checkers.checkValid(step);
-
-авторизация
-  клиент
-    {cmd: 'auth', password: 123, email: 'dddd'}
-  сервер
-    находим игрока player по email, сверяем пароли;
-    формируем токен token из player.email и player.id
-    {cmd: 'auth', token: token}
-  клиент
-    сохраняем token в playerId в куки. То есть в playerId на самом деле токен
-
-проверка игрока
-  сервер
-    получаем playerId это же токен token, проверяем token; находим игрока player по token.id и token.email
-*/
