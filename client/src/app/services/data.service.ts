@@ -9,6 +9,8 @@ import { Meeting } from 'src/app/models/models';
 export class DataService {
     data$ = new BehaviorSubject<any>([]);
     data;
+    currentGame;
+    currentMeetingId;
 
     constructor() {
         this.data = [];
@@ -20,17 +22,38 @@ export class DataService {
         this.data$.next(data);
     }
 
-    addData(data: Meeting, currentGame = null) {
-        if (currentGame) { data.currentGame = currentGame; }
+    addData(data: Meeting) {
         this.data.push(data);
         this.data = this.data.slice();
         this.data$.next(this.data);
         console.log('addData', this.data);
     }
 
-    setCurrentMeeting(currentGame) {
-        this.data.currentGame = currentGame;
-        this.data$.next(this.data);
+    setCurrentGame(currentGame) {
+        console.log( 'setCurrentGame', currentGame );
+        this.currentGame = currentGame;
+        // this.authService.setCurrentMeetingId(currentGame.id, data.game.id);
+    }
+
+    setCurrentMeeting(meetingId, currentGame) {
+        console.log( 'setCurrentMeeting', meetingId );
+        this.setCurrentGame(currentGame);
+        this.currentMeetingId = meetingId;
+    }
+
+    getCurrentMeetingId() {
+        return this.currentMeetingId;
+    }
+
+    getCurrentMeeting() {
+        let meeting;
+
+        this.data.forEach(element => {
+            if (element.id === this.currentMeetingId) {
+                meeting = element;
+            }
+        });
+        return meeting;
     }
 
     getData(): BehaviorSubject<any> {

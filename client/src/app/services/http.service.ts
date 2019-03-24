@@ -22,8 +22,8 @@ export class HttpService {
         return new Promise(res => {
             this.instance.on(eventName, (event) => {
                 const data = JSON.parse(event);
-                res(data);
                 console.log( 'listenPromise', eventName, data );
+                res(data);
             })
         })
     }
@@ -32,8 +32,8 @@ export class HttpService {
         return new Observable(obs => {
             this.instance.on(eventName, (event) => {
                 const data = JSON.parse(event);
-                obs.next(data);
                 console.log( 'listen', eventName, data );
+                obs.next(data);
             })
         })
     }

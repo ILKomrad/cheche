@@ -36,6 +36,7 @@ export class AppComponent {
         }
 
         this.dataService.setData(data.mettings);
+        this.dataService.setCurrentMeeting(data.currentMeetingId, data.currentGame);
 
         this.httpService.listen('newMeeting')
         .subscribe((data: Meeting) => {
@@ -44,24 +45,26 @@ export class AppComponent {
 
         this.httpService.listen('meetingCreated')
         .subscribe((data: any) => {
-          this.dataService.addData(data.meeting, data.game);
-          this.authService.setCurrentMeetingId(data.meeting.id, data.game.id);
-          // this.router.navigate(['/game']);
+          this.dataService.addData(data.meeting);
+          this.dataService.setCurrentMeeting(data.meeting.id, data.game);
+          this.router.navigate(['/game']);
         });
 
         this.httpService.listen('removeMeeting')
         .subscribe((id: any) => {
-          const currentMeetinId = this.authService.getCurrentMeetingId();
-          console.log( currentMeetinId, id );
-
-          if (currentMeetinId !== id) {
-            this.dataService.removeData(id);
+          this.dataService.removeData(id);
+          const currentMeetingId = this.dataService.getCurrentMeetingId();
+         
+          if (currentMeetingId === id) {
+            this.dataService.setCurrentMeeting(null, null);
+            this.authService.leaveMeeting();
           }
         });
 
         this.httpService.listen('startMeeting')
         .subscribe((data: any) => {
-          console.log( data )
+          this.dataService.setCurrentMeeting(data.id, data.currentGame);
+          this.router.navigate(['/game']);
         });
       });
     }

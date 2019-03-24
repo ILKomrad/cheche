@@ -77,7 +77,6 @@ io.on('connection', (socket) => {
                 if (data) {
                     socket.broadcast.emit('removeMeeting', JSON.stringify(data.meeting.id));
                     socket.emit('startMeeting', JSON.stringify(data.meeting));
-                    console.log( data.socketId );
                     io.to(data.socketId + '').emit('startMeeting', JSON.stringify(data.meeting));
                 }
             });

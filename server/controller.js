@@ -118,7 +118,12 @@ class Controller {
         
         if (token) { data['user'] = await this.getUpdatedUser(socketId, token); }
         
-        data.mettings = await this.getMeetings(data['user']);
+        data.mettings = await this.getMeetings();
+
+        if (data['user'] && data['user'].inGame) { 
+            data['currentGame'] = await this.getGame(data['user'].inGame);
+            data['currentMeetingId'] = data['user'].currentMeetingId;
+        }
         
         return data;
     }
@@ -135,37 +140,41 @@ class Controller {
        
         return Promise.resolve({meeting, game});
     }
+    
+    async startMeeting(secondPlayer, meeting) {
+        const currentGame = await this.getGame(meeting.currentGame.id);
+
+        if (meeting.isStart !== 1) {
+            if (meeting.score.length === 1) { 
+                meeting.score.push({id: secondPlayer.id, name: secondPlayer.name, category: secondPlayer.category}); 
+            }
+            meeting.secondPlayer = secondPlayer.id;
+            meeting.currentGame = currentGame;
+            this.model.startMeeting(meeting);
+            
+            if (currentGame.players.length === 1) { 
+                currentGame.players.push({ id: secondPlayer.id, range: 'b' });
+            }
+            this.model.startGame(currentGame);
+
+            return Promise.resolve(meeting);
+        } else {
+            return Promise.resolve(null);
+        }
+    }
 
     async selectMeeting(token, meetingId) {
         const user = await this.getUserByToken(token);
 
         if (user) {
-            const data = await this.getMeetingById(meetingId),
-                meeting = this.transformMeeting(data[0]);
-               
-            const currentGame = await this.getGame(meeting.currentGame.id);
-            this.model.setMeetingToUser(user.id, meeting.id, currentGame.id);
-
-            if (meeting.isStart !== 1) {
-                if (meeting.score.length === 1) { 
-                    meeting.score.push({id: user.id, name: user.name, category: user.category}); 
-                }
-                meeting.secondPlayer = user.id;
-                meeting.currentGame = currentGame;
-                this.model.startMeeting(meeting);
-                
-                if (currentGame.players.length === 1) { 
-                    currentGame.players.push({ id: user.id, range: 'b' });
-                }
-                this.model.startGame(currentGame);
-
-                const firstPlayer = await this.getUser(meeting.firstPlayer);
-            
-                if (firstPlayer) {
-                    return Promise.resolve({meeting, socketId: firstPlayer.socketId});
-                } else {
-                    return Promise.resolve(null);
-                }
+            const data = await this.getMeetingById(meetingId);
+            let meeting = this.transformMeeting(data);
+            const firstPlayer = await this.getUser(meeting.firstPlayer);
+            meeting = await this.startMeeting(user, meeting); 
+            this.model.setMeetingToUser(user.id, meeting.id, meeting.currentGame.id);
+        
+            if (firstPlayer) {
+                return Promise.resolve({meeting, socketId: firstPlayer.socketId});
             } else {
                 return Promise.resolve(null);
             }
@@ -178,8 +187,8 @@ class Controller {
         return new Promise(res => {
             this.model.getMeetingById(meetingId)
             .then(meeting => {
-                if (meeting) {
-                    meeting = JSON.parse(meeting);
+                if (meeting && (meeting !== '0 results')) {
+                    meeting = JSON.parse(meeting)[0];
                 }
                 res(meeting);
             });
@@ -216,10 +225,18 @@ class Controller {
 
     async removeMeeting(token) {
         const user = await this.getUserByToken(token);
+        const meeting = await this.getMeetingById(user.currentMeetingId);
         this.model.removeMeeting(user.currentMeetingId);
         this.model.removeGame(user.inGame);
         this.model.leaveMeeting(user.id);
 
+        if (meeting && meeting.score) {
+            const score = JSON.parse(meeting.score);
+            score.forEach(player => {
+                if (player.id !== user.id) { this.model.leaveMeeting(player.id); }
+            });
+        }
+        console.log( 'meeting', meeting );
         return Promise.resolve(user.currentMeetingId);
     }
 
@@ -232,35 +249,30 @@ class Controller {
     getGame(id) {
         return new Promise(res => {
             this.model.getGame(id).then(data => {
-                const game = JSON.parse(data)[0];
-                game.cells = JSON.parse(game.cells);
-                game.hitsChips = JSON.parse(game.hitsChips);
-                game.paths = JSON.parse(game.paths);
-                game.players = JSON.parse(game.players);
+                let game;
+
+                if (data && (data !== '0 results')) {
+                    game = JSON.parse(data)[0];
+                    game.cells = JSON.parse(game.cells);
+                    game.hitsChips = JSON.parse(game.hitsChips);
+                    game.paths = JSON.parse(game.paths);
+                    game.players = JSON.parse(game.players);
+                }
 
                 res(game);
             })
         });
     }
 
-    async getMeetings(user) {
+    async getMeetings() {
         const data = await this.model.getMeetings();
-        let currentGame;
-      
+        
         if (!data || (data === '0 results')) { return Promise.resolve([]); }
-
-        if (user && user.inGame) { 
-            currentGame = await this.getGame(user.inGame);
-        }
         
         const parseData = JSON.parse(data);
         const meetings = parseData.map(m => {
             const meeting = this.transformMeeting(m);
-           
-            if (currentGame && (m.id === user.currentMeetingId)) {
-                meeting.currentGame = currentGame;
-            }
-
+        
             return meeting;
         });
         
