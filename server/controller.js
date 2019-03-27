@@ -114,16 +114,21 @@ class Controller {
     }
 
     async hello(socketId, token) {
-        let data = {mettings: []};
+        let data = {mettings: []},
+            currentMeetingId;
         
-        if (token) { data['user'] = await this.getUpdatedUser(socketId, token); }
-        
-        data.mettings = await this.getMeetings();
-
-        if (data['user'] && data['user'].inGame) { 
-            data['currentGame'] = await this.getGame(data['user'].inGame);
-            data['currentMeetingId'] = data['user'].currentMeetingId;
+        if (token) { 
+            data['user'] = await this.getUpdatedUser(socketId, token); 
         }
+        
+        if (data['user'] && data['user'].inGame) { 
+            currentMeetingId = data['user'].currentMeetingId;
+            data['currentGame'] = await this.getGame(data['user'].inGame);
+            data['currentMeetingId'] = currentMeetingId;
+            data['currentMeeting'] = await this.getMeetingById(currentMeetingId);
+        }
+
+        data.mettings = await this.getMeetings(currentMeetingId);
         
         return data;
     }
@@ -167,8 +172,7 @@ class Controller {
         const user = await this.getUserByToken(token);
 
         if (user) {
-            const data = await this.getMeetingById(meetingId);
-            let meeting = this.transformMeeting(data);
+            const meeting = await this.getMeetingById(meetingId);
             const firstPlayer = await this.getUser(meeting.firstPlayer);
             meeting = await this.startMeeting(user, meeting); 
             this.model.setMeetingToUser(user.id, meeting.id, meeting.currentGame.id);
@@ -189,6 +193,7 @@ class Controller {
             .then(meeting => {
                 if (meeting && (meeting !== '0 results')) {
                     meeting = JSON.parse(meeting)[0];
+                    meeting = this.transformMeeting(meeting);
                 }
                 res(meeting);
             });
@@ -231,12 +236,11 @@ class Controller {
         this.model.leaveMeeting(user.id);
 
         if (meeting && meeting.score) {
-            const score = JSON.parse(meeting.score);
-            score.forEach(player => {
+            meeting.score.forEach(player => {
                 if (player.id !== user.id) { this.model.leaveMeeting(player.id); }
             });
         }
-        console.log( 'meeting', meeting );
+
         return Promise.resolve(user.currentMeetingId);
     }
 
@@ -264,8 +268,8 @@ class Controller {
         });
     }
 
-    async getMeetings() {
-        const data = await this.model.getMeetings();
+    async getMeetings(currentMeetingId) {
+        const data = await this.model.getMeetings(currentMeetingId);
         
         if (!data || (data === '0 results')) { return Promise.resolve([]); }
         

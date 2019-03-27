@@ -42,8 +42,8 @@ class Model {
         return this.http.send(url);
     }
 
-    getMeetings(playerId) {
-        let url = this.url + '?action=getMeetings&playerId=' + playerId;
+    getMeetings(currentMeetingId) {
+        let url = this.url + '?action=getMeetings&currentMeetingId=' + currentMeetingId;
 
         return this.http.send(url);
     }

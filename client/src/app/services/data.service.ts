@@ -11,6 +11,7 @@ export class DataService {
     data;
     currentGame;
     currentMeetingId;
+    currentMeeting;
 
     constructor() {
         this.data = [];
@@ -35,10 +36,16 @@ export class DataService {
         // this.authService.setCurrentMeetingId(currentGame.id, data.game.id);
     }
 
-    setCurrentMeeting(meetingId, currentGame) {
-        console.log( 'setCurrentMeeting', meetingId );
+    setCurrentMeeting(meeting, currentGame) {
+        console.log( 'setCurrentMeeting', meeting );
         this.setCurrentGame(currentGame);
-        this.currentMeetingId = meetingId;
+        this.currentMeeting = meeting;
+
+        if (meeting) { 
+            this.currentMeetingId = meeting.id; 
+        } else {
+            this.currentMeetingId = null;
+        }
     }
 
     getCurrentMeetingId() {
@@ -46,14 +53,7 @@ export class DataService {
     }
 
     getCurrentMeeting() {
-        let meeting;
-
-        this.data.forEach(element => {
-            if (element.id === this.currentMeetingId) {
-                meeting = element;
-            }
-        });
-        return meeting;
+        return this.currentMeeting;
     }
 
     getData(): BehaviorSubject<any> {

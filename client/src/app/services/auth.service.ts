@@ -51,7 +51,7 @@ export class AuthService {
         this.user = user;
         this.setState();
         this.isLoggedIn.next(user.playerId);
-        localStorage.setItem('checkers_playerId', user.playerId);
+        localStorage.setItem('checkers_playerId', user.playerId + '');
     }
 
     leaveMeeting() {

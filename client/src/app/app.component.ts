@@ -36,7 +36,7 @@ export class AppComponent {
         }
 
         this.dataService.setData(data.mettings);
-        this.dataService.setCurrentMeeting(data.currentMeetingId, data.currentGame);
+        this.dataService.setCurrentMeeting(data.currentMeeting, data.currentGame);
 
         this.httpService.listen('newMeeting')
         .subscribe((data: Meeting) => {
@@ -45,9 +45,10 @@ export class AppComponent {
 
         this.httpService.listen('meetingCreated')
         .subscribe((data: any) => {
+          this.dataService.setCurrentMeeting(data.meeting, data.game);
           this.dataService.addData(data.meeting);
-          this.dataService.setCurrentMeeting(data.meeting.id, data.game);
-          this.router.navigate(['/game']);
+          this.authService.setCurrentMeetingId(data.meeting.id, data.game.id);
+          // this.router.navigate(['/game']);
         });
 
         this.httpService.listen('removeMeeting')
@@ -63,8 +64,8 @@ export class AppComponent {
 
         this.httpService.listen('startMeeting')
         .subscribe((data: any) => {
-          this.dataService.setCurrentMeeting(data.id, data.currentGame);
-          this.router.navigate(['/game']);
+          this.dataService.setCurrentMeeting(data, data.currentGame);
+          // this.router.navigate(['/game']);
         });
       });
     }
