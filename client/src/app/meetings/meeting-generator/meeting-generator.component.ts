@@ -14,8 +14,7 @@ export class MeetingGeneratorComponent implements OnInit {
   meetingForm: FormGroup;
 
   constructor(
-    private fb: FormBuilder,
-    private meetingsService: MeetingsService
+    private fb: FormBuilder
   ) {
     this.types = [
       {alias: 'giveaway', label: 'поддавки'},

@@ -2,6 +2,9 @@
     <div class="flex-col flex-col_4">    
         <app-auth *ngIf="authState === 'guest'" class="fullHeight flex flex-center"></app-auth>
         <app-meeting-generator *ngIf="authState === 'isLogin'" (create)="createMeeting($event)" class="fullHeight flex flex-center"></app-meeting-generator>
+        <div *ngIf="authState === 'waiting'">
+            создается встреча
+        </div>
         <div *ngIf="authState === 'inGame'">
             <p>ты в игре мудел</p>
             <div class="flex">

@@ -43,7 +43,13 @@ class Model {
     }
 
     getMeetings(currentMeetingId) {
-        let url = this.url + '?action=getMeetings&currentMeetingId=' + currentMeetingId;
+        let url;
+
+        if (currentMeetingId) {
+            url = this.url + '?action=getMeetings&currentMeetingId=' + currentMeetingId;
+        } else {
+            url = this.url + '?action=getMeetings';
+        }
 
         return this.http.send(url);
     }
