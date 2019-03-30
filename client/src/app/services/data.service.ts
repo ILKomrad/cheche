@@ -36,6 +36,10 @@ export class DataService {
         // this.authService.setCurrentMeetingId(currentGame.id, data.game.id);
     }
 
+    getCurrentGame() {
+        return this.currentGame;
+    }
+
     setCurrentMeeting(meeting, currentGame) {
         console.log( 'setCurrentMeeting', meeting );
         this.setCurrentGame(currentGame);

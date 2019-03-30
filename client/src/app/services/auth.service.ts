@@ -60,21 +60,15 @@ export class AuthService {
         this.setUser(this.user);
     }
 
-    setCurrentMeetingId(id, inGame = null) {
-        if (inGame) { this.user.inGame = inGame; }
-        this.user.currentMeetingId = id;
+    inGame(meetingId, gameId = null) {
+        this.user.inGame = gameId;
+        this.user.currentMeetingId = meetingId;
         this.setUser(this.user);
     }
 
-    wait() {
-        this.user.currentMeetingId = 1;
-    }
-
     setState() {
-        if (this.user.inGame !== null) {
+        if (this.user.currentMeetingId !== null) {
             this.state = 'inGame';
-        } else if (this.user.currentMeetingId !== null) {
-            this.state = 'waiting';
         } else if (this.user.id !== null) {
             this.state = 'isLogin';
         } else {
@@ -83,16 +77,20 @@ export class AuthService {
         console.log('state', this.state);
     }
 
+    getCurrentMeetingId() {
+        return this.user.currentMeetingId;
+    }
+
+    getUserId() {
+        return this.user.id;
+    }
+
     getState() {
         return this.state;
     }
 
     getUser(): User {
         return this.user;
-    }
-
-    getCurrentMeetingId() {
-        return this.user.currentMeetingId;
     }
 
     getTocken() {

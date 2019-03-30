@@ -35,8 +35,8 @@ export class AppComponent {
           this.authService.setUser(data.user);
         }
 
-        this.dataService.setData(data.mettings);
         this.dataService.setCurrentMeeting(data.currentMeeting, data.currentGame);
+        this.dataService.setData(data.mettings);
 
         this.httpService.listen('newMeeting')
         .subscribe((data: Meeting) => {
@@ -47,7 +47,7 @@ export class AppComponent {
         .subscribe((data: any) => {
           this.dataService.setCurrentMeeting(data.meeting, data.game);
           this.dataService.addData(data.meeting);
-          this.authService.setCurrentMeetingId(data.meeting.id, data.game.id);
+          this.authService.inGame(data.meeting, data.game);
           // this.router.navigate(['/game']);
         });
 

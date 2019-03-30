@@ -4,7 +4,13 @@ import { DataService } from 'src/app/services/data.service';
 import { MeetingsService } from './services/meetings.service';
 
 @Component({
-    templateUrl: './meetings.component.html'
+    templateUrl: './meetings.component.html',
+    styles: [`
+        :host {
+            display: block;
+            padding: 20vmin 4vmin 4vmin 4vmin;
+        }
+    `]
 })
 export class MeetingsComponent {
     meetings;
@@ -24,9 +30,9 @@ export class MeetingsComponent {
             if (token !== null) {
                 this.isLogin = token;
             }
-            const user = this.authService.getUser();
-            this.userId = user.id;
-            this.currentMeetingId = user.currentMeetingId;
+    
+            this.userId = this.authService.getUserId();
+            this.currentMeetingId = this.authService.getCurrentMeetingId();
             this.authState = this.authService.getState();
         })
 
@@ -37,20 +43,17 @@ export class MeetingsComponent {
 
     createMeeting(meetingType) {
         if ((this.authState === 'isLogin') && (this.currentMeetingId === null)) {
-            const user = this.authService.getUser();
-            this.meetingsService.createMeeting(meetingType, user);
+            this.meetingsService.createMeeting(meetingType, this.authService.getUser());
             this.authState = 'waiting';
         }
     }
 
     leaveMeeting() {
-        const user = this.authService.getUser();
-        this.meetingsService.removeMeeting(user.playerId);
+        this.meetingsService.removeMeeting(this.authService.getTocken());
         this.authService.leaveMeeting();
     }
 
     selectMeeting(meetingId) {
-        const user = this.authService.getUser();
-        this.meetingsService.selectMeeting(user.playerId, meetingId);
+        this.meetingsService.selectMeeting(this.authService.getTocken(), meetingId);
     }
 }
