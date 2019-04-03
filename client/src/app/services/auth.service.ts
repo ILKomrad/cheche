@@ -93,6 +93,10 @@ export class AuthService {
         return this.user;
     }
 
+    getPlayerId() {
+        return this.user.playerId;
+    }
+
     getTocken() {
         return localStorage.getItem('checkers_playerId');
     }

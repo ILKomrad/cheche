@@ -6,7 +6,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MeetingsComponent } from './meetings.component';
 import { AuthComponent } from './auth/auth.component';
 import { MeetingListComponent } from './meeting-list/meeting-list.component';
-import { MeetingsService } from './services/meetings.service';
 import { MeetingGeneratorComponent } from './meeting-generator/meeting-generator.component';
 import { MeetingsPipe } from 'src/app/meetings/meeting.pipe';
 
@@ -27,9 +26,6 @@ import { MeetingsPipe } from 'src/app/meetings/meeting.pipe';
         MeetingListComponent,
         MeetingGeneratorComponent,
         MeetingsPipe
-    ],
-    providers: [
-        MeetingsService
     ]
 })
 export class MeetingsModule {

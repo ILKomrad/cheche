@@ -8,6 +8,7 @@ import { Meeting } from 'src/app/models/models';
 })
 export class DataService {
     data$ = new BehaviorSubject<any>([]);
+    currentGame$ = new BehaviorSubject<any>({});
     data;
     currentGame;
     currentMeetingId;
@@ -33,17 +34,26 @@ export class DataService {
     setCurrentGame(currentGame) {
         console.log( 'setCurrentGame', currentGame );
         this.currentGame = currentGame;
+        this.currentGame$.next(currentGame);
         // this.authService.setCurrentMeetingId(currentGame.id, data.game.id);
     }
 
     getCurrentGame() {
-        return this.currentGame;
+        return this.currentGame$;
+    }
+
+    isStart() {
+        if (this.currentGame && this.currentGame.players) {
+            return this.currentGame.players.length === 2;
+        } else {
+            return false;
+        }
     }
 
     setCurrentMeeting(meeting, currentGame) {
-        console.log( 'setCurrentMeeting', meeting );
-        this.setCurrentGame(currentGame);
+        console.log( 'setCurrentMeeting', meeting, currentGame );
         this.currentMeeting = meeting;
+        this.setCurrentGame(currentGame);
 
         if (meeting) { 
             this.currentMeetingId = meeting.id; 

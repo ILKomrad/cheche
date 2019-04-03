@@ -1,23 +1,43 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from 'src/app/services/http.service';
-import { Observable, of } from 'rxjs';
-import { AuthService } from 'src/app/services/auth.service';
+import { Observable, of, BehaviorSubject } from 'rxjs';
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class MeetingsService {
+    step$ = new BehaviorSubject<any>({});
+    
     constructor(
-        private httpService: HttpService,
-        private authService: AuthService
+        private httpService: HttpService
     ) {}
 
-    createMeeting(type) {
-        const user = this.authService.getUser();
-        console.log('createMeeting', type, user);
+    createMeeting(type, user) {
         this.httpService.sendMessage('createMeeting', {type, user});
     }
 
-    selectMeeting(id) {
-        console.log('selectMeeting', id);
-        this.httpService.sendMessage('selectMeeting', {id});
+    selectMeeting(token, meetingId) {
+        console.log( 'selectMeeting', token, meetingId );
+        this.httpService.sendMessage('selectMeeting', {playerId: token, meetingId: meetingId});
+    }
+
+    removeMeeting(tokenId) {
+        this.httpService.sendMessage('removeMeeting', {tokenId});
+    }
+
+    makeStep(step, hitChips, token) {
+        this.httpService.sendMessage('makeStep', {step, hitChips, token});
+    }
+
+    continueMeeting(token) {
+        this.httpService.sendMessage('continueGame', {token});
+    }
+
+    stepHandler() {
+        return this.step$;
+    }
+
+    opponentStep(step, hitChips) {
+        this.step$.next({step, hitChips});
     }
 }

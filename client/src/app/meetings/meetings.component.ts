@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
 import { DataService } from 'src/app/services/data.service';
-import { MeetingsService } from './services/meetings.service';
+import { MeetingsService } from '../services/meetings.service';
 
 @Component({
     templateUrl: './meetings.component.html',
@@ -55,5 +55,11 @@ export class MeetingsComponent {
 
     selectMeeting(meetingId) {
         this.meetingsService.selectMeeting(this.authService.getTocken(), meetingId);
+    }
+
+    continueGame() {
+        if (this.dataService.getCurrentMeeting() === undefined) {
+            this.meetingsService.continueMeeting(this.authService.getTocken());
+        }
     }
 }

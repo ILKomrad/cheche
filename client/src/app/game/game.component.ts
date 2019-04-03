@@ -1,54 +1,72 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
-import { Renderer } from './renderer';
-import { MeshLoader } from './mesh-loader';
-import { Desk } from './desk';
-import { ThreeCommon } from './common';
 
-declare var THREE: any;
+import { Checkers } from './checkers/checkers';
+import { GameViewComponent } from 'src/app/game/game-view.component';
+import { MeetingsService } from 'src/app/services/meetings.service';
+import { AuthService } from 'src/app/services/auth.service';
+
 
 @Component({
     templateUrl: './game.component.html'
 })
 export class GameComponent {
-    gameRenderer;
-    meshLoader;
-    common;
     currentGame;
-    desk;
-    @ViewChild('container') container: ElementRef;
+    checkers;
+    isStart = false;
+
+    @ViewChild(GameViewComponent)
+    private gameViewComponent: GameViewComponent;
 
     constructor(
-        private dataService: DataService
+        private dataService: DataService,
+        private meetingsService: MeetingsService,
+        private authService: AuthService
     ) {
-        this.gameRender = this.gameRender.bind(this);
+        this.checkers = Checkers;
+        this.isStart = false;
     }
 
     ngAfterViewInit() {
-        this.dataService.getData()
-        .subscribe(data => {
-            if (data) {
-                this.currentGame = this.dataService.getCurrentGame();
-                
-                if (this.currentGame) { this.createGameView(); }
+        this.dataService.getCurrentGame()
+        .subscribe(currentGame => {
+            if (currentGame) {
+                console.log( this.isStart )
+                this.isStart = this.dataService.isStart();
+                this.currentGame = currentGame;
+                this.currentGame = this.checkers.getGame(currentGame);
+    
+                if (this.currentGame && !this.gameViewComponent.isInit) { 
+                    this.gameViewComponent.createGameView(this.currentGame); 
+                }
+            }
+        });
+
+        this.meetingsService.stepHandler().subscribe(step => {
+            console.log( step );
+            if (step.step) {
+                this.makeStep(step.hitChips, step.step);
             }
         })
     }
 
-    createGameView() {
-        this.gameRenderer = new Renderer();
-        this.common = new ThreeCommon();
-        this.gameRenderer.createEnvironment(1, this.container.nativeElement);
-        this.meshLoader = new MeshLoader();
-        this.meshLoader.waitLoadData().then(() => {     
-            this.desk = new Desk(this.gameRenderer, this.common, this.meshLoader);
-            this.desk.create(this.currentGame.cells, this.currentGame.paths);
-            this.gameRender();
-        });
+    makeStep(hitChips, step) {
+        this.gameViewComponent.makeStep(step.from, step.to);
+
+        if (hitChips.length) {
+            this.gameViewComponent.removeHits(hitChips[0]);
+        }
     }
 
-    gameRender() {
-        requestAnimationFrame(this.gameRender);
-        this.gameRenderer.render();
+    onStep(step) {
+        let hitChips = this.currentGame.checkValidStep(step.from, step.to);
+
+        if (hitChips === undefined) {
+            this.gameViewComponent.cancelStep(step.from);
+        } else {
+            this.makeStep(hitChips, step);
+
+            this.meetingsService.makeStep(step, hitChips, this.authService.getPlayerId());
+        }
     }
 }

@@ -1,58 +1,10 @@
-class Checkers {
-    constructor(type) {
-        this.type = type;
-    }   
-
-    setPaths(paths) {
-        this.paths = paths;
-    }
-
-    getPaths() {
-        return this.paths;
-    }
-
-    addPlayer(id) {
-        if (this.players.length === 0) {
-            this.players.push({id, range: 'w'});
-        } else {
-            this.players.push({id, range: 'b'});
-        }
-    }
-
-    setData(currentGame) {
+export class CheckersGame {
+    paths;
+    cells;
+    init(currentGame) {
         for (let i in currentGame) {
             this[i] = currentGame[i];
         }
-    }
-
-    init() {
-        this.cells = [
-            ['w', 'b', 'w', 'b', 'w', 'b', 'w', 'b'],
-            ['b', 'w', 'b', 'w', 'b', 'w', 'b', 'w'],
-            ['w', 'b', 'w', 'b', 'w', 'b', 'w', 'b'],
-            ['b', 'w', 'b', 'w', 'b', 'w', 'b', 'w'],
-            ['w', 'b', 'w', 'b', 'w', 'b', 'w', 'b'],
-            ['b', 'w', 'b', 'w', 'b', 'w', 'b', 'w'],
-            ['w', 'b', 'w', 'b', 'w', 'b', 'w', 'b'],
-            ['b', 'w', 'b', 'w', 'b', 'w', 'b', 'w']
-        ]; 
-        this.paths = [
-            [0, 2, 0, 2, 0, 2, 0, 2],
-            [2, 0, 2, 0, 2, 0, 2, 0],
-            [0, 2, 0, 2, 0, 2, 0, 2],
-            [0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0],
-            [1, 0, 1, 0, 1, 0, 1, 0],
-            [0, 1, 0, 1, 0, 1, 0, 1],
-            [1, 0, 1, 0, 1, 0, 1, 0]
-        ];
-        this.hitsChips = {
-            'w': [],
-            'b': []
-        };
-        this.whosTurn = null;
-        this.whoWin = null;
-        this.players = [];
     }
 
     checkValidStep(from, to) {
@@ -119,4 +71,23 @@ class Checkers {
     }
 }
 
-module.exports = Checkers;
+export class Giveaway extends CheckersGame {
+    
+}
+
+export class Checkers {
+    static getGame(currentGame) {
+        let type = currentGame.type;
+        let game;
+
+        switch (type) {
+            case 'giveaway':
+                game = new Giveaway();
+                game.init(currentGame);
+                
+                break;
+        }
+
+        return game;
+    }
+}

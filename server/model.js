@@ -67,7 +67,7 @@ class Model {
                 cells: JSON.stringify(game.cells),
                 paths: JSON.stringify(game.paths),
                 hitsChips: JSON.stringify(game.hitsChips),
-                whoseTurn: game.whoseTurn,
+                whosTurn: JSON.stringify(game.whosTurn),
                 whoWin: game.whoWin,
                 players: JSON.stringify(game.players)
             }
@@ -122,6 +122,17 @@ class Model {
                 score: JSON.stringify(meeting.score),
                 secondPlayer: meeting.secondPlayer,
                 meetingId: meeting.id
+            }
+        });
+    }
+
+    makeStep(game) {
+        return this.http.sendPost({
+            makeStep: {
+                paths: JSON.stringify(game.paths),
+                gameId: game.id,
+                whosTurn: game.whosTurn,
+                hitsChips: JSON.stringify(game.hitsChips)
             }
         });
     }

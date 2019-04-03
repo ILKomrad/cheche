@@ -3,10 +3,14 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
 import { GameComponent } from 'src/app/game/game.component';
+import { GameViewComponent } from 'src/app/game/game-view.component';
+import { GameInterfaceComponent } from './game-interface/game-interface.component';
 
 @NgModule({
     declarations: [
-        GameComponent
+        GameComponent,
+        GameViewComponent,
+        GameInterfaceComponent
     ],
     imports: [
         CommonModule,

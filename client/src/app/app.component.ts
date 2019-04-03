@@ -5,6 +5,7 @@ import { HttpService } from './services/http.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { DataService } from 'src/app/services/data.service';
 import { Meeting } from 'src/app/models/models';
+import { MeetingsService } from 'src/app/services/meetings.service';
 
 @Component({
   selector: 'app-root',
@@ -19,6 +20,7 @@ export class AppComponent {
     private httpService: HttpService,
     private authService: AuthService,
     private dataService: DataService,
+    private meetingService: MeetingsService,
     private router: Router
   ) {}
 
@@ -45,10 +47,10 @@ export class AppComponent {
 
         this.httpService.listen('meetingCreated')
         .subscribe((data: any) => {
-          this.dataService.setCurrentMeeting(data.meeting, data.game);
           this.dataService.addData(data.meeting);
+          this.dataService.setCurrentMeeting(data.meeting, data.game);
           this.authService.inGame(data.meeting, data.game);
-          // this.router.navigate(['/game']);
+          this.router.navigate(['/game']);
         });
 
         this.httpService.listen('removeMeeting')
@@ -65,7 +67,23 @@ export class AppComponent {
         this.httpService.listen('startMeeting')
         .subscribe((data: any) => {
           this.dataService.setCurrentMeeting(data, data.currentGame);
-          // this.router.navigate(['/game']);
+          this.router.navigate(['/game']);
+        });
+
+        this.httpService.listen('makeStep')
+        .subscribe((data: any) => {
+          this.dataService.setCurrentGame(data);
+        });
+
+        this.httpService.listen('opponentStep')
+        .subscribe((data: any) => {
+          //this.dataService.setCurrentGame(data);
+          this.meetingService.opponentStep(data.step, data.hitChips);
+        });
+
+        this.httpService.listen('continueGame')
+        .subscribe((data: any) => {
+          this.dataService.setCurrentMeeting(data.currentMeeting, data.currentGame);
         });
       });
     }

@@ -1,5 +1,4 @@
 import { Chip } from './chip';
-import { DragAndDrop } from './drag-and-drop';
 
 export class Desk {
     desk;
@@ -14,44 +13,23 @@ export class Desk {
     deskColor = '#926b2b';
     meshLoader;
     cells;
-    dragAndDrop;
+    chips;
 
     constructor(gameRenderer, common, meshLoader) {
         this.gameRenderer = gameRenderer;
         this.common = common;
         this.meshLoader = meshLoader;
         this.cells = [];
-        this.onDocumentMouseDown = this.onDocumentMouseDown.bind(this);
+        this.chips = [];
     }
 
     create(cells, chips) {
-        console.log( chips )
         this.deskPos.x = -(cells.length / 2) * this.cellSize.w + this.cellSize.w / 2;
         this.deskPos.y = -(cells[0].length / 2) * this.cellSize.h + this.cellSize.h / 2;
         
         this.createCells(cells);
         this.createChips(chips);
         this.createDesk(cells.length + 1);
-        this.dragAndDrop = new DragAndDrop(this.gameRenderer, this.getDeskMesh());
-        window.addEventListener('mousedown', this.onDocumentMouseDown);
-    }
-
-    onDocumentMouseDown(event) {
-        const that = this,
-            intersects = that.dragAndDrop.getIntersects(event);
-
-        for (let item in intersects) {
-            const target = intersects[item].object;
-            
-            if (target.meshType === 'chip') {
-                that.dragAndDrop.start(target, function(obj) {
-                    let cell = that.getCellPosition(obj);
-                    target.position.set(cell.position.x, 0.1, cell.position.z);
-                });
-            }
-        }
-
-        event.preventDefault();
     }
 
     createChips(chips) {
@@ -64,6 +42,7 @@ export class Desk {
                     this.gameRenderer.addToScene(chip.mesh);  
                     chip.setName([x, y]);
                     chip.moveTo(this.deskPos.x + x * this.cellSize.w, 0.1, this.deskPos.y + y * this.cellSize.h);
+                    this.chips.push(chip);
                 }
             }
         }
@@ -120,5 +99,16 @@ export class Desk {
         });
 
         return cell;
+    }
+
+    getChip(chipName) {
+        let chip;
+        this.chips.forEach(c => {
+            if (this.common.compareArrays(chipName, c.getName())) {
+                chip = c;
+            }
+        });
+
+        return chip;
     }
 }

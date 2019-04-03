@@ -1,6 +1,6 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
-import { MeetingsService } from 'src/app/meetings/services/meetings.service';
+import { MeetingsService } from 'src/app/services/meetings.service';
 import { AuthService } from 'src/app/services/auth.service';
 
 @Component({

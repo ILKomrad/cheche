@@ -100,6 +100,29 @@ io.on('connection', (socket) => {
             controller.logout(playerId);
         }
     });
+
+    socket.on('continueGame', function(event) {
+        if (event) {
+            const data = JSON.parse(event);
+            controller.continueGame(data.token)
+            .then((event) => {
+                socket.emit('continueGame', JSON.stringify(event));
+            });
+        }
+    });
+
+    socket.on('makeStep', function(event) {
+        if (event) {
+            const data = JSON.parse(event);
+            controller.makeStep(data)
+            .then((event) => {
+                socket.emit('makeStep', JSON.stringify(event.game));
+                io.to(event.opponentSocketId + '').emit('opponentStep', 
+                    JSON.stringify({game: event.game, step: data.step, hitChips: data.hitChips}
+                ));
+            });
+        }
+    })
 });
 
 http.listen(port, () => {

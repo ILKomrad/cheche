@@ -7,9 +7,9 @@ export class Chip {
     range;
     mesh;
     chipsColors = {
-        1: 0xffffff,
+        1: 0xffffff, //w
         11: 0xffffff,
-        2: '#645247',
+        2: '#645247', //b
         22: '#645247'
     };
 
@@ -24,11 +24,20 @@ export class Chip {
         this.mesh.meshType = 'chip';
     }
 
+    getName() {
+        return this.mesh.name;
+    }
+
     setName(name) {
         this.mesh.name = name;
     }
 
     moveTo(x, y, z) {
         this.mesh.position.set(x, y, z);
+    }
+
+    remove() {
+        this.mesh.position.set(this.mesh.position.x + 550, 11.1, this.mesh.position.z);
+        this.setName([]);
     }
 }
