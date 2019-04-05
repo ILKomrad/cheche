@@ -1,0 +1,52 @@
+@import 'vars';
+
+:host {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.player {
+    position: absolute;
+    right: 0;
+    top: 0;
+
+    &__name {
+        color: #000;
+        font: 1rem $mainFont;
+        height: 3rem;
+        width: 7rem;
+        background: rgba(255, 255, 255, .8);
+        align-items: center;
+        justify-content: center;
+        display: flex;
+    }
+
+    &_current {
+        left: 0;
+        right: initial;
+    }
+
+    &__hits {
+        background: rgba(255, 255, 255, .8);
+        width: 7rem;
+        overflow: hidden
+    }
+
+    &__hit {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 50%;
+        margin: .25rem auto;
+
+        &_w {
+            background: #fff;
+        }
+
+        &_b {
+            background: #000;
+        }
+    }
+}

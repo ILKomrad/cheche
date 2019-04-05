@@ -77,7 +77,7 @@ export class AppComponent {
 
         this.httpService.listen('opponentStep')
         .subscribe((data: any) => {
-          //this.dataService.setCurrentGame(data);
+          this.dataService.setCurrentGame(data.game);
           this.meetingService.opponentStep(data.step, data.hitChips);
         });
 

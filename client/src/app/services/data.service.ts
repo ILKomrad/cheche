@@ -50,6 +50,12 @@ export class DataService {
         }
     }
 
+    getPlayers() {
+        if (this.currentMeeting) {
+            return this.currentMeeting.score;
+        }
+    }
+
     setCurrentMeeting(meeting, currentGame) {
         console.log( 'setCurrentMeeting', meeting, currentGame );
         this.currentMeeting = meeting;

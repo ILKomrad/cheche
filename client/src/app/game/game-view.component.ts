@@ -5,8 +5,10 @@ import { MeshLoader } from './mesh-loader';
 import { Desk } from './desk';
 import { ThreeCommon } from './common';
 import { DragAndDrop } from './drag-and-drop';
+import { GameSettings } from './game.settings';
 
 declare var THREE: any;
+declare var TWEEN: any;
 
 @Component({
     selector: 'game-view',
@@ -21,6 +23,7 @@ export class GameViewComponent {
     checkers;
     dragAndDrop;
     isInit;
+    gameSettings;
     @Input() isStart;
     @ViewChild('container') container: ElementRef;
     @Output() step = new EventEmitter<any>();
@@ -28,17 +31,17 @@ export class GameViewComponent {
     constructor() {
         this.gameRender = this.gameRender.bind(this);
         this.onDocumentMouseDown = this.onDocumentMouseDown.bind(this);
+        this.gameSettings = new GameSettings();
     }
 
-    createGameView(currentGame) {
-        console.log( 'this.isInit' )
+    createGameView(currentGame, range) {
         this.isInit = true;
         this.gameRenderer = new Renderer();
         this.common = new ThreeCommon();
-        this.gameRenderer.createEnvironment(1, this.container.nativeElement);
+        this.gameRenderer.createEnvironment(range, this.container.nativeElement);
         this.meshLoader = new MeshLoader();
         this.meshLoader.waitLoadData().then(() => {     
-            this.desk = new Desk(this.gameRenderer, this.common, this.meshLoader);
+            this.desk = new Desk(this.gameRenderer, this.common, this.meshLoader, this.gameSettings);
             this.desk.create(currentGame.cells, currentGame.paths);
             this.gameRender();
             this.dragAndDrop = new DragAndDrop(this.gameRenderer, this.desk.getDeskMesh());
@@ -49,6 +52,7 @@ export class GameViewComponent {
     gameRender() {
         requestAnimationFrame(this.gameRender);
         this.gameRenderer.render();
+        TWEEN.update();
     }
 
     onDocumentMouseDown(event) {
@@ -78,10 +82,16 @@ export class GameViewComponent {
         // target.position.set(cell.position.x, 0.1, cell.position.z);
     }
 
-    makeStep(chipName, cellName) {
+    makeStep(chipName, cellName, anim) {
         let cell = this.desk.getCellPosition(cellName),
             chip = this.desk.getChip(chipName);
-        chip.moveTo(cell.position.x, 0.1, cell.position.z);
+        
+        if (anim) {
+            chip.animateMoveTo(cell.position.x, 0.1, cell.position.z);
+        } else {
+            chip.moveTo(cell.position.x, 0.1, cell.position.z);
+        }
+    
         chip.setName(cellName);
     }
 

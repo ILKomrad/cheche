@@ -1,31 +1,30 @@
 import { Chip } from './chip';
+import { Animator } from './animator';
 
 export class Desk {
     desk;
-    cellSize = {w: 10, h: 10};
     gameRenderer;
     common;
-    deskPos = {x:0, y: 0};
-    cellsColors = {
-        'w': 0xe9bb6e,
-        'b': 0x512d17
-    };
-    deskColor = '#926b2b';
+    deskPos = {x:0, y: 0}; 
     meshLoader;
     cells;
     chips;
+    animator;
+    gameSettings;
 
-    constructor(gameRenderer, common, meshLoader) {
+    constructor(gameRenderer, common, meshLoader, gameSettings) {
         this.gameRenderer = gameRenderer;
         this.common = common;
         this.meshLoader = meshLoader;
         this.cells = [];
         this.chips = [];
+        this.animator = new Animator();
+        this.gameSettings = gameSettings;
     }
 
     create(cells, chips) {
-        this.deskPos.x = -(cells.length / 2) * this.cellSize.w + this.cellSize.w / 2;
-        this.deskPos.y = -(cells[0].length / 2) * this.cellSize.h + this.cellSize.h / 2;
+        this.deskPos.x = -(cells.length / 2) * this.gameSettings.cellSize.w + this.gameSettings.cellSize.w / 2;
+        this.deskPos.y = -(cells[0].length / 2) * this.gameSettings.cellSize.h + this.gameSettings.cellSize.h / 2;
         
         this.createCells(cells);
         this.createChips(chips);
@@ -38,10 +37,10 @@ export class Desk {
                 let range = chips[y][x];
 
                 if (range !== 0) {
-                    let chip = new Chip(this.meshLoader, range);
+                    let chip = new Chip(this.meshLoader, range, this.animator);
                     this.gameRenderer.addToScene(chip.mesh);  
                     chip.setName([x, y]);
-                    chip.moveTo(this.deskPos.x + x * this.cellSize.w, 0.1, this.deskPos.y + y * this.cellSize.h);
+                    chip.moveTo(this.deskPos.x + x * this.gameSettings.cellSize.w, 0.1, this.deskPos.y + y * this.gameSettings.cellSize.h);
                     this.chips.push(chip);
                 }
             }
@@ -49,24 +48,24 @@ export class Desk {
     }
 
     createCells(cells) {
-        const deskX = -(cells.length / 2) * this.cellSize.w + this.cellSize.w / 2,
-            deskY = -(cells[0].length / 2) * this.cellSize.h + this.cellSize.h / 2;
+        const deskX = -this.gameSettings.deskPlayZoneSize.w / 2 + this.gameSettings.cellSize.w / 2,
+            deskY = -this.gameSettings.deskPlayZoneSize.h / 2 + this.gameSettings.cellSize.h / 2;
 
         for (let x = 0; x < cells.length; x++) {
             for (let y = 0; y < cells[x].length; y++) {
-                let color = this.cellsColors[cells[x][y]];
-                this.addCell(deskX + x * this.cellSize.w, deskY + y * this.cellSize.h, color, [x, y]);
+                let color = this.gameSettings.cellsColors[cells[x][y]];
+                this.addCell(deskX + x * this.gameSettings.cellSize.w, deskY + y * this.gameSettings.cellSize.h, color, [x, y]);
             }
         }
     }
 
     createDesk(cellsLength) {
         this.desk = this.common.createBoxMesh(
-            {w: this.cellSize.w * cellsLength, h: this.cellSize.h * cellsLength, deep: 4},
+            {w: this.gameSettings.deskSize.w, h: this.gameSettings.deskSize.h, deep: this.gameSettings.deskSize.deep},
             {x: -Math.PI / 2},
-            this.deskColor
+            this.gameSettings.deskColor
         );
-        this.desk.position.set(0, -2, 0);
+        this.desk.position.set(this.gameSettings.deskPosition.x, this.gameSettings.deskPosition.y, this.gameSettings.deskPosition.z);
         this.desk.name = 'desk';
         this.desk.receiveShadow = true;
         this.gameRenderer.addToScene(this.desk);  
@@ -78,7 +77,7 @@ export class Desk {
 
     addCell(x, y, color, name) {
         const cell = this.common.createPlaneMesh(
-            {w: this.cellSize.w, h: this.cellSize.h},
+            {w: this.gameSettings.cellSize.w, h: this.gameSettings.cellSize.h},
             {x: -Math.PI / 2},
             color
         );

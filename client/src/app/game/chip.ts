@@ -6,6 +6,7 @@ export class Chip {
     meshLoader;
     range;
     mesh;
+    animator;
     chipsColors = {
         1: 0xffffff, //w
         11: 0xffffff,
@@ -13,15 +14,22 @@ export class Chip {
         22: '#645247'
     };
 
-    constructor(meshLoader, range) {
+    constructor(meshLoader, range, animator) {
         const pieceMaterial = new THREE.MeshPhongMaterial({
             color: this.chipsColors[range],
-            shininess: 20
+            shininess: 20,
+            transparent: true
         });
         this.mesh = new THREE.Mesh(meshLoader.geom['chip'].clone());
         this.mesh.material = pieceMaterial;
         this.mesh.position.set(0, 0, 0);
         this.mesh.meshType = 'chip';
+        this.animator = animator;
+        this.range = range;
+    }
+
+    getRange() {
+        return this.range;
     }
 
     getName() {
@@ -36,8 +44,13 @@ export class Chip {
         this.mesh.position.set(x, y, z);
     }
 
+    animateMoveTo(x, y, z) {
+        this.animator.animationMove(this.mesh.position, {x: x, y: y, z: z});
+    }
+
     remove() {
-        this.mesh.position.set(this.mesh.position.x + 550, 11.1, this.mesh.position.z);
+        // this.mesh.position.set(pos.x, pos.y, pos.z);
+        this.animator.removeFromDesk(this.mesh.material);
         this.setName([]);
     }
 }

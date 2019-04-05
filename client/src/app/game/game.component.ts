@@ -14,6 +14,7 @@ export class GameComponent {
     currentGame;
     checkers;
     isStart = false;
+    interfaceData;
 
     @ViewChild(GameViewComponent)
     private gameViewComponent: GameViewComponent;
@@ -31,27 +32,68 @@ export class GameComponent {
         this.dataService.getCurrentGame()
         .subscribe(currentGame => {
             if (currentGame) {
-                console.log( this.isStart )
                 this.isStart = this.dataService.isStart();
                 this.currentGame = currentGame;
                 this.currentGame = this.checkers.getGame(currentGame);
-    
+             
                 if (this.currentGame && !this.gameViewComponent.isInit) { 
-                    this.gameViewComponent.createGameView(this.currentGame); 
+                    const range = this.getRange();
+                    this.gameViewComponent.createGameView(this.currentGame, range); 
+                    this.compareData({
+                        score: this.dataService.getPlayers(),
+                        playerId: this.authService.getUserId(),
+                        hitsChips: this.currentGame.hitsChips,
+                        players: this.currentGame.players
+                    });
                 }
             }
         });
 
         this.meetingsService.stepHandler().subscribe(step => {
-            console.log( step );
             if (step.step) {
-                this.makeStep(step.hitChips, step.step);
+                this.makeStep(step.hitChips, step.step, true);
             }
         })
     }
 
-    makeStep(hitChips, step) {
-        this.gameViewComponent.makeStep(step.from, step.to);
+    getRange() {
+        const userId = this.authService.getUserId();
+        let range;
+        this.currentGame.players.forEach(player => {
+            if (player.id === userId) {
+                range = player.range;
+            }
+        });
+
+        return range;
+    }
+
+    compareData(data) {
+        let d = [];
+        console.log(data)
+
+        data.players.forEach((player, index) => {
+           let score;
+
+           data.score.forEach(s => {
+               if (s.id === player.id) {
+                   score = s;
+               }
+           })
+
+            d.push({
+                id: player.id,
+                range: player.range,
+                hitsChips: data.hitsChips[player.range],
+                currentPlayer: (data.playerId === player.id),
+                score
+            })
+        })
+        this.interfaceData = d;
+    }
+
+    makeStep(hitChips, step, ifOpponent = false) {
+        this.gameViewComponent.makeStep(step.from, step.to, ifOpponent);
 
         if (hitChips.length) {
             this.gameViewComponent.removeHits(hitChips[0]);

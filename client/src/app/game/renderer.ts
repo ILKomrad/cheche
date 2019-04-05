@@ -9,14 +9,20 @@ export class Renderer {
     fps;
     fpsControl
     controls;
+    range;
 
     createEnvironment(range, container) {
         this.container = container;
         this.scene = new THREE.Scene();
-
         this.camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 1000);
         this.scene.add(this.camera);
-        this.setCameraPos(1, 110, 110);
+        this.range = range;
+
+        if (range === 'w') {
+            this.setCameraPos(1, 110, 110);
+        } else {
+            this.setCameraPos(0.5, 110, -110);
+        }
         
         var ambientLight = new THREE.AmbientLight(0x0c0c0c);
         this.scene.add(ambientLight);
@@ -43,6 +49,7 @@ export class Renderer {
         // this.camera.lookAt(this.scene.position);
         this.camera.lookAt(new THREE.Vector3(0.89, 0, 0));
         // this.camera.position.set(x - 5, y, z);
+        console.log( this.camera.position )
     }
 
     render() {
