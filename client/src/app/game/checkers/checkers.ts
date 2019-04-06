@@ -1,6 +1,10 @@
 export class CheckersGame {
     paths;
     cells;
+    hitsChips = {
+        b: [],
+        w: []
+    };
     init(currentGame) {
         for (let i in currentGame) {
             this[i] = currentGame[i];
@@ -34,6 +38,10 @@ export class CheckersGame {
         } else {
             return range;
         }
+    }
+
+    getChip(position) {
+        return this.paths[position[1]][position[0]];
     }
 
     isQueen(from) {
@@ -117,13 +125,41 @@ export class CheckersGame {
         
         if ((Math.abs(deltaY) === 2) && (Math.abs(deltaX) === 2)) {
             let hitPosX = from[0] + deltaX / 2,
-                hitPosY = from[1] + deltaY / 2;
-            let hitRange = this.transformRange(this.paths[hitPosY][hitPosX]);
+                hitPosY = from[1] + deltaY / 2,
+                hitRange = this.transformRange(this.paths[hitPosY][hitPosX])
 
             if ((range !== hitRange) && (hitRange !== 0)) { hitChips.push([hitPosX, hitPosY]); }
         }
 
         return hitChips;
+    }
+
+    makeStep(step) {
+        let hits = this.checkValidStep(step.from, step.to);
+        
+        if (hits !== undefined) {
+            this.stepAction(step, hits);
+        } 
+
+        return hits;
+    }
+
+    stepAction(step, hits) {   
+        this.paths[step.to[1]][step.to[0]] = this.paths[step.from[1]][step.from[0]];
+        this.paths[step.from[1]][step.from[0]] = 0;
+
+        if (hits && hits.length) {
+            hits.forEach(h => {
+                let range = this.paths[h[1]][h[0]];
+                this.paths[h[1]][h[0]] = 0;
+
+                if (range === 2) {
+                    this.hitsChips.w.push(range);
+                } else if (range === 1) {
+                    this.hitsChips.b.push(range);
+                }
+            })
+        }
     }
 }
 

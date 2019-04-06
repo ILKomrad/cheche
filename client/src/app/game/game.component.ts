@@ -51,6 +51,7 @@ export class GameComponent {
 
         this.meetingsService.stepHandler().subscribe(step => {
             if (step.step) {
+                console.log( step )
                 this.makeStep(step.hitChips, step.step, true);
             }
         })
@@ -93,17 +94,24 @@ export class GameComponent {
     }
 
     makeStep(hitChips, step, ifOpponent = false) {
-        this.gameViewComponent.makeStep(step.from, step.to, ifOpponent);
+        let range = this.currentGame.getChip(step.to);
+        console.log( 'range', range );
+        this.gameViewComponent.makeStep(step.from, step.to, ifOpponent)
+        .then(() => {
+            // this.currentGame.postStepProcessor(step.to, range);
+            console.log( this.currentGame.paths )
+        });
 
         if (hitChips.length) {
             hitChips.forEach(h => {
+                if (this.currentGame.isQueen(h)) { console.log('%c QUEEN HIT!!! ', 'background: red; color: #fff') }
                 this.gameViewComponent.removeHits(h);
             })
         }
     }
 
     onStep(step) {
-        let hitChips = this.currentGame.checkValidStep(step.from, step.to);
+        let hitChips = this.currentGame.makeStep(step);
 
         if (hitChips === undefined) {
             this.gameViewComponent.cancelStep(step.from);

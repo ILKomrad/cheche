@@ -146,25 +146,7 @@ class Controller {
         let currentGame = await this.getGame(gameId);
         const game = this.game.generate(currentGame.type);
         game.setData(currentGame);
-        const hits = game.checkValidStep(step.from, step.to);
-
-        if (hits !== undefined) {
-            game.paths[step.to[1]][step.to[0]] = game.paths[step.from[1]][step.from[0]];
-            game.paths[step.from[1]][step.from[0]] = 0;
-
-            if (hits && hits.length) {
-                hits.forEach(h => {
-                    let range = game.paths[h[1]][h[0]];
-                    game.paths[h[1]][h[0]] = 0;
-
-                    if (range === 2) {
-                        game.hitsChips.w.push(range);
-                    } else if (range === 1) {
-                        game.hitsChips.b.push(range);
-                    }
-                })
-            }
-        }
+        const hits = game.makeStep(step);
 
         return game;
     }

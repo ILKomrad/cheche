@@ -45,7 +45,7 @@ export class Chip {
     }
 
     animateMoveTo(x, y, z) {
-        this.animator.animationMove(this.mesh.position, {x: x, y: y, z: z});
+        return this.animator.animationMove(this.mesh.position, {x: x, y: y, z: z});
     }
 
     remove() {

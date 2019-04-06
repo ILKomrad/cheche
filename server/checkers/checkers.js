@@ -74,6 +74,32 @@ class Checkers {
         return hitChips;
     }
 
+    makeStep(step) {
+        let hits = this.checkValidStep(step.from, step.to);
+
+        if (hits !== undefined) {
+            this.stepAction(step, hits);
+        }
+    }
+
+    stepAction(step, hits) {   
+        this.paths[step.to[1]][step.to[0]] = this.paths[step.from[1]][step.from[0]];
+        this.paths[step.from[1]][step.from[0]] = 0;
+
+        if (hits && hits.length) {
+            hits.forEach(h => {
+                let range = this.paths[h[1]][h[0]];
+                this.paths[h[1]][h[0]] = 0;
+
+                if (range === 2) {
+                    this.hitsChips.w.push(range);
+                } else if (range === 1) {
+                    this.hitsChips.b.push(range);
+                }
+            })
+        }
+    }
+
     isQueen(from) {
         let range = this.paths[from[1]][from[0]];
         

@@ -76,23 +76,26 @@ export class GameViewComponent {
     }
 
     cancelStep(chipName) {
+        console.log('cancel')
         let cell = this.desk.getCellPosition(chipName),
             chip = this.desk.getChip(chipName);
         chip.moveTo(cell.position.x, 0.1, cell.position.z);
         // target.position.set(cell.position.x, 0.1, cell.position.z);
     }
 
-    makeStep(chipName, cellName, anim) {
+    async makeStep(chipName, cellName, anim) {
         let cell = this.desk.getCellPosition(cellName),
             chip = this.desk.getChip(chipName);
-     
+
+        chip.setName(cellName);
+
         if (anim) {
-            chip.animateMoveTo(cell.position.x, 0.1, cell.position.z);
+            await chip.animateMoveTo(cell.position.x, 0.1, cell.position.z);
         } else {
             chip.moveTo(cell.position.x, 0.1, cell.position.z);
         }
-    
-        chip.setName(cellName);
+
+        return Promise.resolve();
     }
 
     removeHits(chipName) {
