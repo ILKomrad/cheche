@@ -10,5 +10,11 @@ export class GameSettings {
         'w': 0xe9bb6e,
         'b': 0x512d17
     };
+    chipsColors = {
+        1: 0xffffff, //w
+        11: 0xffffff,
+        2: '#645247', //b
+        22: '#645247'
+    };
     deskColor = '#926b2b';
 }

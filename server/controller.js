@@ -153,14 +153,16 @@ class Controller {
             game.paths[step.from[1]][step.from[0]] = 0;
 
             if (hits && hits.length) {
-                let range = game.paths[hits[0][1]][hits[0][0]];
-                game.paths[hits[0][1]][hits[0][0]] = 0;
+                hits.forEach(h => {
+                    let range = game.paths[h[1]][h[0]];
+                    game.paths[h[1]][h[0]] = 0;
 
-                if (range === 2) {
-                    game.hitsChips.w.push(range);
-                } else if (range === 1) {
-                    game.hitsChips.b.push(range);
-                }
+                    if (range === 2) {
+                        game.hitsChips.w.push(range);
+                    } else if (range === 1) {
+                        game.hitsChips.b.push(range);
+                    }
+                })
             }
         }
 

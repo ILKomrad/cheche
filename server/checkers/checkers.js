@@ -59,12 +59,32 @@ class Checkers {
         if (!this.checkDelta(from, to)) { return; }
         if (!this.isBusy(to)) { return; }
         if (!this.checkColor(to)) { return; }
+        if (!this.checkDiagonal(from, to)) { return; }
+        let isQueen = this.isQueen(from),
+            hitChips;
 
-        let hitChips = this.getHitChips(from, to);
+        if (isQueen) {
+            hitChips = this.getHitChipsByQueen(from, to)
+        } else {
+            hitChips = this.getHitChips(from, to);
 
-        if (!this.checkFar(from, to, hitChips)) { return; }
-       
+            if (!this.checkFarAndDirection(from, to, hitChips, isQueen)) { return; }
+        }
+        
         return hitChips;
+    }
+
+    isQueen(from) {
+        let range = this.paths[from[1]][from[0]];
+        
+        return (range === 11 || range === 22);
+    }
+
+    checkDiagonal(from, to) {
+        let deltaX = from[0] - to[0];
+        return ((from[1] + deltaX) === to[1]) || 
+        ((from[1] + Math.abs(deltaX)) === to[1]) ||
+        ((from[1] - Math.abs(deltaX)) === to[1]);
     }
 
     checkDelta(from, to) {
@@ -83,7 +103,7 @@ class Checkers {
         return this.cells[to[1]][to[0]] === 'b';
     }
 
-    checkFar(from, to, hitChips) {
+    checkFarAndDirection(from, to, hitChips) {
         let range = this.paths[from[1]][from[0]],
             deltaX = Math.abs(from[0] - to[0]),
             deltaY = from[1] - to[1];
@@ -101,6 +121,40 @@ class Checkers {
         }
     }
 
+    getQueenRange(queen) {
+        if (queen === 22) {
+            return 2;
+        } else if (queen === 11) {
+            return 1;
+        }
+    }
+
+    getHitChipsByQueen(from, to) {
+        let directionX = ((to[0] - from[0]) > 0) ? 1 : -1,
+            directionY = ((to[1] - from[1]) > 0) ? 1 : -1,
+            fromX = from[0],
+            fromY = from[1],
+            toX = to[0],
+            toY = to[1],
+            hitChips = [],
+            range = this.getQueenRange(this.paths[from[1]][from[0]]);
+        
+        while (fromX !== toX) {
+            fromX += 1 * directionX;
+            fromY += 1 * directionY;
+            let hitRange = this.paths[fromY][fromX];
+
+            if (hitRange !== 0) { hitChips.push([fromX, fromY]); }
+
+            if (range === hitRange) { 
+                hitChips = undefined;  
+                break;
+            }
+        }
+
+        return hitChips;
+    }
+
     getHitChips(from, to) {
         let range = this.paths[from[1]][from[0]],
             deltaX = to[0] - from[0],
@@ -110,12 +164,22 @@ class Checkers {
         if ((Math.abs(deltaY) === 2) && (Math.abs(deltaX) === 2)) {
             let hitPosX = from[0] + deltaX / 2,
                 hitPosY = from[1] + deltaY / 2;
-            let hitRange = this.paths[hitPosY][hitPosX];
+            let hitRange = this.transformRange(this.paths[hitPosY][hitPosX]);
 
             if ((range !== hitRange) && (hitRange !== 0)) { hitChips.push([hitPosX, hitPosY]); }
         }
 
         return hitChips;
+    }
+
+    transformRange(range) {
+        if (range === 22) {
+            return 2;
+        } else if (range === 11) {
+            return 1;
+        } else {
+            return range;
+        }
     }
 }
 

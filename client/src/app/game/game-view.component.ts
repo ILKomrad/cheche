@@ -85,7 +85,7 @@ export class GameViewComponent {
     makeStep(chipName, cellName, anim) {
         let cell = this.desk.getCellPosition(cellName),
             chip = this.desk.getChip(chipName);
-        
+     
         if (anim) {
             chip.animateMoveTo(cell.position.x, 0.1, cell.position.z);
         } else {
@@ -96,7 +96,6 @@ export class GameViewComponent {
     }
 
     removeHits(chipName) {
-        let chip = this.desk.getChip(chipName);
-        chip.remove();
+        this.desk.removeHits(chipName);
     }
 }

@@ -1,6 +1,6 @@
 import { Chip } from './chip';
 import { Animator } from './animator';
-
+// w = 1 b = 2
 export class Desk {
     desk;
     gameRenderer;
@@ -37,7 +37,7 @@ export class Desk {
                 let range = chips[y][x];
 
                 if (range !== 0) {
-                    let chip = new Chip(this.meshLoader, range, this.animator);
+                    let chip = new Chip(this.meshLoader, range, this.animator, this.gameSettings);
                     this.gameRenderer.addToScene(chip.mesh);  
                     chip.setName([x, y]);
                     chip.moveTo(this.deskPos.x + x * this.gameSettings.cellSize.w, 0.1, this.deskPos.y + y * this.gameSettings.cellSize.h);
@@ -109,5 +109,13 @@ export class Desk {
         });
 
         return chip;
+    }
+
+    removeHits(chipName) {
+        let chip = this.getChip(chipName);
+        chip.remove().then(() => {
+            this.gameRenderer.removeFromScene(chip.getMesh());
+        });
+        chip.setName([])
     }
 }

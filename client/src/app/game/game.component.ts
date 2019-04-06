@@ -96,7 +96,9 @@ export class GameComponent {
         this.gameViewComponent.makeStep(step.from, step.to, ifOpponent);
 
         if (hitChips.length) {
-            this.gameViewComponent.removeHits(hitChips[0]);
+            hitChips.forEach(h => {
+                this.gameViewComponent.removeHits(h);
+            })
         }
     }
 
@@ -107,7 +109,6 @@ export class GameComponent {
             this.gameViewComponent.cancelStep(step.from);
         } else {
             this.makeStep(hitChips, step);
-
             this.meetingsService.makeStep(step, hitChips, this.authService.getPlayerId());
         }
     }
