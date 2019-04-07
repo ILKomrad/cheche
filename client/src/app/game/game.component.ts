@@ -15,6 +15,7 @@ export class GameComponent {
     checkers;
     isStart = false;
     interfaceData;
+    isGameOver = false;
 
     @ViewChild(GameViewComponent)
     private gameViewComponent: GameViewComponent;
@@ -31,10 +32,13 @@ export class GameComponent {
     ngAfterViewInit() {
         this.dataService.getCurrentGame()
         .subscribe(currentGame => {
-            if (currentGame) {
+            if (currentGame && currentGame.paths) {
                 this.isStart = this.dataService.isStart();
-                this.currentGame = currentGame;
                 this.currentGame = this.checkers.getGame(currentGame);
+                
+                if (this.currentGame) {
+                    this.isGameOver = this.currentGame.whoWin;
+                }
              
                 if (this.currentGame && !this.gameViewComponent.isInit) { 
                     const range = this.getRange();
@@ -51,7 +55,6 @@ export class GameComponent {
 
         this.meetingsService.stepHandler().subscribe(step => {
             if (step.step) {
-                console.log( step )
                 this.makeStep(step.hitChips, step.step, true);
             }
         })
@@ -71,7 +74,6 @@ export class GameComponent {
 
     compareData(data) {
         let d = [];
-        console.log(data)
 
         data.players.forEach((player, index) => {
            let score;
@@ -94,17 +96,18 @@ export class GameComponent {
     }
 
     makeStep(hitChips, step, ifOpponent = false) {
-        let range = this.currentGame.getChip(step.to);
-        console.log( 'range', range );
         this.gameViewComponent.makeStep(step.from, step.to, ifOpponent)
         .then(() => {
-            // this.currentGame.postStepProcessor(step.to, range);
-            console.log( this.currentGame.paths )
+            if (!ifOpponent) { this.currentGame.postStepProcessor(step); }
+            this.isGameOver = this.currentGame.whoWin;
+           
+            if (this.currentGame.newQueen) {
+                this.gameViewComponent.newQueen(this.currentGame.newQueen);
+            }
         });
 
         if (hitChips.length) {
             hitChips.forEach(h => {
-                if (this.currentGame.isQueen(h)) { console.log('%c QUEEN HIT!!! ', 'background: red; color: #fff') }
                 this.gameViewComponent.removeHits(h);
             })
         }

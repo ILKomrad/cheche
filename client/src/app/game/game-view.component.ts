@@ -12,19 +12,21 @@ declare var TWEEN: any;
 
 @Component({
     selector: 'game-view',
-    template: '<div #container id="container"></div>'
+    templateUrl: './game-view.component.html'
 }) 
 export class GameViewComponent {
     gameRenderer;
     meshLoader;
     common;
     currentGame;
+    range;
     desk;
     checkers;
     dragAndDrop;
     isInit;
     gameSettings;
     @Input() isStart;
+    @Input() isGameOver;
     @ViewChild('container') container: ElementRef;
     @Output() step = new EventEmitter<any>();
 
@@ -34,8 +36,21 @@ export class GameViewComponent {
         this.gameSettings = new GameSettings();
     }
 
+    ngOnChanges() {
+        console.log( 'isGameOver', this.isGameOver )
+
+        if (this.isGameOver) {
+            if (this.isGameOver === this.range) {
+                console.log('%c YOU WIN ', 'background: red; color: #fff');
+            } else {
+                console.log('%c YOU loose ', 'background: red; color: #fff');
+            }
+        }
+    }
+
     createGameView(currentGame, range) {
         this.isInit = true;
+        this.range = range;
         this.gameRenderer = new Renderer();
         this.common = new ThreeCommon();
         this.gameRenderer.createEnvironment(range, this.container.nativeElement);
@@ -56,7 +71,7 @@ export class GameViewComponent {
     }
 
     onDocumentMouseDown(event) {
-        if (this.isStart) {
+        if (this.isStart && !this.isGameOver) {
             const that = this,
                 intersects = that.dragAndDrop.getIntersects(event);
 
@@ -96,6 +111,11 @@ export class GameViewComponent {
         }
 
         return Promise.resolve();
+    }
+
+    newQueen(chipName) {
+        let chip = this.desk.getChip(chipName);
+        chip.transformToQueen();
     }
 
     removeHits(chipName) {

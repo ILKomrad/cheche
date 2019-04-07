@@ -5,6 +5,9 @@ export class CheckersGame {
         b: [],
         w: []
     };
+    newQueen;
+    whoWin;
+
     init(currentGame) {
         for (let i in currentGame) {
             this[i] = currentGame[i];
@@ -153,12 +156,44 @@ export class CheckersGame {
                 let range = this.paths[h[1]][h[0]];
                 this.paths[h[1]][h[0]] = 0;
 
-                if (range === 2) {
+                if (this.transformRange(range) === 2) {
                     this.hitsChips.w.push(range);
-                } else if (range === 1) {
+                } else if (this.transformRange(range) === 1) {
                     this.hitsChips.b.push(range);
                 }
             })
+        }
+    }
+
+    postStepProcessor(step) {
+        let range = this.paths[step.to[1]][step.to[0]];
+       
+        if (!this.isQueen(step.to)) {
+            this.newQueen = this.detectQueen(step.to, range);
+
+            if (this.newQueen) { this.paths[this.newQueen[1]][this.newQueen[0]] = range === 1 ? 11 : 22; }
+        } else {
+            this.newQueen = null;
+        }
+
+        this.whoWin = this.isGameOver();
+    }
+
+    isGameOver() {
+        let whoWin;
+
+        if (this.hitsChips['w'].length === 12) {
+            whoWin = 'w';
+        } else if (this.hitsChips['b'].length === 12) {
+            whoWin = 'b';
+        }
+
+        return whoWin;
+    }
+
+    detectQueen(cellPos, range) {
+        if (((cellPos[1] === 7) && (range === 2)) || ((cellPos[1] === 0) && (range === 1))) {
+            return cellPos;
         }
     }
 }

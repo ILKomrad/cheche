@@ -22,6 +22,10 @@ export class Chip {
         this.animator = animator;
         this.range = range;
         this.settings = settings;
+
+        if ((range === 22) || (range === 11)) {
+            this.transformToQueen();
+        }
     }
 
     getRange() {
@@ -51,5 +55,9 @@ export class Chip {
     remove() {
         // this.mesh.position.set(pos.x, pos.y, pos.z);
         return this.animator.removeFromDesk(this.mesh.material)
+    }
+
+    transformToQueen() {
+        return this.animator.transformToQueen(this.mesh)
     }
 }

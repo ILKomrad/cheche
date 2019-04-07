@@ -67,7 +67,7 @@ class Model {
                 cells: JSON.stringify(game.cells),
                 paths: JSON.stringify(game.paths),
                 hitsChips: JSON.stringify(game.hitsChips),
-                whosTurn: JSON.stringify(game.whosTurn),
+                whosTurn: game.whosTurn,
                 whoWin: game.whoWin,
                 players: JSON.stringify(game.players)
             }
@@ -132,6 +132,7 @@ class Model {
                 paths: JSON.stringify(game.paths),
                 gameId: game.id,
                 whosTurn: game.whosTurn,
+                whoWin: game.whoWin,
                 hitsChips: JSON.stringify(game.hitsChips)
             }
         });
@@ -142,7 +143,7 @@ class Model {
             startGame: {
                 players: JSON.stringify(game.players),
                 gameId: game.id,
-                whosTurn: game.players[0].id
+                whosTurn: game.whosTurn
             }
         });
     }
