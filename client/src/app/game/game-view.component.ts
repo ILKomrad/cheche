@@ -27,6 +27,7 @@ export class GameViewComponent {
     gameSettings;
     @Input() isStart;
     @Input() isGameOver;
+    @Input() isBlock;
     @ViewChild('container') container: ElementRef;
     @Output() step = new EventEmitter<any>();
 
@@ -51,6 +52,7 @@ export class GameViewComponent {
     createGameView(currentGame, range) {
         this.isInit = true;
         this.range = range;
+        this.currentGame = currentGame;
         this.gameRenderer = new Renderer();
         this.common = new ThreeCommon();
         this.gameRenderer.createEnvironment(range, this.container.nativeElement);
@@ -81,7 +83,7 @@ export class GameViewComponent {
                 if (target.meshType === 'chip') {
                     that.dragAndDrop.start(target, function(cellName) {
                         let cell = that.desk.getCellPosition(cellName);
-                        that.step.emit({to: cellName, from: target.name})
+                        that.step.emit({to: cellName, from: target.name});
                     });
                 }
             }
@@ -95,7 +97,6 @@ export class GameViewComponent {
         let cell = this.desk.getCellPosition(chipName),
             chip = this.desk.getChip(chipName);
         chip.moveTo(cell.position.x, 0.1, cell.position.z);
-        // target.position.set(cell.position.x, 0.1, cell.position.z);
     }
 
     async makeStep(chipName, cellName, anim) {

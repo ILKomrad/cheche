@@ -181,14 +181,6 @@ class Checkers {
         }
     }
 
-    getQueenRange(queen) {
-        if (queen === 22) {
-            return 2;
-        } else if (queen === 11) {
-            return 1;
-        }
-    }
-
     getHitChipsByQueen(from, to) {
         let directionX = ((to[0] - from[0]) > 0) ? 1 : -1,
             directionY = ((to[1] - from[1]) > 0) ? 1 : -1,
@@ -197,7 +189,7 @@ class Checkers {
             toX = to[0],
             toY = to[1],
             hitChips = [],
-            range = this.getQueenRange(this.paths[from[1]][from[0]]);
+            range = this.transformRange(this.paths[from[1]][from[0]]);
         
         while (fromX !== toX) {
             fromX += 1 * directionX;
@@ -206,7 +198,7 @@ class Checkers {
 
             if (hitRange !== 0) { hitChips.push([fromX, fromY]); }
 
-            if (range === hitRange) { 
+            if (range === this.transformRange(hitRange)) { 
                 hitChips = undefined;  
                 break;
             }

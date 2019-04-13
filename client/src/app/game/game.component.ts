@@ -96,13 +96,18 @@ export class GameComponent {
     }
 
     makeStep(hitChips, step, ifOpponent = false) {
+        let newQueen = (this.currentGame.newQueen) ? this.currentGame.newQueen.slice() : null;
         this.gameViewComponent.makeStep(step.from, step.to, ifOpponent)
         .then(() => {
-            if (!ifOpponent) { this.currentGame.postStepProcessor(step); }
+            if (!ifOpponent) { 
+                this.currentGame.postStepProcessor(step); 
+                newQueen = (this.currentGame.newQueen) ? this.currentGame.newQueen.slice() : null;
+            }
             this.isGameOver = this.currentGame.whoWin;
            
-            if (this.currentGame.newQueen) {
-                this.gameViewComponent.newQueen(this.currentGame.newQueen);
+            if (newQueen) {
+                console.log( 'newQueen' )
+                this.gameViewComponent.newQueen(newQueen);
             }
         });
 
@@ -120,7 +125,7 @@ export class GameComponent {
             this.gameViewComponent.cancelStep(step.from);
         } else {
             this.makeStep(hitChips, step);
-            this.meetingsService.makeStep(step, hitChips, this.authService.getPlayerId());
+            // this.meetingsService.makeStep(step, hitChips, this.authService.getPlayerId());
         }
     }
 }

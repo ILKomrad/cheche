@@ -7,11 +7,16 @@ export class CheckersGame {
     };
     newQueen;
     whoWin;
+    players;
 
     init(currentGame) {
         for (let i in currentGame) {
             this[i] = currentGame[i];
         }
+    }
+
+    checkTurn(userId) {
+        console.log( this.players, userId );
     }
 
     checkValidStep(from, to) {
@@ -23,7 +28,9 @@ export class CheckersGame {
             hitChips;
 
         if (isQueen) {
-            hitChips = this.getHitChipsByQueen(from, to)
+            hitChips = this.getHitChipsByQueen(from, to);
+            
+            if (hitChips && !this.checkHits(hitChips)) { return; }
         } else {
             hitChips = this.getHitChips(from, to);
 
@@ -31,6 +38,18 @@ export class CheckersGame {
         }
        
         return hitChips;
+    }
+
+    checkHits(hitChips) {
+        let flag = true;
+
+        hitChips.forEach((hit, index) => {
+            if (flag && hitChips[index + 1]) {
+                flag = Math.abs(hitChips[index + 1][0] - hit[0]) > 1;
+            }
+        });
+
+        return flag;
     }
 
     transformRange(range) {
@@ -111,7 +130,7 @@ export class CheckersGame {
 
             if (hitRange !== 0) { hitChips.push([fromX, fromY]); }
 
-            if (range === hitRange) { 
+            if (range === this.transformRange(hitRange)) { 
                 hitChips = undefined;  
                 break;
             }
@@ -139,7 +158,7 @@ export class CheckersGame {
 
     makeStep(step) {
         let hits = this.checkValidStep(step.from, step.to);
-        
+        console.log(step)
         if (hits !== undefined) {
             this.stepAction(step, hits);
         } 
