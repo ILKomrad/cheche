@@ -3,9 +3,7 @@ import { Component, ViewChild, ElementRef, EventEmitter, Output, Input } from '@
 import { Renderer } from './renderer';
 import { MeshLoader } from './mesh-loader';
 import { Desk } from './desk';
-import { ThreeCommon } from './common';
 import { DragAndDrop } from './drag-and-drop';
-import { GameSettings } from './game.settings';
 
 declare var THREE: any;
 declare var TWEEN: any;
@@ -17,31 +15,28 @@ declare var TWEEN: any;
 export class GameViewComponent {
     gameRenderer;
     meshLoader;
-    common;
     currentGame;
     range;
     desk;
     checkers;
     dragAndDrop;
     isInit;
-    gameSettings;
-    @Input() isStart;
-    @Input() isGameOver;
-    @Input() isBlock;
+    isGameOver;
+    @Input() state;
     @ViewChild('container') container: ElementRef;
     @Output() step = new EventEmitter<any>();
 
     constructor() {
         this.gameRender = this.gameRender.bind(this);
         this.onDocumentMouseDown = this.onDocumentMouseDown.bind(this);
-        this.gameSettings = new GameSettings();
+        this.onResize = this.onResize.bind(this);
     }
 
     ngOnChanges() {
-        console.log( 'isGameOver', this.isGameOver )
+        if (this.state.alias === 'gameOver') {
+            this.isGameOver = this.state.additional;
 
-        if (this.isGameOver) {
-            if (this.isGameOver === this.range) {
+            if (this.range === this.isGameOver) {
                 console.log('%c YOU WIN ', 'background: red; color: #fff');
             } else {
                 console.log('%c YOU loose ', 'background: red; color: #fff');
@@ -54,16 +49,20 @@ export class GameViewComponent {
         this.range = range;
         this.currentGame = currentGame;
         this.gameRenderer = new Renderer();
-        this.common = new ThreeCommon();
         this.gameRenderer.createEnvironment(range, this.container.nativeElement);
         this.meshLoader = new MeshLoader();
         this.meshLoader.waitLoadData().then(() => {     
-            this.desk = new Desk(this.gameRenderer, this.common, this.meshLoader, this.gameSettings);
+            this.desk = new Desk(this.gameRenderer, this.meshLoader);
             this.desk.create(currentGame.cells, currentGame.paths);
             this.gameRender();
             this.dragAndDrop = new DragAndDrop(this.gameRenderer, this.desk.getDeskMesh());
             window.addEventListener('mousedown', this.onDocumentMouseDown);
+            window.addEventListener('resize', this.onResize);
         });
+    }
+
+    onResize() {
+        this.gameRenderer.resize();
     }
 
     gameRender() {
@@ -73,14 +72,22 @@ export class GameViewComponent {
     }
 
     onDocumentMouseDown(event) {
-        if (this.isStart && !this.isGameOver) {
+        if ((this.state.alias !== 'waiting') && !this.isGameOver) {
             const that = this,
                 intersects = that.dragAndDrop.getIntersects(event);
-
+            
             for (let item in intersects) {
                 const target = intersects[item].object;
-                
+
                 if (target.meshType === 'chip') {
+                    let error = this.currentGame.canTouch(target.name, this.range);
+                    
+                    if (error.length) {
+                        console.log( 'error', error );
+                    } else {
+                        console.log( 'valid step' );
+                    }
+                    console.log( target.name )
                     that.dragAndDrop.start(target, function(cellName) {
                         let cell = that.desk.getCellPosition(cellName);
                         that.step.emit({to: cellName, from: target.name});
@@ -92,8 +99,22 @@ export class GameViewComponent {
         event.preventDefault();
     }
 
+    updateCurrentGame(currentGame) {
+        this.currentGame = currentGame;
+    }
+
+    showNextStep() {
+        this.desk.removeHighlightCells(); 
+
+        if (this.currentGame.nextStep) {
+            this.currentGame.nextStep.forEach(step => {
+                this.desk.highlightCell(step.to, true); 
+                this.desk.highlightCell(step.from);            
+            });
+        }
+    }
+
     cancelStep(chipName) {
-        console.log('cancel')
         let cell = this.desk.getCellPosition(chipName),
             chip = this.desk.getChip(chipName);
         chip.moveTo(cell.position.x, 0.1, cell.position.z);

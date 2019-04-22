@@ -23,8 +23,8 @@ export class Chip {
         this.range = range;
         this.settings = settings;
 
-        if ((range === 22) || (range === 11)) {
-            this.transformToQueen();
+        if ((range === 'bb') || (range === 'ww')) {
+            this.transformToQueen(true);
         }
     }
 
@@ -57,7 +57,7 @@ export class Chip {
         return this.animator.removeFromDesk(this.mesh.material)
     }
 
-    transformToQueen() {
-        return this.animator.transformToQueen(this.mesh)
+    transformToQueen(rightNow = false) {
+        return this.animator.transformToQueen(this.mesh, rightNow)
     }
 }

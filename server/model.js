@@ -61,6 +61,7 @@ class Model {
     }
 
     addGame(game) {
+        console.log( game.whosTurn )
         return this.http.sendPost({
             addGame: {
                 type: game.type,

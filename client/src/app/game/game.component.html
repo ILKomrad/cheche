@@ -1,2 +1,2 @@
-<game-view [isGameOver]="isGameOver" [isBlock]="isBlock" [isStart]="isStart" (step)="onStep($event)"></game-view>
+<game-view [state]="state" (step)="onStep($event)"></game-view>
 <game-interface [data]="interfaceData"></game-interface>

@@ -146,7 +146,7 @@ class Controller {
         let currentGame = await this.getGame(gameId);
         const game = this.game.generate(currentGame.type);
         game.setData(currentGame);
-        const hits = game.makeStep(step);
+        game.makeStep(step);
 
         return game;
     }
@@ -160,11 +160,9 @@ class Controller {
             
             let opponentId;
             game.players.forEach(player => {
-                if (player.id === user.id) {
-                    game.whosTurn = player.range === 'w' ? 'b' : 'w';
-                } else {
+                if (player.id !== user.id) {
                     opponentId = player.id;
-                }
+                } 
             }); 
             const opponent = await this.getUser(opponentId);
     

@@ -29,7 +29,21 @@ export class ThreeCommon {
         return mesh;
     }
 
-    compareArrays(firstArray, secondArray) {
+    createCircleMesh(r, rotation, color) {
+        const bodyMaterial = new THREE.MeshPhongMaterial({
+                color: color,
+                transparent: true
+            }),
+            mesh = new THREE.Mesh(new THREE.CircleGeometry(r, 32), bodyMaterial);
+        
+        if (rotation) {
+            if (rotation.x) { mesh.rotation.x = -Math.PI / 2; }
+        }
+        
+        return mesh;
+    }
+
+    static compareArrays(firstArray, secondArray) {
         if (firstArray.length !== secondArray.length) { return; }
 
         let flag = true;

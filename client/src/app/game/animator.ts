@@ -13,13 +13,18 @@ export class Animator {
         await this.fadeOut(material);
     }
 
-    async transformToQueen(obj) {
-        let startY = obj.position.y;
-        await this.moveWithRotate(obj, {y: startY + 12}, Math.PI);
-        await this.move(obj.position, {x: obj.position.x, y: startY + 1, z: obj.position.z}).then(() => {
-            obj.position.y = startY;
+    async transformToQueen(obj, rightNow) {
+        if (rightNow) {
+            obj.rotation.x = Math.PI;
             obj.geometry.applyMatrix(new THREE.Matrix4().makeTranslation(0, -1, 0))
-        })
+        } else {
+            let startY = obj.position.y;
+            await this.moveWithRotate(obj, {y: startY + 12}, Math.PI);
+            await this.move(obj.position, {x: obj.position.x, y: startY + 1, z: obj.position.z}).then(() => {
+                obj.position.y = startY;
+                obj.geometry.applyMatrix(new THREE.Matrix4().makeTranslation(0, -1, 0))
+            });
+        }
     }
 
     fadeOut(material) {

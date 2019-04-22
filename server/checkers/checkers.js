@@ -37,20 +37,20 @@ class Checkers {
             ['b', 'w', 'b', 'w', 'b', 'w', 'b', 'w']
         ]; 
         this.paths = [
-            [0, 2, 0, 2, 0, 2, 0, 2],
-            [2, 0, 2, 0, 2, 0, 2, 0],
-            [0, 2, 0, 2, 0, 2, 0, 2],
-            [0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0],
-            [1, 0, 1, 0, 1, 0, 1, 0],
-            [0, 1, 0, 1, 0, 1, 0, 1],
-            [1, 0, 1, 0, 1, 0, 1, 0]
+            ['0', 'b', '0', 'b', '0', 'b', '0', 'b'],
+            ['b', '0', 'b', '0', 'b', '0', 'b', '0'],
+            ['0', 'b', '0', 'b', '0', 'b', '0', 'b'],
+            ['0', '0', '0', '0', '0', '0', '0', '0'],
+            ['0', '0', '0', '0', '0', '0', '0', '0'],
+            ['w', '0', 'w', '0', 'w', '0', 'w', '0'],
+            ['0', 'w', '0', 'w', '0', 'w', '0', 'w'],
+            ['w', '0', 'w', '0', 'w', '0', 'w', '0']
         ];
         this.hitsChips = {
             'w': [],
             'b': []
         };
-        this.whosTurn = null;
+        this.whosTurn = 'w';
         this.whoWin = null;
         this.players = [];
     }
@@ -90,7 +90,7 @@ class Checkers {
         if (!this.isQueen(step.to)) {
             this.newQueen = this.detectQueen(step.to, range);
 
-            if (this.newQueen) { this.paths[this.newQueen[1]][this.newQueen[0]] = range === 1 ? 11 : 22; }
+            if (this.newQueen) { this.paths[this.newQueen[1]][this.newQueen[0]] = range === 'w' ? 'ww' : 'bb'; }
         } else {
             this.newQueen = null;
         }
@@ -111,33 +111,36 @@ class Checkers {
     }
 
     detectQueen(cellPos, range) {
-        if (((cellPos[1] === 7) && (range === 2)) || ((cellPos[1] === 0) && (range === 1))) {
+        if (((cellPos[1] === 7) && (range === 'b')) || ((cellPos[1] === 0) && (range === 'w'))) {
             return cellPos;
         }
     }
 
-    stepAction(step, hits) {   
+    stepAction(step, hits, userRange) {   
+        let userRange = this.paths[step.from[1]][step.from[0]];
         this.paths[step.to[1]][step.to[0]] = this.paths[step.from[1]][step.from[0]];
-        this.paths[step.from[1]][step.from[0]] = 0;
+        this.paths[step.from[1]][step.from[0]] = '0';
 
         if (hits && hits.length) {
             hits.forEach(h => {
                 let range = this.paths[h[1]][h[0]];
-                this.paths[h[1]][h[0]] = 0;
+                this.paths[h[1]][h[0]] = '0';
 
-                if (this.transformRange(range) === 2) {
+                if (this.transformRange(range) === 'b') {
                     this.hitsChips.w.push(range);
-                } else if (this.transformRange(range) === 1) {
+                } else if (this.transformRange(range) === 'w') {
                     this.hitsChips.b.push(range);
                 }
             })
         }
+
+        this.whosTurn = userRange === 'w' ? 'b' : 'w';
     }
 
     isQueen(from) {
         let range = this.paths[from[1]][from[0]];
         
-        return (range === 11 || range === 22);
+        return (range === 'ww' || range === 'bb');
     }
 
     checkDiagonal(from, to) {
@@ -156,7 +159,7 @@ class Checkers {
     }
 
     isBusy(to) {
-        return this.paths[to[1]][to[0]] === 0;
+        return this.paths[to[1]][to[0]] === '0';
     }
 
     checkColor(to) {
@@ -174,9 +177,9 @@ class Checkers {
            return hitChips.length !== 0;
         }
         
-        if (range === 1) {
+        if (range === 'w') {
             return deltaY === 1;
-        } else if (range === 2) {
+        } else if (range === 'b') {
             return deltaY === -1;
         }
     }
@@ -196,7 +199,7 @@ class Checkers {
             fromY += 1 * directionY;
             let hitRange = this.paths[fromY][fromX];
 
-            if (hitRange !== 0) { hitChips.push([fromX, fromY]); }
+            if (hitRange !== '0') { hitChips.push([fromX, fromY]); }
 
             if (range === this.transformRange(hitRange)) { 
                 hitChips = undefined;  
@@ -218,17 +221,17 @@ class Checkers {
                 hitPosY = from[1] + deltaY / 2;
             let hitRange = this.transformRange(this.paths[hitPosY][hitPosX]);
 
-            if ((range !== hitRange) && (hitRange !== 0)) { hitChips.push([hitPosX, hitPosY]); }
+            if ((range !== hitRange) && (hitRange !== '0')) { hitChips.push([hitPosX, hitPosY]); }
         }
 
         return hitChips;
     }
 
     transformRange(range) {
-        if (range === 22) {
-            return 2;
-        } else if (range === 11) {
-            return 1;
+        if (range === 'bb') {
+            return 'b';
+        } else if (range === 'ww') {
+            return 'w';
         } else {
             return range;
         }

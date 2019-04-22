@@ -16,6 +16,7 @@ export class GameComponent {
     isStart = false;
     interfaceData;
     isGameOver = false;
+    state = {alias: 'waiting', additional: null};
 
     @ViewChild(GameViewComponent)
     private gameViewComponent: GameViewComponent;
@@ -26,20 +27,27 @@ export class GameComponent {
         private authService: AuthService
     ) {
         this.checkers = Checkers;
-        this.isStart = false;
+    }
+
+    setState() {
+        if (this.dataService.isStart()) {
+            this.state = {alias: 'start', additional: null};
+        } else {
+            this.state = {alias: 'waiting', additional: null};
+        }
+
+        if (this.currentGame && this.currentGame.whoWin) {
+            this.state = {alias: 'gameOver', additional: this.currentGame.whoWin};
+        }
     }
 
     ngAfterViewInit() {
         this.dataService.getCurrentGame()
         .subscribe(currentGame => {
             if (currentGame && currentGame.paths) {
-                this.isStart = this.dataService.isStart();
                 this.currentGame = this.checkers.getGame(currentGame);
-                
-                if (this.currentGame) {
-                    this.isGameOver = this.currentGame.whoWin;
-                }
-             
+                this.setState();
+               
                 if (this.currentGame && !this.gameViewComponent.isInit) { 
                     const range = this.getRange();
                     this.gameViewComponent.createGameView(this.currentGame, range); 
@@ -50,6 +58,7 @@ export class GameComponent {
                         players: this.currentGame.players
                     });
                 }
+                this.gameViewComponent.updateCurrentGame(this.currentGame);
             }
         });
 
@@ -103,11 +112,14 @@ export class GameComponent {
                 this.currentGame.postStepProcessor(step); 
                 newQueen = (this.currentGame.newQueen) ? this.currentGame.newQueen.slice() : null;
             }
-            this.isGameOver = this.currentGame.whoWin;
+            this.setState();
            
             if (newQueen) {
-                console.log( 'newQueen' )
                 this.gameViewComponent.newQueen(newQueen);
+            }
+
+            if (this.currentGame.nextStep) {
+                this.gameViewComponent.showNextStep();
             }
         });
 

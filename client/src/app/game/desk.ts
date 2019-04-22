@@ -1,25 +1,26 @@
 import { Chip } from './chip';
 import { Animator } from './animator';
+import { ThreeCommon } from 'src/app/game/common';
+import { GameSettings } from 'src/app/game/game.settings';
 // w = 1 b = 2
 export class Desk {
     desk;
     gameRenderer;
-    common;
     deskPos = {x:0, y: 0}; 
     meshLoader;
     cells;
     chips;
     animator;
-    gameSettings;
+    gameSettings = new GameSettings;
+    common = new ThreeCommon();
+    highlights = [];
 
-    constructor(gameRenderer, common, meshLoader, gameSettings) {
+    constructor(gameRenderer, meshLoader) {
         this.gameRenderer = gameRenderer;
-        this.common = common;
         this.meshLoader = meshLoader;
         this.cells = [];
         this.chips = [];
         this.animator = new Animator();
-        this.gameSettings = gameSettings;
     }
 
     create(cells, chips) {
@@ -31,12 +32,43 @@ export class Desk {
         this.createDesk(cells.length + 1);
     }
 
+    removeHighlightCells() {
+        this.highlights.forEach(h => {
+            this.gameRenderer.removeFromScene(h); 
+        });
+        this.highlights = [];
+    }
+
+    highlightCell(cellName, to = false) {
+        let c = this.getCellPosition(cellName),
+            color = '#3a873c',
+            cell;
+        
+        if (to) {
+            cell = this.common.createCircleMesh(
+                this.gameSettings.cellSize.w / 8,
+                {x: -Math.PI / 2},
+                color
+            );
+        } else {
+            cell = this.common.createPlaneMesh(
+                {w: this.gameSettings.cellSize.w, h: this.gameSettings.cellSize.h},
+                {x: -Math.PI / 2},
+                color
+            );
+        }
+    
+        cell.position.set(c.position.x, c.position.y + 0.1, c.position.z);
+        this.highlights.push(cell);
+        this.gameRenderer.addToScene(cell);   
+    }
+
     createChips(chips) {
         for (let y = 0; y < chips.length; y++) {
             for (let x = 0; x < chips[y].length; x++) {
                 let range = chips[y][x];
 
-                if (range !== 0) {
+                if (range !== '0') {
                     let chip = new Chip(this.meshLoader, range, this.animator, this.gameSettings);
                     this.gameRenderer.addToScene(chip.mesh);  
                     chip.setName([x, y]);
@@ -92,7 +124,7 @@ export class Desk {
     getCellPosition(nameCell) {
         let cell;
         this.cells.forEach(c => {
-            if (this.common.compareArrays(nameCell, c.name)) {
+            if (ThreeCommon.compareArrays(nameCell, c.name)) {
                 cell = c;
             }
         });
@@ -103,7 +135,7 @@ export class Desk {
     getChip(chipName) {
         let chip;
         this.chips.forEach(c => {
-            if (this.common.compareArrays(chipName, c.getName())) {
+            if (ThreeCommon.compareArrays(chipName, c.getName())) {
                 chip = c;
             }
         });

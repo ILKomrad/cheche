@@ -47,7 +47,7 @@ export class DragAndDrop {
             let i = th.getRegardingPosition(th.desk);
             
             if (i[0]) {
-                obj.position.set(i[0].point.x, i[0].point.y, i[0].point.z - 0.5);
+                obj.position.set(i[0].point.x, i[0].point.y + 1, i[0].point.z - 0.5);
             }
 
             e.preventDefault();
