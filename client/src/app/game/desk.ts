@@ -1,5 +1,4 @@
 import { Chip } from './chip';
-import { Animator } from './animator';
 import { ThreeCommon } from 'src/app/game/common';
 import { GameSettings } from 'src/app/game/game.settings';
 // w = 1 b = 2
@@ -10,7 +9,6 @@ export class Desk {
     meshLoader;
     cells;
     chips;
-    animator;
     gameSettings = new GameSettings;
     common = new ThreeCommon();
     highlights = [];
@@ -20,7 +18,6 @@ export class Desk {
         this.meshLoader = meshLoader;
         this.cells = [];
         this.chips = [];
-        this.animator = new Animator();
     }
 
     create(cells, chips) {
@@ -69,7 +66,7 @@ export class Desk {
                 let range = chips[y][x];
 
                 if (range !== '0') {
-                    let chip = new Chip(this.meshLoader, range, this.animator, this.gameSettings);
+                    let chip = new Chip(this.meshLoader, range, this.gameSettings);
                     this.gameRenderer.addToScene(chip.mesh);  
                     chip.setName([x, y]);
                     chip.moveTo(this.deskPos.x + x * this.gameSettings.cellSize.w, 0.1, this.deskPos.y + y * this.gameSettings.cellSize.h);
@@ -141,13 +138,5 @@ export class Desk {
         });
 
         return chip;
-    }
-
-    removeHits(chipName) {
-        let chip = this.getChip(chipName);
-        chip.remove().then(() => {
-            this.gameRenderer.removeFromScene(chip.getMesh());
-        });
-        chip.setName([])
     }
 }

@@ -5,7 +5,7 @@
         </h5>
         <div class="player__hits">
             <div class="player__hit" 
-                [ngClass]="{player__hit_w: hit === 1, player__hit_b: hit === 2}" 
+                [ngClass]="{player__hit_w: hit === 'w', player__hit_b: hit === 'b'}" 
                 *ngFor="let hit of player.hitsChips">
             </div>
         </div>

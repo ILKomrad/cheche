@@ -132,9 +132,11 @@ class Controller {
         
         if (data['user'] && data['user'].inGame) { 
             currentMeetingId = data['user'].currentMeetingId;
-            data['currentGame'] = await this.getGame(data['user'].inGame);
+            const currentGame = await this.getGame(data['user'].inGame);
             data['currentMeetingId'] = currentMeetingId;
             data['currentMeeting'] = await this.getMeetingById(currentMeetingId);
+            data['currentGame'] = this.game.generate(currentGame.type);
+            data['currentGame'].setData(currentGame);
         }
 
         data.mettings = await this.getMeetings(currentMeetingId);
@@ -142,13 +144,19 @@ class Controller {
         return data;
     }
 
-    async makeStepInGame(gameId, step) {
+    async makeStepInGame(gameId, step, userId) {
         let currentGame = await this.getGame(gameId);
         const game = this.game.generate(currentGame.type);
         game.setData(currentGame);
-        game.makeStep(step);
+        let valid
 
-        return game;
+        if (game.checkRange(step.from, userId)) {
+            valid = game.makeStep(step);
+        }
+       
+        if (valid) { 
+            return game;
+        } 
     }
 
     async makeStep(data) {
@@ -156,19 +164,21 @@ class Controller {
         let currentGame;
        
         if (user && (user.inGame !== null)) {
-            const game = await this.makeStepInGame(user.inGame, data.step);
-            
-            let opponentId;
-            game.players.forEach(player => {
-                if (player.id !== user.id) {
-                    opponentId = player.id;
-                } 
-            }); 
-            const opponent = await this.getUser(opponentId);
-    
-            let result = await this.model.makeStep(game);
+            const game = await this.makeStepInGame(user.inGame, data.step, user.id);
+           
+            if (game) {
+                let opponentId;
+                game.players.forEach(player => {
+                    if (player.id !== user.id) {
+                        opponentId = player.id;
+                    } 
+                }); 
+                const opponent = await this.getUser(opponentId);
+        
+                let result = await this.model.makeStep(game);
 
-            return {game, opponentSocketId: opponent.socketId};
+                return {game, opponentSocketId: opponent.socketId};
+            } 
         }
     }
 
@@ -294,7 +304,7 @@ class Controller {
         return new Promise(res => {
             this.model.getGame(id).then(data => {
                 let game;
-
+                
                 if (data && (data !== '0 results')) {
                     game = JSON.parse(data)[0];
                     game.cells = JSON.parse(game.cells);
@@ -302,7 +312,7 @@ class Controller {
                     game.paths = JSON.parse(game.paths);
                     game.players = JSON.parse(game.players);
                 }
-
+               
                 res(game);
             })
         });

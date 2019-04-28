@@ -51,13 +51,15 @@ export class GameComponent {
                 if (this.currentGame && !this.gameViewComponent.isInit) { 
                     const range = this.getRange();
                     this.gameViewComponent.createGameView(this.currentGame, range); 
-                    this.compareData({
-                        score: this.dataService.getPlayers(),
-                        playerId: this.authService.getUserId(),
-                        hitsChips: this.currentGame.hitsChips,
-                        players: this.currentGame.players
-                    });
                 }
+
+                this.compareData({
+                    score: this.dataService.getPlayers(),
+                    playerId: this.authService.getUserId(),
+                    hitsChips: this.currentGame.hitsChips,
+                    players: this.currentGame.players
+                });
+                this.currentGame.setNextStep(this.getRange());
                 this.gameViewComponent.updateCurrentGame(this.currentGame);
             }
         });
@@ -137,7 +139,7 @@ export class GameComponent {
             this.gameViewComponent.cancelStep(step.from);
         } else {
             this.makeStep(hitChips, step);
-            // this.meetingsService.makeStep(step, hitChips, this.authService.getPlayerId());
+            this.meetingsService.makeStep(step, hitChips, this.authService.getPlayerId());
         }
     }
 }

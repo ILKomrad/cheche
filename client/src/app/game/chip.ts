@@ -6,10 +6,9 @@ export class Chip {
     meshLoader;
     range;
     mesh;
-    animator;
     settings
 
-    constructor(meshLoader, range, animator, settings) {
+    constructor(meshLoader, range, settings) {
         const pieceMaterial = new THREE.MeshPhongMaterial({
             color: settings.chipsColors[range],
             shininess: 20,
@@ -19,12 +18,11 @@ export class Chip {
         this.mesh.material = pieceMaterial;
         this.mesh.position.set(0, 0, 0);
         this.mesh.meshType = 'chip';
-        this.animator = animator;
         this.range = range;
         this.settings = settings;
 
         if ((range === 'bb') || (range === 'ww')) {
-            this.transformToQueen(true);
+            this.transformToQueen();
         }
     }
 
@@ -48,16 +46,16 @@ export class Chip {
         this.mesh.position.set(x, y, z);
     }
 
-    animateMoveTo(x, y, z) {
-        return this.animator.animationMove(this.mesh.position, {x: x, y: y, z: z});
+    getPosition() {
+        return this.mesh.position;
     }
 
-    remove() {
-        // this.mesh.position.set(pos.x, pos.y, pos.z);
-        return this.animator.removeFromDesk(this.mesh.material)
+    getMaterial() {
+        return this.mesh.material;
     }
 
-    transformToQueen(rightNow = false) {
-        return this.animator.transformToQueen(this.mesh, rightNow)
+    transformToQueen() {
+        this.mesh.rotation.x = Math.PI;
+        this.mesh.geometry.applyMatrix(new THREE.Matrix4().makeTranslation(0, -1, 0))
     }
 }

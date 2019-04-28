@@ -4,6 +4,7 @@ import { Renderer } from './renderer';
 import { MeshLoader } from './mesh-loader';
 import { Desk } from './desk';
 import { DragAndDrop } from './drag-and-drop';
+import { Animator } from './animator';
 
 declare var THREE: any;
 declare var TWEEN: any;
@@ -22,6 +23,7 @@ export class GameViewComponent {
     dragAndDrop;
     isInit;
     isGameOver;
+    animator;
     @Input() state;
     @ViewChild('container') container: ElementRef;
     @Output() step = new EventEmitter<any>();
@@ -30,6 +32,7 @@ export class GameViewComponent {
         this.gameRender = this.gameRender.bind(this);
         this.onDocumentMouseDown = this.onDocumentMouseDown.bind(this);
         this.onResize = this.onResize.bind(this);
+        this.animator = new Animator();
     }
 
     ngOnChanges() {
@@ -58,6 +61,10 @@ export class GameViewComponent {
             this.dragAndDrop = new DragAndDrop(this.gameRenderer, this.desk.getDeskMesh());
             window.addEventListener('mousedown', this.onDocumentMouseDown);
             window.addEventListener('resize', this.onResize);
+
+            if (this.currentGame.nextStep) {
+                this.showNextStep();
+            }
         });
     }
 
@@ -105,7 +112,7 @@ export class GameViewComponent {
 
     showNextStep() {
         this.desk.removeHighlightCells(); 
-
+       
         if (this.currentGame.nextStep) {
             this.currentGame.nextStep.forEach(step => {
                 this.desk.highlightCell(step.to, true); 
@@ -127,7 +134,7 @@ export class GameViewComponent {
         chip.setName(cellName);
 
         if (anim) {
-            await chip.animateMoveTo(cell.position.x, 0.1, cell.position.z);
+            await this.animator.animationMove(chip.getPosition(), {x: cell.position.x, y: 0.1, z: cell.position.z});
         } else {
             chip.moveTo(cell.position.x, 0.1, cell.position.z);
         }
@@ -135,12 +142,26 @@ export class GameViewComponent {
         return Promise.resolve();
     }
 
-    newQueen(chipName) {
-        let chip = this.desk.getChip(chipName);
-        chip.transformToQueen();
+    async newQueen(chipName) {
+        let chip = this.desk.getChip(chipName),
+            camera = this.gameRenderer.getCamera(),
+            cameraFov = camera.fov,
+            startCameraPos = {x: camera.position.x, y: camera.position.y, z: camera.position.z},
+            chipPos = chip.getPosition(),
+            posTo = {x: chipPos.x, y: chipPos.y + 5, z: chipPos.z};
+       
+        await this.animator.zoomTo(camera, posTo, {f: 6}, posTo, {x: 0.89, y: 0, z: 0});
+        await this.animator.transformToQueen(chip.getMesh());
+        await this.animator.zoomTo(camera, startCameraPos, {f: cameraFov}, {x: 0.89, y: 0, z: 0}, posTo);
     }
 
     removeHits(chipName) {
-        this.desk.removeHits(chipName);
+        let chip = this.desk.getChip(chipName);
+        this.animator.removeFromDesk(chip.getMaterial()).then(() => {
+            this.gameRenderer.removeFromScene(chip.getMesh());
+        });
+        chip.setName([])
     }
 }
+
+//todo перенести аниматор в вью и убрать из деск и из чип

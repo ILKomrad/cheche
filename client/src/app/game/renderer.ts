@@ -17,21 +17,22 @@ export class Renderer {
         this.camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 1000);
         this.scene.add(this.camera);
         this.range = range;
+        
+        var ambientLight = new THREE.AmbientLight(0x3a3a3a);
+        this.scene.add(ambientLight);
 
+        // add spotlight for the shadows
+        var spotLight = new THREE.SpotLight(0xe0e0e0);
+        spotLight.position.set(0, 39, 65);
+        spotLight.castShadow = true;
+        this.scene.add(spotLight);
+        console.log( spotLight.position )
         if (range === 'w') {
             this.setCameraPos(1, 110, 110);
         } else {
             this.setCameraPos(0.5, 110, -110);
+            spotLight.position.set(0, 90, -80);
         }
-        
-        var ambientLight = new THREE.AmbientLight(0x0c0c0c);
-        this.scene.add(ambientLight);
-
-        // add spotlight for the shadows
-        var spotLight = new THREE.SpotLight(0xffffff);
-        spotLight.position.set(-40, 60, 50);
-        spotLight.castShadow = true;
-        this.scene.add(spotLight);
 
         this.renderer = new THREE.WebGLRenderer({antialias: true, powerPreference: "high-performance"});
         // this.renderer.setClearColor(new THREE.Color(0xEEEEEE, 1.0));
@@ -50,6 +51,14 @@ export class Renderer {
         this.camera.lookAt(new THREE.Vector3(0.89, 0, 0));
         // this.camera.position.set(x - 5, y, z);
         console.log( this.camera.position )
+    }
+
+    zoomTo(pos) {
+        this.camera.position.x = pos.x;
+        this.camera.lookAt(new THREE.Vector3(pos.x, pos.y + 6, pos.z));
+        this.camera.fov *= 0.199;
+        this.camera.updateProjectionMatrix();
+        console.log( this.camera.position, pos )
     }
 
     render() {

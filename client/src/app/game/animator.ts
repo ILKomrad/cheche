@@ -13,18 +13,13 @@ export class Animator {
         await this.fadeOut(material);
     }
 
-    async transformToQueen(obj, rightNow) {
-        if (rightNow) {
-            obj.rotation.x = Math.PI;
+    async transformToQueen(obj) {
+        let startY = obj.position.y;
+        await this.moveWithRotate(obj, {y: startY + 12}, Math.PI);
+        await this.move(obj.position, {x: obj.position.x, y: startY + 1, z: obj.position.z}).then(() => {
+            obj.position.y = startY;
             obj.geometry.applyMatrix(new THREE.Matrix4().makeTranslation(0, -1, 0))
-        } else {
-            let startY = obj.position.y;
-            await this.moveWithRotate(obj, {y: startY + 12}, Math.PI);
-            await this.move(obj.position, {x: obj.position.x, y: startY + 1, z: obj.position.z}).then(() => {
-                obj.position.y = startY;
-                obj.geometry.applyMatrix(new THREE.Matrix4().makeTranslation(0, -1, 0))
-            });
-        }
+        });
     }
 
     fadeOut(material) {
@@ -83,5 +78,35 @@ export class Animator {
                 })
                 .start();
         })
+    }
+
+    zoomTo(camera, pos, toFov, zoomOut, startZoom) {
+        const finishPos = {x: pos.x, y: pos.y, z: pos.z},
+            cameraStartX = camera.position.x,
+            fromFov = {f: camera.fov},
+            startFov = camera.fov,
+            deltaCameraX = finishPos.x - cameraStartX,
+            lookAt = {
+                delta: {x: zoomOut.x - startZoom.x, y: zoomOut.y - startZoom.y, z: zoomOut.z - startZoom.z},
+                start: {x: startZoom.x, y: startZoom.y, z: startZoom.z}
+            },
+            fovDelta = Math.abs(toFov.f - startFov);
+
+        return new Promise((res) => {
+            const tween = new TWEEN.Tween(fromFov)
+                .to(toFov, 1000)
+                .easing(TWEEN.Easing.Quadratic.Out)
+                .onUpdate(() => {
+                    let pers = 1 - (Math.abs(toFov.f - fromFov.f) / fovDelta);
+                    camera.position.x = cameraStartX + deltaCameraX * pers;
+                    camera.lookAt(new THREE.Vector3(lookAt.start.x + lookAt.delta.x * pers, lookAt.start.y + lookAt.delta.y * pers, lookAt.start.z + lookAt.delta.z * pers));
+                    camera.fov = fromFov.f;
+                    camera.updateProjectionMatrix();
+                })
+                .onComplete(() => {
+                    res();
+                })
+                .start();
+        });
     }
 }
