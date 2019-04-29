@@ -6,6 +6,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { DataService } from 'src/app/services/data.service';
 import { Meeting } from 'src/app/models/models';
 import { MeetingsService } from 'src/app/services/meetings.service';
+import { SoundService } from 'src/app/services/sound.service';
 
 @Component({
   selector: 'app-root',
@@ -21,13 +22,14 @@ export class AppComponent {
     private authService: AuthService,
     private dataService: DataService,
     private meetingService: MeetingsService,
-    private router: Router
+    private router: Router,
+    private soundService: SoundService
   ) {}
 
   ngOnInit() {
     if (!this.init) {
       this.init = true;
-
+      this.soundService.startLoad();
       this.httpService.sendMessage('hello', {playerId: this.authService.getTocken()});
 
       this.httpService.listen('helloFromServer').subscribe((data: any) => {

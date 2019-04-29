@@ -19,7 +19,6 @@ export class DataService {
     }
 
     setData(data: Meeting[]) {
-        console.warn('setData', data);
         this.data = data;
         this.data$.next(data);
     }
@@ -28,7 +27,6 @@ export class DataService {
         this.data.push(data);
         this.data = this.data.slice();
         this.data$.next(this.data);
-        console.log('addData', this.data);
     }
 
     setCurrentGame(currentGame) {

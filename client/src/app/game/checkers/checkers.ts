@@ -25,7 +25,7 @@ export class CheckersGame {
         return ((this.paths[to[1]] !== undefined) && (this.paths[to[1]][to[0]] !== undefined));
     }
 
-    checkValidStep(from, to, isPossibleHits) {
+    checkValidStep(from, to, isPossibleHits = false) {
         if (!this.isCellExist(to)) { return; }
         if (!this.checkDelta(from, to)) { return; }
         if (!this.isBusy(to)) { return; }
@@ -97,6 +97,7 @@ export class CheckersGame {
 
     checkDiagonal(from, to) {
         let deltaX = from[0] - to[0];
+
         return ((from[1] + deltaX) === to[1]) || 
         ((from[1] + Math.abs(deltaX)) === to[1]) ||
         ((from[1] - Math.abs(deltaX)) === to[1]);
@@ -208,7 +209,7 @@ export class CheckersGame {
         console.log( 'whosTurn', this.whosTurn )
     }
 
-    postStepProcessor(step) {
+    postStepProcessor(step, userRange) {
         let range = this.paths[step.to[1]][step.to[0]];
        
         if (!this.isQueen(step.to)) {
@@ -220,7 +221,7 @@ export class CheckersGame {
         }
 
         this.whoWin = this.isGameOver();
-        this.setNextStep();
+        this.setNextStep(userRange);
     }
 
     checkAttack(pos) {
@@ -289,19 +290,20 @@ export class CheckersGame {
 
     setNextStep(userRange) {
         this.nextStep = [];
+        
         this.paths.forEach((row, rowIndex) => {
             row.forEach((chip, colIndex) => {
                 let range = this.transformRange(chip);
-
+                
                 if ((range === this.whosTurn) && (range === userRange)) {
                     let hits = this.getPosibleHits([colIndex, rowIndex]);
-           
+                   
                     if (hits && hits.length) {
                         this.nextStep = this.nextStep.concat(hits);
                     }
                 }
             })
-        })
+        });
     }
 
     isGameOver() {

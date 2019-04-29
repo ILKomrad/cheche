@@ -74,7 +74,6 @@ export class AuthService {
         } else {
             this.state = 'guest';
         }
-        console.log('state', this.state);
     }
 
     getCurrentMeetingId() {

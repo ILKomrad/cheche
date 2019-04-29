@@ -26,7 +26,7 @@ export class Renderer {
         spotLight.position.set(0, 39, 65);
         spotLight.castShadow = true;
         this.scene.add(spotLight);
-        console.log( spotLight.position )
+
         if (range === 'w') {
             this.setCameraPos(1, 110, 110);
         } else {
@@ -45,12 +45,8 @@ export class Renderer {
     }
 
     setCameraPos(x, y, z) {
-        
         this.camera.position.set(x, y, z);
-        // this.camera.lookAt(this.scene.position);
         this.camera.lookAt(new THREE.Vector3(0.89, 0, 0));
-        // this.camera.position.set(x - 5, y, z);
-        console.log( this.camera.position )
     }
 
     zoomTo(pos) {
@@ -58,7 +54,6 @@ export class Renderer {
         this.camera.lookAt(new THREE.Vector3(pos.x, pos.y + 6, pos.z));
         this.camera.fov *= 0.199;
         this.camera.updateProjectionMatrix();
-        console.log( this.camera.position, pos )
     }
 
     render() {

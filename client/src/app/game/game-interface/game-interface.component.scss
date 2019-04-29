@@ -12,40 +12,87 @@
     position: absolute;
     right: 0;
     top: 0;
+    padding: 1rem;
+    background: rgba(255, 255, 255, .8);
+    display: flex;
+    align-items: center;
+    padding: .5rem .5rem .5rem 1rem;
+    border-radius: 0 0 0 1rem;
+    opacity: 0.5;
 
     &__name {
         color: #000;
         font: 1rem $mainFont;
-        height: 3rem;
+        height: 100%;
         width: 7rem;
-        background: rgba(255, 255, 255, .8);
         align-items: center;
         justify-content: center;
         display: flex;
     }
 
+    &__hits {
+        width: 10rem;
+        overflow: hidden;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        justify-content: flex-start;
+        height: 3rem;
+    }
+
+    &.turn {
+        opacity: 1;
+    }
+
+    &__score,
+    &__name {
+        padding: 0 .5rem;
+    }
+
     &_current {
         left: 0;
         right: initial;
-    }
+        padding: .5rem 1rem .5rem .5rem;
+        border-radius: 0 0 1rem 0;
 
-    &__hits {
-        background: rgba(255, 255, 255, .8);
-        width: 7rem;
-        overflow: hidden
+        .player__name {
+            order: 1;
+        }
+
+        .player__score {
+            order: 2;
+        }
+
+        .player__hits {
+            order: 3;
+        }
     }
 
     &__hit {
-        width: 2.5rem;
-        height: 2.5rem;
+        width: 1.3rem;
+        height: 1.3rem;
         border-radius: 50%;
-        margin: .25rem auto;
+        margin: .11rem;
 
         &_w {
             background: #fff;
         }
 
         &_b {
+            background: #000;
+        }
+    }
+
+    &__range {
+        width: 2.6rem;
+        height: 2.6rem;
+        border-radius: 50%;
+        
+        &.w {
+            background: #fff;
+        }
+
+        &.b {
             background: #000;
         }
     }

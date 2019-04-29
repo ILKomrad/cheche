@@ -116,7 +116,6 @@ io.on('connection', (socket) => {
             const data = JSON.parse(event);
             controller.makeStep(data)
             .then((event) => {
-              
                 if (event) {
                     socket.emit('makeStep', JSON.stringify(event.game));
                     io.to(event.opponentSocketId + '').emit('opponentStep', 

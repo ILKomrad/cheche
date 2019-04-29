@@ -200,7 +200,7 @@ class Controller {
 
         if (meeting.isStart !== 1) {
             if (meeting.score.length === 1) { 
-                meeting.score.push({id: secondPlayer.id, name: secondPlayer.name, category: secondPlayer.category}); 
+                meeting.score.push({id: secondPlayer.id, name: secondPlayer.name, category: secondPlayer.category, score: 0}); 
             }
             meeting.secondPlayer = secondPlayer.id;
             meeting.currentGame = currentGame;
@@ -266,7 +266,7 @@ class Controller {
     createNewMeeting(user, game) {
         return new Promise(res => {
             const meeting = new Meeting();
-            meeting.addPlayer({id: user.id, name: user.name, category: user.category});
+            meeting.addPlayer({id: user.id, name: user.name, category: user.category, score: 0});
             meeting.setCurrentGame(game.id, game.type);
             meeting.addGame(game);
             meeting.firstPlayer = user.id;
