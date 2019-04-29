@@ -69,6 +69,19 @@ class Checkers {
         return this.transformRange(stepRange) === this.transformRange(userRange);
     }
 
+    checkNextStep(step) {
+        if (!this.nextStep || (this.nextStep.length === 0)) { return true; }
+        
+        let matchesWithNextStep = true;
+        this.nextStep.forEach(s => {
+            if (!this.compareArrays(s.from, step.from) || !this.compareArrays(s.to, step.to)) {
+                matchesWithNextStep = false;
+            }
+        });
+        
+        return matchesWithNextStep;
+    }
+
     checkValidStep(from, to, isPossibleHits) {
         let canTouch = this.canTouch(from, this.paths[from[1]][from[0]], isPossibleHits);
        
@@ -78,6 +91,7 @@ class Checkers {
         if (!this.isBusy(to)) { return; }
         if (!this.checkColor(to)) { return; }
         if (!this.checkDiagonal(from, to)) { return; }
+        if (!isPossibleHits && !this.checkNextStep({from, to})) { return; }
         let isQueen = this.isQueen(from),
             hitChips;
 

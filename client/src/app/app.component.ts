@@ -80,7 +80,7 @@ export class AppComponent {
         this.httpService.listen('opponentStep')
         .subscribe((data: any) => {
           this.dataService.setCurrentGame(data.game);
-          this.meetingService.opponentStep(data.step, data.hitChips);
+          this.meetingService.opponentStep(data.steps);
         });
 
         this.httpService.listen('continueGame')

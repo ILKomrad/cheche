@@ -144,16 +144,20 @@ class Controller {
         return data;
     }
 
-    async makeStepInGame(gameId, step, userId) {
+    async makeStepInGame(gameId, steps, userId) {
         let currentGame = await this.getGame(gameId);
         const game = this.game.generate(currentGame.type);
         game.setData(currentGame);
-        let valid
-
-        if (game.checkRange(step.from, userId)) {
-            valid = game.makeStep(step);
-        }
+        let valid;
        
+        steps.forEach(s => {
+            let step = s.step;
+
+            if (game.checkRange(step.from, userId)) {
+                valid = game.makeStep(step);
+            }
+        })
+      
         if (valid) { 
             return game;
         } 
@@ -164,8 +168,8 @@ class Controller {
         let currentGame;
        
         if (user && (user.inGame !== null)) {
-            const game = await this.makeStepInGame(user.inGame, data.step, user.id);
-           
+            const game = await this.makeStepInGame(user.inGame, data.steps, user.id);
+            // console.log('game', game);
             if (game) {
                 let opponentId;
                 game.players.forEach(player => {
@@ -175,7 +179,7 @@ class Controller {
                 }); 
                 const opponent = await this.getUser(opponentId);
         
-                let result = await this.model.makeStep(game);
+                // let result = await this.model.makeStep(game);
 
                 return {game, opponentSocketId: opponent.socketId};
             } 

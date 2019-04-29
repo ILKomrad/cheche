@@ -56,9 +56,9 @@ export class GameComponent {
         .subscribe(currentGame => {
             if (currentGame && currentGame.paths) {
                 this.currentGame = this.checkers.getGame(currentGame);
-                this.setState();
                
                 if (this.currentGame && !this.gameViewComponent.isInit) { 
+                    this.setState();
                     const range = this.getRange();
                     this.gameViewComponent.createGameView(this.currentGame, range); 
                 }
@@ -68,9 +68,10 @@ export class GameComponent {
             }
         });
 
-        this.meetingsService.stepHandler().subscribe(async(step) => {
-            if (step.step) {
-                await this.makeStep(step.hitChips, step.step, true);
+        this.meetingsService.stepHandler().subscribe(async(steps) => {
+            if (steps.steps) {
+                console.log('steps', steps.steps)
+                this.stepHandler(steps.steps);
             }
         })
     }
@@ -126,8 +127,6 @@ export class GameComponent {
             newQueen = (this.currentGame.newQueen) ? this.currentGame.newQueen.slice() : null;
         }
 
-        // this.setState();
-
         this.updateInterface();
        
         if (newQueen) {
@@ -138,21 +137,40 @@ export class GameComponent {
         if (this.currentGame.nextStep) {
             this.gameViewComponent.showNextStep();
         }
+
+        this.setState();
     }
 
-    async makeStep(hitChips, step, ifOpponent = false) {
+    async makeStep(hitChips, step, ifOpponent = false, multiStep = false) {
         this.gameViewComponent.startRender();
         let newQueen = (this.currentGame.newQueen) ? this.currentGame.newQueen.slice() : null;
         await this.gameViewComponent.makeStep(step.from, step.to, ifOpponent);
         this.soundService.reproduceSound('step');
-        await this.postStep(ifOpponent, newQueen, step);
+        
+        if (!multiStep) { await this.postStep(ifOpponent, newQueen, step); }
 
         if (hitChips.length) {
             this.soundService.reproduceSound('remove');
             await this.gameViewComponent.removeHits(hitChips);
         }
         this.gameViewComponent.stopRender();
-        console.log('remove');
+    }
+
+    async stepHandler(steps) {
+        let i = 0;
+        while (i < steps.length) {
+            let step = steps[i];
+
+            if (step.step) {
+                if (i === steps.length - 1) {
+                    await this.makeStep(step.hitChips, step.step, true);
+                } else {
+                    await this.makeStep(step.hitChips, step.step, true, true);
+                }
+            }
+
+            i++;
+        }
     }
 
     onStep(step) {
@@ -166,8 +184,8 @@ export class GameComponent {
             this.steps.push({step, hitChips});
            
             if (!this.currentGame.nextStep || (this.currentGame.nextStep.length === 0)) {
-                console.log( 'send', this.steps )
-                // this.meetingsService.makeStep(step, hitChips, this.authService.getPlayerId());
+                this.meetingsService.makeStep(this.steps.slice(), this.authService.getPlayerId());
+                this.steps = [];
             }
         }
     }

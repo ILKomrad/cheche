@@ -119,7 +119,7 @@ io.on('connection', (socket) => {
                 if (event) {
                     socket.emit('makeStep', JSON.stringify(event.game));
                     io.to(event.opponentSocketId + '').emit('opponentStep', 
-                        JSON.stringify({game: event.game, step: data.step, hitChips: data.hitChips}
+                        JSON.stringify({game: event.game, steps: data.steps}
                     ));
                 }
             });

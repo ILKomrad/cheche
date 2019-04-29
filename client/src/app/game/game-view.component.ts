@@ -94,16 +94,16 @@ export class GameViewComponent {
                     let error = this.currentGame.canTouch(target.name, this.range);
                     this.startRender();
                     this.viewState = 'drag';
-                    // if (error.length) {
-                    //     console.log( 'error', error );
-                    // } else {
-                    //     console.log( target.name )
+                    if (error.length) {
+                        console.log( 'error', error );
+                    } else {
+                        console.log( target.name )
                         that.dragAndDrop.start(target, (cellName) => {
                             let cell = that.desk.getCellPosition(cellName);
                             that.step.emit({to: cellName, from: target.name});
                             this.viewState = 'idle';
                         });
-                    // }
+                    }
                 }
             }
         }

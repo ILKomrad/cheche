@@ -25,12 +25,26 @@ export class CheckersGame {
         return ((this.paths[to[1]] !== undefined) && (this.paths[to[1]][to[0]] !== undefined));
     }
 
+    checkNextStep(step) {
+        if (!this.nextStep || (this.nextStep.length === 0)) { return true; }
+        
+        let matchesWithNextStep = true;
+        this.nextStep.forEach(s => {
+            if (!ThreeCommon.compareArrays(s.from, step.from) || !ThreeCommon.compareArrays(s.to, step.to)) {
+                matchesWithNextStep = false;
+            }
+        });
+       
+        return matchesWithNextStep;
+    }
+
     checkValidStep(from, to, isPossibleHits = false) {
         if (!this.isCellExist(to)) { return; }
         if (!this.checkDelta(from, to)) { return; }
         if (!this.isBusy(to)) { return; }
         if (!this.checkColor(to)) { return; }
         if (!this.checkDiagonal(from, to)) { return; }
+        if (!isPossibleHits && !this.checkNextStep({from, to})) { return; }
         let isQueen = this.isQueen(from),
             hitChips;
 
@@ -277,7 +291,7 @@ export class CheckersGame {
     
         possiblePaths.forEach(tos => {
             tos.forEach(to => {
-                let h = this.checkValidStep(name, to);
+                let h = this.checkValidStep(name, to, true);
             
                 if (h && h.length) {
                     hits.push({hits: h, to, from: name});

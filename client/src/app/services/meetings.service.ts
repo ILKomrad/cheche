@@ -25,8 +25,8 @@ export class MeetingsService {
         this.httpService.sendMessage('removeMeeting', {tokenId});
     }
 
-    makeStep(step, hitChips, token) {
-        this.httpService.sendMessage('makeStep', {step, hitChips, token});
+    makeStep(steps, token) {
+        this.httpService.sendMessage('makeStep', {steps, token});
     }
 
     continueMeeting(token) {
@@ -37,7 +37,7 @@ export class MeetingsService {
         return this.step$;
     }
 
-    opponentStep(step, hitChips) {
-        this.step$.next({step, hitChips});
+    opponentStep(steps) {
+        this.step$.next({steps});
     }
 }
