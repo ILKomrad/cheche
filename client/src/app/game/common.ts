@@ -3,8 +3,11 @@ declare var THREE: any;
 export class ThreeCommon {
     createBoxMesh(size, rotation, color) {
         const bodyMaterial = new THREE.MeshPhongMaterial({
+            transparent: true,
+            // depthWrite: false,
+            // blending: THREE.CustomBlending,
             color: color,
-            transparent: true
+            // blendSrc: THREE.OneFactor
         });
         const mesh = new THREE.Mesh(new THREE.BoxGeometry(size.w, size.h, size.deep), bodyMaterial);
         
@@ -17,8 +20,11 @@ export class ThreeCommon {
 
     createPlaneMesh(size, rotation, color) {
         const bodyMaterial = new THREE.MeshPhongMaterial({
+            transparent: true,
+            // depthWrite: false,
+            // blending: THREE.CustomBlending,
             color: color,
-            transparent: true
+            // blendSrc: THREE.OneFactor
         });
         const mesh = new THREE.Mesh(new THREE.PlaneGeometry(size.w, size.h), bodyMaterial);
         
@@ -54,5 +60,40 @@ export class ThreeCommon {
         });
 
         return flag;
+    }
+
+    createText(text, font, fontSize, color) {
+        var geometry = new THREE.TextGeometry(text, {
+            font: font,
+            size: 3,
+            height: 0.1,
+            // curveSegments: 12,
+            // bevelEnabled: true,
+            // bevelThickness: 10,
+            // bevelSize: 2,
+            // bevelOffset: 0,
+            // bevelSegments: 5
+        });
+
+        const mesh = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial({color: color, transparent: true}));
+        mesh.rotation.x = -Math.PI / 2;
+
+        return mesh;
+    }
+
+    createLine(lines, color) {
+        var material = new THREE.LineDashedMaterial({
+            color: color,
+            linewidth: 55
+        });
+        
+        var geometry = new THREE.Geometry();
+        lines.forEach(line => {
+            geometry.vertices.push(new THREE.Vector3(line[0], line[1], line[2]))
+        });
+        
+        var line = new THREE.Line( geometry, material );
+
+        return line;
     }
 }

@@ -10,6 +10,9 @@ export class Renderer {
     fpsControl
     controls;
     range;
+    angle = 0;
+    radius = 500;
+    spotLight;
 
     createEnvironment(range, container) {
         this.container = container;
@@ -17,36 +20,72 @@ export class Renderer {
         this.camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 1000);
         this.scene.add(this.camera);
         this.range = range;
-        
-        var ambientLight = new THREE.AmbientLight(0x3a3a3a);
-        this.scene.add(ambientLight);
+        this.addLight();
 
-        // add spotlight for the shadows
-        var spotLight = new THREE.SpotLight(0xe0e0e0);
-        spotLight.position.set(0, 39, 65);
-        spotLight.castShadow = true;
-        this.scene.add(spotLight);
-
-        if (range === 'w') {
-            this.setCameraPos(1, 110, 110);
-        } else {
-            this.setCameraPos(0.5, 110, -110);
-            spotLight.position.set(0, 90, -80);
-        }
+        if (range === 'b') {
+            // spotLight.position.set(0, 90, 100);
+        } 
 
         this.renderer = new THREE.WebGLRenderer({antialias: true, powerPreference: "high-performance"});
-        // this.renderer.setClearColor(new THREE.Color(0xEEEEEE, 1.0));
+        // this.renderer.sortObjects = true;
+        // this.renderer.setClearColor(new THREE.Color(0xffffff, 1.0));
+        // this.renderer.setClearColor( 0xffffff, 1 );
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.shadowMapEnabled = true;
         let devicePixelRatio = (window.devicePixelRatio > 1) ? 1 : window.devicePixelRatio;
         this.renderer.setPixelRatio(devicePixelRatio);
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.container.appendChild( this.renderer.domElement );
+        this.setInitialCamera();
+    }
+
+    addLight() {
+        var ambientLight = new THREE.AmbientLight(0x3a3a3a);
+        this.scene.add(ambientLight);
+        ambientLight.intensity = 0.3;
+
+        // add spotlight for the shadows
+        this.spotLight = new THREE.SpotLight(0xe0e0e0);
+        // this.spotLight.position.set(0, 39, 65);
+        this.spotLight.angle = 1;
+        this.spotLight.position.set(0, 20, 0);
+        this.spotLight.intensity = 0;
+        this.spotLight.distance = 0;
+        this.spotLight.penumbra = 0.5;
+        this.spotLight.castShadow = true;
+        this.scene.add(this.spotLight);
+    }
+
+    getLight() {
+        return this.spotLight;
+    }
+
+    setInitialCamera() {
+        this.setCameraPos(250, 80, 0);
+        this.camera.fov = 20;
+        this.camera.lookAt(new THREE.Vector3(0.89, -10, 0));
+        this.camera.updateProjectionMatrix();
+    }
+
+    getCameraPos() {
+        if (this.range === 'w') {
+            return {x: 1, y: 110, z: 110};
+        } else {
+            return {x: 0.5, y: 110, z: -110};
+        }
+    }
+
+    setCamera() {
+        if (this.range === 'w') {
+            this.setCameraPos(1, 110, 110);
+        } else {
+            this.setCameraPos(0.5, 110, -110);
+        }
     }
 
     setCameraPos(x, y, z) {
         this.camera.position.set(x, y, z);
-        this.camera.lookAt(new THREE.Vector3(0.89, 0, 0));
+        this.camera.lookAt(new THREE.Vector3(0.89, -10, 0));
     }
 
     zoomTo(pos) {

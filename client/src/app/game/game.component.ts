@@ -15,7 +15,7 @@ export class GameComponent {
     currentGame;
     checkers;
     isStart = false;
-    interfaceData;
+    interfaceData = [];
     isGameOver = false;
     steps = [];
     state = {alias: 'waiting', additional: null};
@@ -51,17 +51,22 @@ export class GameComponent {
         }
     }
 
-    ngAfterViewInit() {
+    ngOnInit() {
         this.dataService.getCurrentGame()
         .subscribe(currentGame => {
             if (currentGame && currentGame.paths) {
                 this.currentGame = this.checkers.getGame(currentGame);
                
                 if (this.currentGame && !this.gameViewComponent.isInit) { 
-                    this.setState();
                     const range = this.getRange();
                     this.gameViewComponent.createGameView(this.currentGame, range); 
                 }
+                
+                if (!this.isStart && this.dataService.isStart()) {
+                    this.setState();
+                    this.isStart = true;
+                }
+                
                 this.updateInterface();
                 this.currentGame.setNextStep(this.getRange());
                 this.gameViewComponent.updateCurrentGame(this.currentGame);
@@ -122,32 +127,37 @@ export class GameComponent {
         this.interfaceData = d;
     }
 
-    async postStep(ifOpponent, newQueen, step) {
-        if (!ifOpponent) { 
-            newQueen = (this.currentGame.newQueen) ? this.currentGame.newQueen.slice() : null;
+    async postStep(ifOpponent, step, multiStep = false) {
+        // if (!ifOpponent) { 
+            let newQueen = (this.currentGame.newQueen) ? this.currentGame.newQueen.slice() : null;
+        // }
+        
+        if (newQueen && ((step.to[0] !== newQueen[0]) || (step.to[1] !== newQueen[1]))) {
+            newQueen = null;
         }
-
-        this.updateInterface();
+  
+        if (!multiStep) { this.updateInterface(); }
        
         if (newQueen) {
             this.soundService.reproduceSound('queen');
             await this.gameViewComponent.newQueen(newQueen);
+            this.currentGame.newQueen = null;
         }
 
-        if (this.currentGame.nextStep) {
+        if (!multiStep && this.currentGame.nextStep) {
             this.gameViewComponent.showNextStep();
         }
 
-        this.setState();
+        if (!multiStep) { this.setState(); }
     }
 
     async makeStep(hitChips, step, ifOpponent = false, multiStep = false) {
         this.gameViewComponent.startRender();
-        let newQueen = (this.currentGame.newQueen) ? this.currentGame.newQueen.slice() : null;
+        // let newQueen = (this.currentGame.newQueen) ? this.currentGame.newQueen.slice() : null;
         await this.gameViewComponent.makeStep(step.from, step.to, ifOpponent);
         this.soundService.reproduceSound('step');
         
-        if (!multiStep) { await this.postStep(ifOpponent, newQueen, step); }
+        await this.postStep(ifOpponent, step, multiStep);
 
         if (hitChips.length) {
             this.soundService.reproduceSound('remove');
@@ -176,7 +186,7 @@ export class GameComponent {
     onStep(step) {
         let hitChips = this.currentGame.makeStep(step);
         this.currentGame.postStepProcessor(step, this.getRange()); 
-
+        
         if (hitChips === undefined) {
             this.gameViewComponent.cancelStep(step.from);
         } else {

@@ -5,12 +5,15 @@ import { MeshLoader } from './mesh-loader';
 import { Desk } from './desk';
 import { DragAndDrop } from './drag-and-drop';
 import { Animator } from './animator';
+import { SoundService } from 'src/app/services/sound.service';
+import { ThreeCommon } from 'src/app/game/common';
 
 declare var THREE: any;
 declare var TWEEN: any;
 
 @Component({
     selector: 'game-view',
+    styleUrls: ['./game-view.component.scss'],
     templateUrl: './game-view.component.html'
 }) 
 export class GameViewComponent {
@@ -25,16 +28,20 @@ export class GameViewComponent {
     isGameOver;
     animator;
     stopRenderFlag = false;
+    common = new ThreeCommon();
     @Input() state;
     @ViewChild('container') container: ElementRef;
     @Output() step = new EventEmitter<any>();
-    viewState = 'idle';
+    viewState = 'splash';
 
-    constructor() {
+    constructor(
+        private soundService: SoundService
+    ) {
         this.gameRender = this.gameRender.bind(this);
         this.onDocumentMouseDown = this.onDocumentMouseDown.bind(this);
         this.onResize = this.onResize.bind(this);
-        this.animator = new Animator();
+        this.animator = new Animator(this.soundService);
+        this.hideSplash = this.hideSplash.bind(this);
     }
 
     ngOnChanges() {
@@ -49,22 +56,57 @@ export class GameViewComponent {
         this.currentGame = currentGame;
         this.gameRenderer = new Renderer();
         this.gameRenderer.createEnvironment(range, this.container.nativeElement);
+        // this.gameRenderer.setCamera()
         this.meshLoader = new MeshLoader();
-        this.meshLoader.waitLoadData().then(() => {     
-            this.desk = new Desk(this.gameRenderer, this.meshLoader);
+        this.meshLoader.waitLoadData().then(() => {  
+            this.startRender();   
+            this.desk = new Desk(this.gameRenderer, this.meshLoader, this.common);
             this.desk.create(currentGame.cells, currentGame.paths);
-            this.startRender();
-            this.stopRender();
             this.dragAndDrop = new DragAndDrop(this.gameRenderer, this.desk.getDeskMesh());
             window.addEventListener('mousedown', this.onDocumentMouseDown);
             window.addEventListener('resize', this.onResize);
+            this.addTable();
 
             if (this.currentGame.nextStep) {
                 this.showNextStep();
-                this.startRender();
-                this.stopRender();
             }
+            this.stopRender();
         });
+    }
+
+    addTable() {
+        const table = this.common.createPlaneMesh(
+            {w: 200, h: 200},
+            {x: -Math.PI / 2},
+            '#fff'
+        );
+        table.material.map = this.meshLoader.geom['table'];
+        table.position.set(0, -3, 0);
+        table.name = name;
+        table.receiveShadow = true;
+        table.material.map.wrapS = THREE.RepeatWrapping;
+        table.material.map.wrapT = THREE.RepeatWrapping;
+        table.material.map.repeat.set(4, 1);
+        this.gameRenderer.addToScene(table);  
+    }
+
+    hideSplash() {
+        this.viewState = 'idle';
+
+        this.startRender();
+        this.animator.renderAnimation(this.gameRenderer.getCamera(), this.gameRenderer.getLight(), this.gameRenderer.getCameraPos()).then(() => {
+            this.stopRender();
+        });
+        window.removeEventListener("resize", this.hideSplash);
+    }
+
+    fullScreenToggle(flag) {
+        if (flag) {
+            document.body.requestFullscreen();
+            window.addEventListener("resize", this.hideSplash);
+        } else {
+            this.hideSplash();
+        }
     }
 
     onResize() {
@@ -92,16 +134,18 @@ export class GameViewComponent {
 
                 if (target.meshType === 'chip') {
                     let error = this.currentGame.canTouch(target.name, this.range);
-                    this.startRender();
-                    this.viewState = 'drag';
+
                     if (error.length) {
                         console.log( 'error', error );
+                        this.viewState = 'idle';
                     } else {
-                        console.log( target.name )
+                        this.startRender();
+                        this.viewState = 'drag';
+
                         that.dragAndDrop.start(target, (cellName) => {
+                            this.viewState = 'idle';
                             let cell = that.desk.getCellPosition(cellName);
                             that.step.emit({to: cellName, from: target.name});
-                            this.viewState = 'idle';
                         });
                     }
                 }
@@ -169,9 +213,9 @@ export class GameViewComponent {
             startCameraPos = {x: camera.position.x, y: camera.position.y, z: camera.position.z},
             chipPos = chip.getPosition(),
             posTo = {x: chipPos.x, y: chipPos.y + 5, z: chipPos.z};
-        await this.animator.zoomTo(camera, posTo, {f: 8}, posTo, {x: 0.89, y: 0, z: 0});
+        await this.animator.zoomTo(camera, posTo, {f: 8}, posTo, {x: 0.89, y: -10, z: 0});
         await this.animator.transformToQueen(chip.getMesh());
-        await this.animator.zoomTo(camera, startCameraPos, {f: cameraFov}, {x: 0.89, y: 0, z: 0}, posTo);
+        await this.animator.zoomTo(camera, startCameraPos, {f: cameraFov}, {x: 0.89, y: -10, z: 0}, posTo);
     }
 
     async removeHits(hitChips) {
@@ -186,5 +230,3 @@ export class GameViewComponent {
         }
     }
 }
-
-//todo перенести аниматор в вью и убрать из деск и из чип

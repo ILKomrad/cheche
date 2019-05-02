@@ -72,10 +72,10 @@ class Checkers {
     checkNextStep(step) {
         if (!this.nextStep || (this.nextStep.length === 0)) { return true; }
         
-        let matchesWithNextStep = true;
+        let matchesWithNextStep = false;
         this.nextStep.forEach(s => {
-            if (!this.compareArrays(s.from, step.from) || !this.compareArrays(s.to, step.to)) {
-                matchesWithNextStep = false;
+            if (this.compareArrays(s.from, step.from) || this.compareArrays(s.to, step.to)) {
+                matchesWithNextStep = true;
             }
         });
         
@@ -224,12 +224,12 @@ class Checkers {
         return hitChips;
     }
 
-    makeStep(step) {
+    makeStep(step, multistep) {
         let hits = this.checkValidStep(step.from, step.to);
         
         if (hits !== undefined) {
             this.stepAction(step, hits);
-            this.postStepProcessor(step);
+            this.postStepProcessor(step, multistep);
 
             return true;
         } 
@@ -269,14 +269,14 @@ class Checkers {
         this.setTurn(userRange, step.to, withHit);
     }
 
-    postStepProcessor(step) {
+    postStepProcessor(step, multistep) {
         let range = this.paths[step.to[1]][step.to[0]];
-       
+
         if (!this.isQueen(step.to)) {
             this.newQueen = this.detectQueen(step.to, range);
 
             if (this.newQueen) { this.paths[this.newQueen[1]][this.newQueen[0]] = range === 'w' ? 'ww' : 'bb'; }
-        } else {
+        } else if (!multistep && !this.newQueen) {
             this.newQueen = null;
         }
 

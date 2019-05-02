@@ -28,13 +28,13 @@ export class CheckersGame {
     checkNextStep(step) {
         if (!this.nextStep || (this.nextStep.length === 0)) { return true; }
         
-        let matchesWithNextStep = true;
+        let matchesWithNextStep = false;
         this.nextStep.forEach(s => {
-            if (!ThreeCommon.compareArrays(s.from, step.from) || !ThreeCommon.compareArrays(s.to, step.to)) {
-                matchesWithNextStep = false;
+            if (ThreeCommon.compareArrays(s.from, step.from) || ThreeCommon.compareArrays(s.to, step.to)) {
+                matchesWithNextStep = true;
             }
         });
-       
+
         return matchesWithNextStep;
     }
 
@@ -45,6 +45,7 @@ export class CheckersGame {
         if (!this.checkColor(to)) { return; }
         if (!this.checkDiagonal(from, to)) { return; }
         if (!isPossibleHits && !this.checkNextStep({from, to})) { return; }
+        
         let isQueen = this.isQueen(from),
             hitChips;
 

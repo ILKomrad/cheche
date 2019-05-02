@@ -2,6 +2,12 @@ declare var TWEEN: any;
 declare var THREE: any;
 
 export class Animator {
+    sound;
+
+    constructor(sound) {
+        this.sound = sound;
+    }
+
     async animationMove(objPosition, to) {
         let startPos = Object.assign({}, objPosition);
         await this.move(objPosition, {x: startPos.x, y: startPos.y + 5, z: startPos.z});
@@ -71,7 +77,7 @@ export class Animator {
     move(from, to) {
         return new Promise((res) => {
             const tween = new TWEEN.Tween(from)
-                .to(to, 500)
+                .to(to, 350)
                 .easing(TWEEN.Easing.Quadratic.Out)
                 .onComplete(() => {
                     res();
@@ -108,5 +114,112 @@ export class Animator {
                 })
                 .start();
         });
+    }
+
+    soundDump(soundName, duration) {
+        let from = {v: 1},
+            to = {v: 0};
+
+        return new Promise((res) => {
+            const tween = new TWEEN.Tween(from)
+                .to(to, duration)
+                .easing(TWEEN.Easing.Quadratic.Out)
+                .onUpdate(() => {
+                    this.sound.setVolume(from.v, soundName);
+                })
+                .onComplete(() => {
+                    res();
+                })
+                .start();
+        });
+    }
+
+    lightGlitter(light) {
+        let from = {x: 0},
+            to = {x: 1000};
+        this.sound.reproduceSound('lamp');
+        this.soundDump('lamp', 3000);
+
+        return new Promise((res) => {
+            const tween = new TWEEN.Tween(from)
+                .to(to, 500)
+                .easing(TWEEN.Easing.Quadratic.Out)
+                .onUpdate(() => {
+                    light.intensity = this.getRandom(0, 1.2);
+                    light.distance = this.getRandomInt(0, 200);
+                    light.penumbra = Math.random() + 0.5;
+                })
+                .onComplete(() => {
+                    res();
+                })
+                .start();
+        });
+    }
+
+    lightOn(light) {
+        let from = light.position,
+            to = {x: 0, y: 100, z: 0};  
+        light.intensity = 1.2;
+        light.distance = 200;
+        light.penumbra = 0.5;
+
+        return new Promise((res) => {
+            const tween = new TWEEN.Tween(from)
+                .to(to, 1000)
+                .easing(TWEEN.Easing.Quadratic.Out)
+                .onComplete(() => {
+                    res();
+                })
+                .start();
+        });
+    }
+
+    rotateCamera(camera, cameraPos) {
+        let from = camera.position,
+            to = cameraPos,
+            deltaY = to.y - camera.position.y,
+            fromFov = 20,
+            toFov = 32,
+            deltaFov = toFov - fromFov;
+
+        return new Promise((res) => {
+            const tween = new TWEEN.Tween(from)
+                .to(to, 2500)
+                .easing(TWEEN.Easing.Quadratic.Out)
+                .onUpdate(() => {
+                    let pers = 1 - (Math.abs(to.y - from.y) / deltaY);
+                    camera.fov = fromFov + deltaFov * pers;
+                    camera.updateProjectionMatrix();
+                    camera.lookAt(new THREE.Vector3(0.89, -10, 0));
+                })
+                .onComplete(() => {
+                    res();
+                })
+                .start();
+        });
+    }
+
+    async renderAnimation(camera, light, rotateCamera) {    
+        await this.lightGlitter(light);
+        this.lightOn(light);
+        await this.rotateCamera(camera, rotateCamera);
+    }
+
+    getRandomInt(min, max) {
+        let rand = min - 0.5 + Math.random() * (max - min + 1)
+        rand = Math.round(rand);
+
+        return rand;
+    }
+
+    getRandom(min, max) {
+        let rand = min - 0.5 + Math.random() * (max - min + 1)
+        
+        return rand;
+    }
+
+    degreesToRadians(degrees) {
+        var pi = Math.PI;
+        return degrees * (pi/180);
     }
 }

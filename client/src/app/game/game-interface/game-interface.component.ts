@@ -9,6 +9,6 @@ export class GameInterfaceComponent {
     @Input() data;
 
     ngOnChanges() {
-        console.log( 'GameInterfaceComponent', this.data );
+        // console.log( 'GameInterfaceComponent', this.data );
     }
 }

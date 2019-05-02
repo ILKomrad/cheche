@@ -149,13 +149,14 @@ class Controller {
         const game = this.game.generate(currentGame.type);
         game.setData(currentGame);
         let valid;
-       
+
         steps.forEach(s => {
             let step = s.step;
 
             if (game.checkRange(step.from, userId)) {
-                valid = game.makeStep(step);
+                valid = game.makeStep(step, (steps.length > 1));
             }
+            console.log('valid', valid);
         })
       
         if (valid) { 

@@ -2,3 +2,12 @@
 <div *ngIf="isGameOver">
     <game-over [result]="isGameOver === range"></game-over>
 </div>
+<div class="splash" *ngIf="viewState === 'splash'">
+    <div class="splash-window">
+        <h5 class="splash-window__title">Включить полноэкранный режим</h5>
+        <div class="splash-window__btns">
+            <button (click)="fullScreenToggle(true)" class="btn btn_md splash-window__btn">да</button>
+            <button (click)="fullScreenToggle(false)" class="btn btn_md splash-window__btn">нет</button>
+        </div>
+    </div>
+</div>

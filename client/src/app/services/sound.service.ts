@@ -20,6 +20,7 @@ export class SoundService {
         this.loadSound('queen', 'queen.mp3');
         this.loadSound('win', 'win.mp3');
         this.loadSound('loose', 'loose.mp3');
+        this.loadSound('lamp', 'lamp.mp3');
     }
 
     reproduceSound(name) {
@@ -34,6 +35,12 @@ export class SoundService {
         if (this[name]) {
             this[name].pause();
             this[name].currentTime = 0;
+        }
+    }
+
+    setVolume(vol, soundName) {
+        if (this[soundName]) {
+            this[soundName].volume = vol;
         }
     }
 }

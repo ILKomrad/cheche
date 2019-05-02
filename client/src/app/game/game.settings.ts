@@ -6,15 +6,16 @@ export class GameSettings {
         w: 10,
         h: 10
     };
+    fontSize = 10;
     cellsColors = {
-        'w': 0xe9bb6e,
-        'b': 0x512d17
+        'w': '#fff',
+        'b': '#412e2a'
     };
     chipsColors = {
-        'w': 0xffffff, //w
-        'ww': 0xffffff,
-        'b': '#645247', //b
-        'bb': '#645247'
+        'w': '#f6ebdb', //w
+        'ww': '#f6ebdb',
+        'b': '#382f23', //b
+        'bb': '#382f23'
     };
-    deskColor = '#926b2b';
+    deskColor = '#f9deab';
 }

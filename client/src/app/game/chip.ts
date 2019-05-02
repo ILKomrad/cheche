@@ -18,6 +18,7 @@ export class Chip {
         this.mesh.material = pieceMaterial;
         this.mesh.position.set(0, 0, 0);
         this.mesh.meshType = 'chip';
+        this.mesh.renderOrder = 3;
         this.range = range;
         this.settings = settings;
 
