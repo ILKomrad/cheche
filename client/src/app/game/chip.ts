@@ -19,6 +19,7 @@ export class Chip {
         this.mesh.position.set(0, 0, 0);
         this.mesh.meshType = 'chip';
         this.mesh.renderOrder = 3;
+        this.mesh.castShadow = true;
         this.range = range;
         this.settings = settings;
 

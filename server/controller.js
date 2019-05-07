@@ -180,7 +180,7 @@ class Controller {
                 }); 
                 const opponent = await this.getUser(opponentId);
         
-                // let result = await this.model.makeStep(game);
+                let result = await this.model.makeStep(game);
 
                 return {game, opponentSocketId: opponent.socketId};
             } 

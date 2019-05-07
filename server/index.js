@@ -42,9 +42,10 @@ io.on('connection', (socket) => {
 
     socket.on('hello', (event) => {
         const data = JSON.parse(event);
-
+        
         controller.hello(socket.id, data.playerId)
         .then(data => {
+            console.log( data )
             socket.emit('helloFromServer', JSON.stringify(data));
       
             if (data && data.user) {

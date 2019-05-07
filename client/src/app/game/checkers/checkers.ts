@@ -293,7 +293,7 @@ export class CheckersGame {
         possiblePaths.forEach(tos => {
             tos.forEach(to => {
                 let h = this.checkValidStep(name, to, true);
-            
+                
                 if (h && h.length) {
                     hits.push({hits: h, to, from: name});
                 }
@@ -367,10 +367,34 @@ export class CheckersGame {
 
         return error;
     }
+
+    generateStep(step) {
+        return new Promise(res => {
+            const generator = new StepGenerator(this);
+            generator.getStep(step);
+            res();
+        })
+    }
+}
+
+export class StepGenerator {
+    game;
+
+    constructor(game) {
+        this.game = game;
+    }
+
+    getStep(step) {
+        console.log( 'getStep', this.game, step );
+    }
 }
 
 export class Giveaway extends CheckersGame {
+    maxHits = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     
+    constructor() {
+        super();
+    }
 }
 
 export class Checkers {

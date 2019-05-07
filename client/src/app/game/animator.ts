@@ -190,7 +190,7 @@ export class Animator {
                     let pers = 1 - (Math.abs(to.y - from.y) / deltaY);
                     camera.fov = fromFov + deltaFov * pers;
                     camera.updateProjectionMatrix();
-                    camera.lookAt(new THREE.Vector3(0.89, -10, 0));
+                    camera.lookAt(new THREE.Vector3(0.89, -15, 0));
                 })
                 .onComplete(() => {
                     res();

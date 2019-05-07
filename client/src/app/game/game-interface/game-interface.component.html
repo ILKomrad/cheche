@@ -1,5 +1,15 @@
 <div class="players" *ngIf="data">
-    <div class="player" [ngClass]="{player_current: player.currentPlayer, turn: player.turn}" *ngFor="let player of data">
+    <div class="player" [ngClass]="{
+            player_black: player.range === 'b', 
+            player_white: player.range === 'w', 
+            turn: player.turn
+        }" *ngFor="let player of data">
+        <div class="player__col player__col_range">
+            <div class="player__range" [ngClass]="{w: player.range === 'w', b: player.range === 'b'}"></div>
+        </div>
+        <h5 class="player__col player__score">
+            {{player.score.score}}
+        </h5>
         <div class="player__col player__hits">
             <!-- <div class="player__hit" 
                 [ngClass]="{player__hit_w: hit === 'w', player__hit_b: hit === 'b'}" 
@@ -7,14 +17,8 @@
             </div> -->
             {{player.hitsChips.length}}
         </div>
-        <h5 class="player__col player__score">
-            {{player.score.score}}
-        </h5>
         <h5 class="player__col player__name">
             {{player.score.name}}
         </h5>
-        <div class="player__col player__col_range">
-            <div class="player__range" [ngClass]="{w: player.range === 'w', b: player.range === 'b'}"></div>
-        </div>
     </div>
 </div>

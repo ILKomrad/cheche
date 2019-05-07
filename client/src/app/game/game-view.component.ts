@@ -32,6 +32,7 @@ export class GameViewComponent {
     @Input() state;
     @ViewChild('container') container: ElementRef;
     @Output() step = new EventEmitter<any>();
+    @Output() gameStart = new EventEmitter<any>();
     viewState = 'splash';
 
     constructor(
@@ -96,6 +97,7 @@ export class GameViewComponent {
         this.startRender();
         this.animator.renderAnimation(this.gameRenderer.getCamera(), this.gameRenderer.getLight(), this.gameRenderer.getCameraPos()).then(() => {
             this.stopRender();
+            this.gameStart.emit();
         });
         window.removeEventListener("resize", this.hideSplash);
     }
@@ -213,9 +215,9 @@ export class GameViewComponent {
             startCameraPos = {x: camera.position.x, y: camera.position.y, z: camera.position.z},
             chipPos = chip.getPosition(),
             posTo = {x: chipPos.x, y: chipPos.y + 5, z: chipPos.z};
-        await this.animator.zoomTo(camera, posTo, {f: 8}, posTo, {x: 0.89, y: -10, z: 0});
+        await this.animator.zoomTo(camera, posTo, {f: 8}, posTo, {x: 0.89, y: -15, z: 0});
         await this.animator.transformToQueen(chip.getMesh());
-        await this.animator.zoomTo(camera, startCameraPos, {f: cameraFov}, {x: 0.89, y: -10, z: 0}, posTo);
+        await this.animator.zoomTo(camera, startCameraPos, {f: cameraFov}, {x: 0.89, y: -15, z: 0}, posTo);
     }
 
     async removeHits(hitChips) {
@@ -230,3 +232,6 @@ export class GameViewComponent {
         }
     }
 }
+
+
+//todo два шага дается - после первого шага попадаем в дамки - у опонента не происходит трансформации

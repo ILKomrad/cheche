@@ -27,6 +27,7 @@ export class Renderer {
         } 
 
         this.renderer = new THREE.WebGLRenderer({antialias: true, powerPreference: "high-performance"});
+        this.renderer.shadowMapSoft = true;
         // this.renderer.sortObjects = true;
         // this.renderer.setClearColor(new THREE.Color(0xffffff, 1.0));
         // this.renderer.setClearColor( 0xffffff, 1 );
@@ -52,7 +53,7 @@ export class Renderer {
         this.spotLight.intensity = 0;
         this.spotLight.distance = 0;
         this.spotLight.penumbra = 0.5;
-        this.spotLight.castShadow = true;
+        // this.spotLight.castShadow = true;
         this.scene.add(this.spotLight);
     }
 
@@ -63,7 +64,7 @@ export class Renderer {
     setInitialCamera() {
         this.setCameraPos(250, 80, 0);
         this.camera.fov = 20;
-        this.camera.lookAt(new THREE.Vector3(0.89, -10, 0));
+        this.camera.lookAt(new THREE.Vector3(0.89, -15, 0));
         this.camera.updateProjectionMatrix();
     }
 
@@ -85,7 +86,7 @@ export class Renderer {
 
     setCameraPos(x, y, z) {
         this.camera.position.set(x, y, z);
-        this.camera.lookAt(new THREE.Vector3(0.89, -10, 0));
+        this.camera.lookAt(new THREE.Vector3(0.89, -15, 0));
     }
 
     zoomTo(pos) {

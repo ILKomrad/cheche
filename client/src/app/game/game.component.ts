@@ -1,11 +1,12 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
 
-import { Checkers } from './checkers/checkers';
+import { Checkers, StepGenerator } from './checkers/checkers';
 import { GameViewComponent } from 'src/app/game/game-view.component';
 import { MeetingsService } from 'src/app/services/meetings.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { SoundService } from 'src/app/services/sound.service';
+import { StepGeneratorService } from 'src/app/game/step-generator.service';
 
 
 @Component({
@@ -19,6 +20,7 @@ export class GameComponent {
     isGameOver = false;
     steps = [];
     state = {alias: 'waiting', additional: null};
+    gameStart = false;
 
     @ViewChild(GameViewComponent)
     private gameViewComponent: GameViewComponent;
@@ -27,7 +29,8 @@ export class GameComponent {
         private dataService: DataService,
         private meetingsService: MeetingsService,
         private authService: AuthService,
-        private soundService: SoundService
+        private soundService: SoundService,
+        private stepGeneratorService: StepGeneratorService,
     ) {
         this.checkers = Checkers;
     }
@@ -87,7 +90,8 @@ export class GameComponent {
             playerId: this.authService.getUserId(),
             hitsChips: this.currentGame.hitsChips,
             players: this.currentGame.players,
-            whosTurn: this.currentGame.whosTurn
+            whosTurn: this.currentGame.whosTurn,
+            maxHits: this.currentGame.maxHits
         });
     }
 
@@ -121,7 +125,8 @@ export class GameComponent {
                 hitsChips: data.hitsChips[player.range],
                 currentPlayer: (data.playerId === player.id),
                 score,
-                turn: (player.range === data.whosTurn)
+                turn: (player.range === data.whosTurn),
+                maxHits: data.maxHits
             })
         })
         this.interfaceData = d;
@@ -194,9 +199,18 @@ export class GameComponent {
             this.steps.push({step, hitChips});
            
             if (!this.currentGame.nextStep || (this.currentGame.nextStep.length === 0)) {
-                this.meetingsService.makeStep(this.steps.slice(), this.authService.getPlayerId());
+                this.meetingsService.makeStep(this.steps.slice(), this.authService.getPlayerId()); 
+                // this.currentGame.generateStep(this.steps.slice())
+                // .then((s) => {
+                //     // this.dataService.setCurrentGame(data.game);
+                //     // this.meetingsService.opponentStep(data.steps);
+                // });
                 this.steps = [];
             }
         }
+    }
+
+    onGameStart() {
+        this.gameStart = true;
     }
 }

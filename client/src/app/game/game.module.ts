@@ -6,6 +6,7 @@ import { GameComponent } from 'src/app/game/game.component';
 import { GameViewComponent } from 'src/app/game/game-view.component';
 import { GameInterfaceComponent } from './game-interface/game-interface.component';
 import { GameOverComponent } from 'src/app/game/game-over/game-over.component';
+import { StepGeneratorService } from 'src/app/game/step-generator.service';
 
 @NgModule({
     declarations: [
@@ -22,7 +23,8 @@ import { GameOverComponent } from 'src/app/game/game-over/game-over.component';
                 component: GameComponent
             }
         ])
-    ]
+    ],
+    providers: [StepGeneratorService]
 })
 export class GameModule {
 

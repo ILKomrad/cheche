@@ -27,6 +27,7 @@ export class MeetingsService {
 
     makeStep(steps, token) {
         this.httpService.sendMessage('makeStep', {steps, token});
+        window.dispatchEvent(new CustomEvent('makeStep', {detail: {steps, token}}));
     }
 
     continueMeeting(token) {

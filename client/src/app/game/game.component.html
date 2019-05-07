@@ -1,2 +1,2 @@
-<game-view [state]="state" (step)="onStep($event)"></game-view>
-<game-interface [data]="interfaceData"></game-interface>
+<game-view (gameStart)="onGameStart()" [state]="state" (step)="onStep($event)"></game-view>
+<game-interface [ngClass]="{'show': gameStart}" [data]="interfaceData"></game-interface>

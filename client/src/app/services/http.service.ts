@@ -34,7 +34,7 @@ export class HttpService {
                 const data = JSON.parse(event);
                 console.log( 'listen', eventName, data );
                 obs.next(data);
-            })
-        })
+            });
+        });
     }
 }
