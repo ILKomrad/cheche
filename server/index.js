@@ -45,7 +45,7 @@ io.on('connection', (socket) => {
         
         controller.hello(socket.id, data.playerId)
         .then(data => {
-            console.log( data )
+            // console.log( data )
             socket.emit('helloFromServer', JSON.stringify(data));
       
             if (data && data.user) {

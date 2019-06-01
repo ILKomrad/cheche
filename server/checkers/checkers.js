@@ -228,8 +228,7 @@ class Checkers {
         let hits = this.checkValidStep(step.from, step.to);
         
         if (hits !== undefined) {
-            this.stepAction(step, hits);
-            this.postStepProcessor(step, multistep);
+            this.stepAction(step, hits, multistep);
 
             return true;
         } 
@@ -247,7 +246,7 @@ class Checkers {
         }
     }
 
-    stepAction(step, hits) {   
+    stepAction(step, hits, multistep) {   
         let userRange = this.paths[step.from[1]][step.from[0]],
             withHit = hits && hits.length;
         this.paths[step.to[1]][step.to[0]] = this.paths[step.from[1]][step.from[0]];
@@ -265,11 +264,11 @@ class Checkers {
                 }
             })
         }
-        
-        this.setTurn(userRange, step.to, withHit);
+
+        this.postStepProcessor(step, multistep, withHit);
     }
 
-    postStepProcessor(step, multistep) {
+    postStepProcessor(step, multistep, withHit) {
         let range = this.paths[step.to[1]][step.to[0]];
 
         if (!this.isQueen(step.to)) {
@@ -281,6 +280,7 @@ class Checkers {
         }
 
         this.whoWin = this.isGameOver();
+        this.setTurn(range, step.to, withHit);
         this.setNextStep();
     }
 

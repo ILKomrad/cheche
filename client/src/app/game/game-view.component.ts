@@ -183,12 +183,12 @@ export class GameViewComponent {
         if (this.viewState !== 'drag') {
             this.startRender();
             this.stopRenderFlag = true;
-            console.warn('stopRender')
+            // console.warn('stopRender')
         }
     }
 
     startRender() {
-        console.warn('startRender')
+       // console.warn('startRender')
         this.stopRenderFlag = false;
         this.gameRender();
     }
@@ -196,7 +196,7 @@ export class GameViewComponent {
     async makeStep(chipName, cellName, anim) {
         let cell = this.desk.getCellPosition(cellName),
             chip = this.desk.getChip(chipName);
-
+        console.warn(chipName)
         chip.setName(cellName);
         
         if (anim) {

@@ -71,14 +71,14 @@ export class GameComponent {
                 }
                 
                 this.updateInterface();
-                this.currentGame.setNextStep(this.getRange());
+                this.currentGame.setNextStep();
                 this.gameViewComponent.updateCurrentGame(this.currentGame);
             }
         });
 
         this.meetingsService.stepHandler().subscribe(async(steps) => {
+            console.log('sub', steps.steps)
             if (steps.steps) {
-                console.log('steps', steps.steps)
                 this.stepHandler(steps.steps);
             }
         })
@@ -173,6 +173,7 @@ export class GameComponent {
 
     async stepHandler(steps) {
         let i = 0;
+       
         while (i < steps.length) {
             let step = steps[i];
 
@@ -186,25 +187,36 @@ export class GameComponent {
 
             i++;
         }
+        console.log('this.currentGame', this.currentGame)
     }
 
     onStep(step) {
         let hitChips = this.currentGame.makeStep(step);
-        this.currentGame.postStepProcessor(step, this.getRange()); 
         
         if (hitChips === undefined) {
             this.gameViewComponent.cancelStep(step.from);
         } else {
             this.makeStep(hitChips, step);
             this.steps.push({step, hitChips});
-           
+
             if (!this.currentGame.nextStep || (this.currentGame.nextStep.length === 0)) {
-                this.meetingsService.makeStep(this.steps.slice(), this.authService.getPlayerId()); 
-                // this.currentGame.generateStep(this.steps.slice())
-                // .then((s) => {
-                //     // this.dataService.setCurrentGame(data.game);
-                //     // this.meetingsService.opponentStep(data.steps);
-                // });
+                // this.meetingsService.makeStep(this.steps.slice(), this.authService.getPlayerId()); 
+                // todo : показывать все обязательные бои ато дамка может встать в другое место и избежать обязательного боя
+                setTimeout(() => {
+                    let gen = new StepGenerator();
+                    gen.init(this.currentGame);
+                    let data = gen.getStep();
+                    console.log( 'onStep', data )
+                    data.steps.forEach(step => {
+                        let range = this.currentGame.getRange(step.step.from);
+                        this.currentGame.makeStep(step.step);
+                    });
+                    this.currentGame.setNextStep();
+                    console.log( this.currentGame )
+                    this.meetingsService.opponentStep(data.steps);   
+                    this.steps = [];    
+                    gen = null;
+                }, 2500);
                 this.steps = [];
             }
         }

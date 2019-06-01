@@ -96,4 +96,38 @@ export class ThreeCommon {
 
         return line;
     }
+
+    static copyArray(array) {
+        let arr = [];
+
+        array.forEach(a => {
+            let type = {}.toString.call(a).slice(8, -1);
+
+            if (type === 'Array') {
+                arr.push(ThreeCommon.copyArray(a));
+            } else if (type === 'Object') {
+                arr.push(ThreeCommon.copyObj(a));
+            } else {
+                arr.push(a);
+            }
+        });
+
+        return arr;
+    }
+
+    static copyObj(obj) {
+        let arr = {};
+
+        for (let i in obj) {
+            let type = {}.toString.call(obj[i]).slice(8, -1);
+            
+            if (type === 'Array') {
+                arr[i] = ThreeCommon.copyArray(obj[i]);
+            } else {
+                arr[i] = obj[i];
+            }
+        }
+
+        return arr;
+    }
 }

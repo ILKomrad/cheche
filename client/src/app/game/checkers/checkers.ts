@@ -22,6 +22,7 @@ export class CheckersGame {
     }
 
     isCellExist(to) {
+        if (!to) { return }
         return ((this.paths[to[1]] !== undefined) && (this.paths[to[1]][to[0]] !== undefined));
     }
 
@@ -38,7 +39,7 @@ export class CheckersGame {
         return matchesWithNextStep;
     }
 
-    checkValidStep(from, to, isPossibleHits = false) {
+    checkValidStep(from, to, isPossibleHits = false, onStep) {
         if (!this.isCellExist(to)) { return; }
         if (!this.checkDelta(from, to)) { return; }
         if (!this.isBusy(to)) { return; }
@@ -58,7 +59,7 @@ export class CheckersGame {
 
             if (!this.checkFarAndDirection(from, to, hitChips, isQueen)) { return; }
         }
-       
+
         return hitChips;
     }
 
@@ -86,6 +87,12 @@ export class CheckersGame {
 
     getChip(position) {
         return this.paths[position[1]][position[0]];
+    }
+
+    getRange(position) {
+        let chip = this.getChip(position);
+
+        return this.transformRange(chip);
     }
 
     isQueen(from) {
@@ -180,22 +187,26 @@ export class CheckersGame {
     }
 
     makeStep(step) {
-        let hits = this.checkValidStep(step.from, step.to);
+        let hits = this.checkValidStep(step.from, step.to, false, true);
        
         if (hits !== undefined) {
             this.stepAction(step, hits);
         } 
-
+      
         return hits;
+    }
+
+    getTurn() {
+        return this.whosTurn;
     }
 
     setTurn(range, pos, withHit = false) {
         let hits;
-
+        
         if (withHit) {
             hits = this.checkAttack(pos);
         }
-       
+
         if (!hits || (hits.length === 0)) {
             this.whosTurn = this.transformRange(range) === 'w' ? 'b' : 'w';
         }
@@ -220,11 +231,10 @@ export class CheckersGame {
             })
         }
         
-        this.setTurn(userRange, step.to, withHit);
-        console.log( 'whosTurn', this.whosTurn )
+        this.postStepProcessor(step, userRange, withHit); 
     }
 
-    postStepProcessor(step, userRange) {
+    postStepProcessor(step, userRange, withHit) {
         let range = this.paths[step.to[1]][step.to[0]];
        
         if (!this.isQueen(step.to)) {
@@ -236,7 +246,13 @@ export class CheckersGame {
         }
 
         this.whoWin = this.isGameOver();
-        this.setNextStep(userRange);
+        this.setTurn(userRange, step.to, withHit);
+        
+        if (this.whosTurn === this.transformRange(range)) {
+            this.setNextStep();
+        } else {
+            this.nextStep = [];
+        }
     }
 
     checkAttack(pos) {
@@ -245,9 +261,30 @@ export class CheckersGame {
         return hits;
     }
 
+    getNeighboring(name) {
+        let possiblePaths = [[], [], [], [] ];
+
+        possiblePaths = [
+            [name[0] - 1, name[1] + 1], //frontLeft
+            [name[0] + 1, name[1] + 1], //frontRight
+            [name[0] - 1, name[1] - 1], //backLeft
+            [name[0] + 1, name[1] - 1] //backRight
+        ];
+
+        possiblePaths = possiblePaths.map(p => {
+            if (!this.isCellExist(p) || !this.isBusy(p)) {
+                p = [];
+            }
+
+            return p;
+        })
+
+        return possiblePaths;
+    }
+
     getLastCells(name) {
         let possiblePaths = [[], [], [], [] ], i = 2;
-
+       
         if (!this.isQueen(name)) {
             possiblePaths = [
                 [[name[0] - 2, name[1] + 2]], //frontLeft
@@ -303,14 +340,14 @@ export class CheckersGame {
         return hits;
     }
 
-    setNextStep(userRange) {
+    setNextStep() {
         this.nextStep = [];
-        
+       
         this.paths.forEach((row, rowIndex) => {
             row.forEach((chip, colIndex) => {
                 let range = this.transformRange(chip);
                 
-                if ((range === this.whosTurn) && (range === userRange)) {
+                if (range === this.whosTurn) {
                     let hits = this.getPosibleHits([colIndex, rowIndex]);
                    
                     if (hits && hits.length) {
@@ -367,31 +404,145 @@ export class CheckersGame {
 
         return error;
     }
-
-    generateStep(step) {
-        return new Promise(res => {
-            const generator = new StepGenerator(this);
-            generator.getStep(step);
-            res();
-        })
-    }
 }
 
 export class StepGenerator {
-    game;
+    initialObj = {};
+    game = {};
 
-    constructor(game) {
-        this.game = game;
+    constructor() {
+        // this.reset = this.reset.bind(this);
     }
 
-    getStep(step) {
-        console.log( 'getStep', this.game, step );
+    copy(from, to, i = false) {
+        for (let u in from) {
+            let type = {}.toString.call(from[u]).slice(8, -1);
+
+            switch (type) {
+                case 'Array':
+                    to[u] = ThreeCommon.copyArray(from[u]);
+                    break;
+                case 'Object':
+                    to[u] = ThreeCommon.copyObj(from[u]);
+                    break;
+                case 'Function':
+                    if(!i) to[u] = from[u].bind(to);
+                    break;
+                default:
+                    to[u] = from[u];
+                    break;
+            }
+        }
+    }
+
+    init(game) {  
+        this.copy(game, this.initialObj);
+        this.copy(game, this.game);
+    }
+
+    reset() {
+        this.copy(this.initialObj, this.game, true);
+    }
+
+    getStep() {
+        let range = this.game.whosTurn,
+            paths = this.game.paths,
+            bestStep = [];
+        this.game.setNextStep(range);
+        let nextStep = this.game.nextStep.slice();
+        this.reset();
+        
+        if (nextStep.length) { 
+            let hitsStep = [];
+            nextStep.forEach(step => {
+                let possibleStep = [];
+                let hits = this.getAllHits([step.from[0], step.from[1]], possibleStep);
+                hitsStep.push(possibleStep);
+                this.reset();
+            });
+            bestStep = this.getBestHitStep(hitsStep);
+            bestStep = this.formatStep(bestStep);
+        } else {
+            paths.forEach((row, rowIndex) => {
+                row.forEach((col, colIndex) => {
+                    if ((paths[rowIndex][colIndex] !== 0) && (paths[rowIndex][colIndex] === range)) {     
+                        const s = this.getPossibleStep([colIndex, rowIndex]);
+                        this.reset();
+                        
+                        if (s && s.length) {
+                            bestStep = bestStep.concat(s);
+                        }
+                    }
+                });
+            });
+            bestStep = this.getBestStep(bestStep);
+            console.log( 'bestStep', bestStep )
+        }
+    
+        return {steps: bestStep, game: this.game};
+    }
+
+    getBestStep(steps) {
+        return [steps[0]];
+    }
+ 
+    getPossibleStep(from) {
+        let n = this.game.getNeighboring(from),
+            steps = [];
+        
+        n.forEach(s => {
+            if (s.length) {
+                let hitChips = this.game.checkValidStep(from, s, false, true);
+                
+                if (hitChips) {
+                    steps.push({hitChips: [], step: {from: from, to: s}})
+                }
+                this.reset();
+            }
+        })
+
+        return steps;
+    }
+
+    getBestHitStep(steps) {
+        let best = [];
+        
+        steps.forEach(step => {
+            if (step && step.length && (best.length < step.length)) {
+                best = step;
+            }
+        });
+
+        if (best.length === 0) {
+            best = steps[0];
+        }
+
+        return best;
+    }
+
+    formatStep(steps) {
+        steps = steps.map(step => {
+            step = {hitChips: step[0].hits, step: {from: step[0].from, to: step[0].to}};
+            return step;
+        });
+
+        return steps;
+    }
+
+    getAllHits(name, possibleHits) {
+        let hits = this.game.getPosibleHits([name[0], name[1]]);
+
+        if (hits.length) {
+            possibleHits.push(hits);
+            this.game.makeStep(hits[0]);
+            this.getAllHits(hits[0].to, possibleHits)
+        }
     }
 }
 
 export class Giveaway extends CheckersGame {
     maxHits = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    
+
     constructor() {
         super();
     }

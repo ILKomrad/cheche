@@ -24,10 +24,9 @@ export class SoundService {
     }
 
     reproduceSound(name) {
-        console.warn( 'reproduceSound', name );
         if (this[name]) {
-            this.stopSound(name);
-            this[name].play();
+            // this.stopSound(name);
+            // this[name].play();
         }
     }
 
