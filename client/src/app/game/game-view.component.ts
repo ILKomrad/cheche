@@ -196,7 +196,7 @@ export class GameViewComponent {
     async makeStep(chipName, cellName, anim) {
         let cell = this.desk.getCellPosition(cellName),
             chip = this.desk.getChip(chipName);
-        console.warn(chipName)
+       
         chip.setName(cellName);
         
         if (anim) {

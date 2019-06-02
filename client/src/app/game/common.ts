@@ -51,14 +51,14 @@ export class ThreeCommon {
 
     static compareArrays(firstArray, secondArray) {
         if (firstArray.length !== secondArray.length) { return; }
-
+        
         let flag = true;
         firstArray.forEach((i, index) => {
             if (i !== secondArray[index]) {
                 flag = false;
             }
         });
-
+        
         return flag;
     }
 

@@ -28,14 +28,15 @@ export class CheckersGame {
 
     checkNextStep(step) {
         if (!this.nextStep || (this.nextStep.length === 0)) { return true; }
-        
+       
         let matchesWithNextStep = false;
         this.nextStep.forEach(s => {
-            if (ThreeCommon.compareArrays(s.from, step.from) || ThreeCommon.compareArrays(s.to, step.to)) {
+            if (ThreeCommon.compareArrays(s.from, step.from) && ThreeCommon.compareArrays(s.to, step.to)) {
                 matchesWithNextStep = true;
             }
+           
         });
-
+        
         return matchesWithNextStep;
     }
 
@@ -186,11 +187,12 @@ export class CheckersGame {
         return hitChips;
     }
 
-    makeStep(step) {
-        let hits = this.checkValidStep(step.from, step.to, false, true);
+    makeStep(step, stepsCount) {
+        let hits = this.checkValidStep(step.from, step.to, false, true),
+            multistep = !!stepsCount;
        
         if (hits !== undefined) {
-            this.stepAction(step, hits);
+            this.stepAction(step, hits, multistep);
         } 
       
         return hits;
@@ -212,7 +214,7 @@ export class CheckersGame {
         }
     }
 
-    stepAction(step, hits) {   
+    stepAction(step, hits, multistep) {   
         let userRange = this.paths[step.from[1]][step.from[0]],
             withHit = hits && hits.length;
         this.paths[step.to[1]][step.to[0]] = this.paths[step.from[1]][step.from[0]];
@@ -231,28 +233,29 @@ export class CheckersGame {
             })
         }
         
-        this.postStepProcessor(step, userRange, withHit); 
+        this.postStepProcessor(step, userRange, withHit, multistep); 
     }
 
-    postStepProcessor(step, userRange, withHit) {
+    postStepProcessor(step, userRange, withHit, multistep) {
         let range = this.paths[step.to[1]][step.to[0]];
        
         if (!this.isQueen(step.to)) {
             this.newQueen = this.detectQueen(step.to, range);
-
+            
             if (this.newQueen) { this.paths[this.newQueen[1]][this.newQueen[0]] = range === 'w' ? 'ww' : 'bb'; }
-        } else {
+        } else if (!multistep && !this.newQueen) {
             this.newQueen = null;
         }
-
-        this.whoWin = this.isGameOver();
-        this.setTurn(userRange, step.to, withHit);
         
+        this.setTurn(userRange, step.to, withHit);
+       
         if (this.whosTurn === this.transformRange(range)) {
             this.setNextStep();
         } else {
             this.nextStep = [];
         }
+
+        this.whoWin = this.isGameOver();
     }
 
     checkAttack(pos) {
@@ -360,13 +363,20 @@ export class CheckersGame {
 
     isGameOver() {
         let whoWin;
-
+        
         if (this.hitsChips['w'].length === 12) {
             whoWin = 'w';
         } else if (this.hitsChips['b'].length === 12) {
             whoWin = 'b';
         }
 
+        let bestStep = this.getPosibleSteps(),
+            hits = this.getAllPossibleHits();
+       
+        if ((bestStep.length === 0) && (hits.length === 0)) {
+            whoWin = this.whosTurn === 'b' ? 'w' : 'b';
+        }
+       
         return whoWin;
     }
 
@@ -403,6 +413,59 @@ export class CheckersGame {
         }
 
         return error;
+    }
+
+    getPosibleSteps() {
+        let bestStep = [];
+        this.paths.forEach((row, rowIndex) => {
+            row.forEach((col, colIndex) => {
+                let range = this.transformRange(this.paths[rowIndex][colIndex]);
+
+                if ((this.paths[rowIndex][colIndex] !== 0) && (range === this.whosTurn)) {     
+                    const s = this.getPossibleStep([colIndex, rowIndex]);
+                    
+                    if (s && s.length) {
+                        bestStep = bestStep.concat(s);
+                    }
+                }
+            });
+        });
+
+        return bestStep;
+    }
+
+    getAllPossibleHits() {
+        let hits = [];
+        this.paths.forEach((row, rowIndex) => {
+            row.forEach((col, colIndex) => {
+                if ((this.paths[rowIndex][colIndex] !== 0) && (this.paths[rowIndex][colIndex] === this.whosTurn)) {     
+                    const hit = this.getPosibleHits([colIndex, rowIndex]);
+                    
+                    if (hit && hit.length) {
+                        hits.push(hit);
+                    }
+                }
+            });
+        });
+
+        return hits;
+    }
+
+    getPossibleStep(from) {
+        let n = this.getNeighboring(from),
+            steps = [];
+        
+        n.forEach(s => {
+            if (s.length) {
+                let hitChips = this.checkValidStep(from, s, false, true);
+                
+                if (hitChips) {
+                    steps.push({hitChips: [], step: {from: from, to: s}})
+                }
+            }
+        })
+
+        return steps;
     }
 }
 
@@ -463,20 +526,8 @@ export class StepGenerator {
             bestStep = this.getBestHitStep(hitsStep);
             bestStep = this.formatStep(bestStep);
         } else {
-            paths.forEach((row, rowIndex) => {
-                row.forEach((col, colIndex) => {
-                    if ((paths[rowIndex][colIndex] !== 0) && (paths[rowIndex][colIndex] === range)) {     
-                        const s = this.getPossibleStep([colIndex, rowIndex]);
-                        this.reset();
-                        
-                        if (s && s.length) {
-                            bestStep = bestStep.concat(s);
-                        }
-                    }
-                });
-            });
+            bestStep = this.game.getPosibleSteps();
             bestStep = this.getBestStep(bestStep);
-            console.log( 'bestStep', bestStep )
         }
     
         return {steps: bestStep, game: this.game};
@@ -484,24 +535,6 @@ export class StepGenerator {
 
     getBestStep(steps) {
         return [steps[0]];
-    }
- 
-    getPossibleStep(from) {
-        let n = this.game.getNeighboring(from),
-            steps = [];
-        
-        n.forEach(s => {
-            if (s.length) {
-                let hitChips = this.game.checkValidStep(from, s, false, true);
-                
-                if (hitChips) {
-                    steps.push({hitChips: [], step: {from: from, to: s}})
-                }
-                this.reset();
-            }
-        })
-
-        return steps;
     }
 
     getBestHitStep(steps) {

@@ -32,7 +32,7 @@ export class Renderer {
         // this.renderer.setClearColor(new THREE.Color(0xffffff, 1.0));
         // this.renderer.setClearColor( 0xffffff, 1 );
         this.renderer.setSize(window.innerWidth, window.innerHeight);
-        this.renderer.shadowMapEnabled = true;
+        this.renderer.shadowMap = true;
         let devicePixelRatio = (window.devicePixelRatio > 1) ? 1 : window.devicePixelRatio;
         this.renderer.setPixelRatio(devicePixelRatio);
         this.renderer.setSize(window.innerWidth, window.innerHeight);
