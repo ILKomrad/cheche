@@ -250,7 +250,7 @@ export class CheckersGame {
         this.setTurn(userRange, step.to, withHit);
        
         if (this.whosTurn === this.transformRange(range)) {
-            this.setNextStep();
+            this.setNextStep(step);
         } else {
             this.nextStep = [];
         }
@@ -343,22 +343,30 @@ export class CheckersGame {
         return hits;
     }
 
-    setNextStep() {
+    setNextStep(step = null) {
         this.nextStep = [];
-       
-        this.paths.forEach((row, rowIndex) => {
-            row.forEach((chip, colIndex) => {
-                let range = this.transformRange(chip);
-                
-                if (range === this.whosTurn) {
-                    let hits = this.getPosibleHits([colIndex, rowIndex]);
-                   
-                    if (hits && hits.length) {
-                        this.nextStep = this.nextStep.concat(hits);
+
+        if (step) {
+            let hits = this.getPosibleHits(step.to);
+                       
+            if (hits && hits.length) {
+                this.nextStep = this.nextStep.concat(hits);
+            }
+        } else {
+            this.paths.forEach((row, rowIndex) => {
+                row.forEach((chip, colIndex) => {
+                    let range = this.transformRange(chip);
+                    
+                    if (range === this.whosTurn) {
+                        let hits = this.getPosibleHits([colIndex, rowIndex]);
+                       
+                        if (hits && hits.length) {
+                            this.nextStep = this.nextStep.concat(hits);
+                        }
                     }
-                }
-            })
-        });
+                })
+            });
+        }
     }
 
     isGameOver() {
@@ -439,7 +447,7 @@ export class CheckersGame {
         this.paths.forEach((row, rowIndex) => {
             row.forEach((col, colIndex) => {
                 let range = this.transformRange(this.paths[rowIndex][colIndex]);
-                
+
                 if ((this.paths[rowIndex][colIndex] !== 0) && (range === this.whosTurn)) {     
                     const hit = this.getPosibleHits([colIndex, rowIndex]);
                     
@@ -513,7 +521,8 @@ export class StepGenerator {
         let range = this.game.whosTurn,
             paths = this.game.paths,
             bestStep = [];
-        this.game.setNextStep(range);
+
+        this.game.setNextStep();
         let nextStep = this.game.nextStep.slice();
         this.reset();
         
