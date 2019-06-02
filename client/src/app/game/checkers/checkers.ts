@@ -438,7 +438,9 @@ export class CheckersGame {
         let hits = [];
         this.paths.forEach((row, rowIndex) => {
             row.forEach((col, colIndex) => {
-                if ((this.paths[rowIndex][colIndex] !== 0) && (this.paths[rowIndex][colIndex] === this.whosTurn)) {     
+                let range = this.transformRange(this.paths[rowIndex][colIndex]);
+                
+                if ((this.paths[rowIndex][colIndex] !== 0) && (range === this.whosTurn)) {     
                     const hit = this.getPosibleHits([colIndex, rowIndex]);
                     
                     if (hit && hit.length) {
