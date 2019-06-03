@@ -191,7 +191,7 @@ export class CheckersGame {
     }
 
     makeStep(step, stepsCount) {
-        let hits = this.checkValidStep(step.from, step.to, true),
+        let hits = this.checkValidStep(step.from, step.to),
             multistep = !!stepsCount;
        
         if (hits !== undefined) {
