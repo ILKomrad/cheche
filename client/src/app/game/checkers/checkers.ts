@@ -337,7 +337,8 @@ export class CheckersGame {
     getPosibleHits(name, paths = null) {
         let possiblePaths = this.getLastCells(name, paths),
             hits = [],
-            _to = [];
+            _to = [],
+            isQueen = this.isQueen(name);
        
         possiblePaths.forEach(tos => {
             tos.forEach(to => {
@@ -345,34 +346,35 @@ export class CheckersGame {
                 
                 if (h && h.length) {
                     hits.push({hits: h, to, from: name});
-                  
-                    if (this.isQueen(name)) {
-                        if (this.getFakeHits({from: name, to})) {
-                            _to.push(to); //todo 1
-                        }
-                    }
                 }
             });
         });
-        const posibleHits = [];
-        _to.forEach(_t => {
-            hits.forEach(hit => {
-                if (ThreeCommon.compareArrays(hit.to, _t)) {
-                    posibleHits.push(hit);
-                }
-            }); 
+        hits = this.filterPosibleHits(hits, isQueen);
+
+        return hits;
+    }
+
+    filterPosibleHits(hits, isQueen) {
+        const filterHits = [];
+
+        if (!isQueen) { return hits; }
+
+        hits.forEach(hit => {
+            if (this.getFakeHits({from: hit.from, to: hit.to})) {
+                filterHits.push(hit);
+            }
         });
        
-        if (posibleHits.length) {
-            return posibleHits;
+        if (filterHits.length) {
+            return filterHits;
         } else {
             return hits;
         }
     }
 
     getFakeHits(step) {
-        const paths = ThreeCommon.copyArray(this.paths);
-        let h = this.checkValidStep(step.from, step.to, true, paths)[0];
+        const paths = ThreeCommon.copyArray(this.paths),
+            h = this.checkValidStep(step.from, step.to, true, paths)[0];
         paths[step.from[1]][step.from[0]] = '0';
         paths[h[1]][h[0]] = '0';
         paths[step.to[1]][step.to[0]] = this.paths[step.from[1]][step.from[0]];
