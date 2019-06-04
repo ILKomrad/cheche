@@ -268,9 +268,7 @@ export class CheckersGame {
     }
 
     getNeighboring(name) {
-        let possiblePaths = [[], [], [], [] ];
-
-        possiblePaths = [
+        let possiblePaths = [
             [name[0] - 1, name[1] + 1], //frontLeft
             [name[0] + 1, name[1] + 1], //frontRight
             [name[0] - 1, name[1] - 1], //backLeft
@@ -283,8 +281,15 @@ export class CheckersGame {
             }
 
             return p;
-        })
+        });
 
+        if (this.isQueen(name)) {
+            let steps = this.getLastCells(name);
+            steps.forEach(step => {
+                if (step.length) { possiblePaths = possiblePaths.concat(step); }
+            });
+        }
+        
         return possiblePaths;
     }
 
@@ -325,7 +330,7 @@ export class CheckersGame {
                 i++;
             }
         }
-
+  
         return possiblePaths;
     }
 
@@ -343,7 +348,7 @@ export class CheckersGame {
                   
                     if (this.isQueen(name)) {
                         if (this.getFakeHits({from: name, to})) {
-                            _to.push(to);
+                            _to.push(to); //todo 1
                         }
                     }
                 }
@@ -578,7 +583,9 @@ export class StepGenerator {
     }
 
     getBestStep(steps) {
-        return [steps[0]];
+        const num = ThreeCommon.randomInteger(0, (steps.length - 1));
+       
+        return [steps[num]];
     }
 
     getBestHitStep(steps) {
@@ -591,7 +598,7 @@ export class StepGenerator {
         });
 
         if (best.length === 0) {
-            best = steps[0];
+            best = steps[ThreeCommon.randomInteger(0, steps.length - 1)];
         }
 
         return best;

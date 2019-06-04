@@ -22,6 +22,7 @@ export class Chip {
         this.mesh.castShadow = true;
         this.range = range;
         this.settings = settings;
+        // this.mesh.material.opacity = 0.1;
 
         if ((range === 'bb') || (range === 'ww')) {
             this.transformToQueen();
