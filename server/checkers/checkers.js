@@ -49,7 +49,7 @@ class Checkers {
     }
 
     checkTurn(userId) {
-        console.log( this.players, userId );
+        // console.log( this.players, userId );
     }
 
     isCellExist(to) {

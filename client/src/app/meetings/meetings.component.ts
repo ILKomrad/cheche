@@ -8,7 +8,20 @@ import { MeetingsService } from '../services/meetings.service';
     styles: [`
         :host {
             display: block;
-            padding: 20vmin 4vmin 4vmin 4vmin;
+            padding: 4vmin;
+            height: 100%;
+            background: url('../../assets/table4.jpg') repeat;
+            color: #fff;
+        }
+
+        .inGame__title {
+            margin-bottom: 1.5rem;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .inGame .btn {
+            margin: .5rem;
         }
     `]
 })
@@ -55,6 +68,10 @@ export class MeetingsComponent {
 
     selectMeeting(meetingId) {
         this.meetingsService.selectMeeting(this.authService.getTocken(), meetingId);
+
+        if (meetingId === 'robot') {
+            this.authService.createBot();
+        }
     }
 
     continueGame() {

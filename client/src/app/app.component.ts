@@ -42,6 +42,11 @@ export class AppComponent {
         this.dataService.setCurrentMeeting(data.currentMeeting, data.currentGame);
         this.dataService.setData(data.mettings);
 
+        this.httpService.listen('currentMeeting')
+        .subscribe((data: any) => {
+          this.dataService.setCurrentMeeting(data.currentMeeting, data.currentGame);
+        });
+
         this.httpService.listen('newMeeting')
         .subscribe((data: Meeting) => {
           this.dataService.addData(data);

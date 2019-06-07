@@ -17,8 +17,11 @@ export class MeetingsService {
     }
 
     selectMeeting(token, meetingId) {
-        console.log( 'selectMeeting', token, meetingId );
-        this.httpService.sendMessage('selectMeeting', {playerId: token, meetingId: meetingId});
+        if (meetingId === 'robot') {
+            this.createMeeting('giveaway', 'you');
+        } else {
+            this.httpService.sendMessage('selectMeeting', {playerId: token, meetingId: meetingId});
+        }
     }
 
     removeMeeting(tokenId) {
@@ -40,5 +43,9 @@ export class MeetingsService {
 
     opponentStep(steps) {
         this.step$.next({steps});
+    }
+
+    newGame(tokenId) {
+        this.httpService.sendMessage('getData', {token: tokenId});
     }
 }

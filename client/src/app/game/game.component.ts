@@ -21,6 +21,7 @@ export class GameComponent {
     steps = [];
     state = {alias: 'waiting', additional: null};
     gameStart = false;
+    isRestart = false;
 
     @ViewChild(GameViewComponent)
     private gameViewComponent: GameViewComponent;
@@ -36,7 +37,7 @@ export class GameComponent {
     }
 
     setState() {
-        if (this.dataService.isStart()) {
+        if (this.dataService.isStart() || this.authService.bot) {
             this.state = {alias: 'start', additional: null};
         } else {
             this.state = {alias: 'waiting', additional: null};
@@ -58,15 +59,20 @@ export class GameComponent {
         .subscribe(currentGame => {
             if (currentGame && currentGame.paths) {
                 this.currentGame = this.checkers.getGame(currentGame);
-               
+                const range = this.getRange();
+             
                 if (this.currentGame && !this.gameViewComponent.isInit) { 
-                    const range = this.getRange();
                     this.gameViewComponent.createGameView(this.currentGame, range); 
                 }
-                
+              
                 if (!this.isStart && this.dataService.isStart()) {
                     this.setState();
                     this.isStart = true;
+                }
+
+                if (this.isRestart) {
+                    this.gameViewComponent.restartGameView(this.currentGame, range); 
+                    this.isRestart = false;
                 }
                 
                 this.updateInterface();
@@ -95,7 +101,7 @@ export class GameComponent {
     }
 
     getRange() {
-        const userId = this.authService.getUserId();
+        const userId = this.authService.bot ? 'you' : this.authService.getUserId();
         let range;
         this.currentGame.players.forEach(player => {
             if (player.id === userId) {
@@ -132,9 +138,7 @@ export class GameComponent {
     }
 
     async postStep(ifOpponent, step, multiStep = false) {
-        // if (!ifOpponent) { 
-            let newQueen = (this.currentGame.newQueen) ? this.currentGame.newQueen.slice() : null;
-        // }
+        let newQueen = (this.currentGame.newQueen) ? this.currentGame.newQueen.slice() : null;
         
         if (newQueen && ((step.to[0] !== newQueen[0]) || (step.to[1] !== newQueen[1]))) {
             newQueen = null;
@@ -157,7 +161,6 @@ export class GameComponent {
 
     async makeStep(hitChips, step, ifOpponent = false, multiStep = false) {
         this.gameViewComponent.startRender();
-        // let newQueen = (this.currentGame.newQueen) ? this.currentGame.newQueen.slice() : null;
         await this.gameViewComponent.makeStep(step.from, step.to, ifOpponent);
         this.soundService.reproduceSound('step');
         
@@ -186,7 +189,6 @@ export class GameComponent {
 
             i++;
         }
-        console.log('this.currentGame', this.currentGame)
     }
 
     async onStep(step) {
@@ -199,26 +201,34 @@ export class GameComponent {
             this.steps.push({step, hitChips});
            
             if (!this.currentGame.nextStep || (this.currentGame.nextStep.length === 0)) {
-                // this.meetingsService.makeStep(this.steps.slice(), this.authService.getPlayerId()); 
-               
-                if (!this.currentGame.whoWin) {
-                    setTimeout(() => {
-                        let gen = new StepGenerator();
-                        gen.init(this.currentGame);
-                        let data = gen.getStep();
-                        data.steps.forEach(step => {
-                            this.currentGame.makeStep(step.step, data.steps.length);
-                        });
-                        this.currentGame.setNextStep();
-                        this.meetingsService.opponentStep(data.steps);   
-                        this.steps = [];    
-                        gen = null;
-                    }, 500);
+                if (!this.authService.bot) {
+                    this.meetingsService.makeStep(this.steps.slice(), this.authService.getPlayerId()); 
+                } else {
+                    if (!this.currentGame.whoWin) {
+                        setTimeout(() => {
+                            let gen = new StepGenerator();
+                            gen.init(this.currentGame);
+                            let data = gen.getStep();
+                            data.steps.forEach(step => {
+                                this.currentGame.makeStep(step.step, data.steps.length);
+                            });
+                            this.currentGame.setNextStep();
+                            this.meetingsService.opponentStep(data.steps);   
+                            this.steps = [];    
+                            gen = null;
+                        }, 500);
+                    }
                 }
         
                 this.steps = [];
             }
         }
+    }
+
+    newGame() {
+        this.isStart = false;
+        this.isRestart = true;
+        this.meetingsService.newGame(this.authService.getPlayerId());
     }
 
     onGameStart() {

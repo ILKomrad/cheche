@@ -641,6 +641,7 @@ export class Checkers {
 
         switch (type) {
             case 'giveaway':
+            case 'classic':
                 game = new Giveaway();
                 game.init(currentGame);
                 

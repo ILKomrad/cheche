@@ -5,11 +5,13 @@
         <div *ngIf="authState === 'waiting'">
             создается встреча
         </div>
-        <div *ngIf="authState === 'inGame'">
-            <p>ты в игре мудел</p>
-            <div class="flex">
-                <button class="btn btn_md" (click)="leaveMeeting()">Выйти из игры</button>
-                <button (click)="continueGame()" class="btn btn_md">Продолжить</button>
+        <div class="fullHeight flex flex-center inGame" *ngIf="authState === 'inGame'">
+            <div>
+                <p class="inGame__title">ты в игре мудел</p>
+                <div class="flex">
+                    <button class="btn btn_md" (click)="leaveMeeting()">Выйти из игры</button>
+                    <button (click)="continueGame()" class="btn btn_md">Продолжить</button>
+                </div>
             </div>
         </div>
     </div>

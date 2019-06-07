@@ -1,6 +1,6 @@
 :host {
     position: absolute;
-    z-index: 10;
+    z-index: 11;
     bottom: 0;
     top: 0;
     left: 0;
@@ -8,8 +8,8 @@
     background: rgba(0, 0, 0, .6);
 }
 
-.win, .loose {
-    padding: 4rem;
+.wrap {
+    padding: 3rem;
     position: absolute;
     top: 50%;
     left: 50%;
@@ -20,4 +20,12 @@
 .win__title {
     font: 2rem verdana;
     color: #000;
+    text-align: center;
+}
+
+.content {
+    margin-top: 3vmin;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

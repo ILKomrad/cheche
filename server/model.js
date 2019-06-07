@@ -61,7 +61,6 @@ class Model {
     }
 
     addGame(game) {
-        console.log( game.whosTurn )
         return this.http.sendPost({
             addGame: {
                 type: game.type,
@@ -117,12 +116,31 @@ class Model {
         });
     }
 
-    startMeeting(meeting) {
+    async startMeeting(meeting) {
         return this.http.sendPost({
             startMeeting: {
                 score: JSON.stringify(meeting.score),
                 secondPlayer: meeting.secondPlayer,
                 meetingId: meeting.id
+            }
+        });
+    }
+
+    async finishGame(meeting) {
+        return this.http.sendPost({
+            finishGame: {
+                score: JSON.stringify(meeting.score),
+                meetingId: meeting.id
+            }
+        });
+    }
+
+    async addGameToMeeting(meetingId, games, currentGame) {
+        return this.http.sendPost({
+            addGameToMeeting: {
+                games: JSON.stringify(games),
+                meetingId,
+                currentGame: JSON.stringify(currentGame)
             }
         });
     }

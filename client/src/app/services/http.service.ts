@@ -10,10 +10,10 @@ export class HttpService {
     instance;
 
     constructor() {
-        this.instance = io('http://localhost:3000'); 
+        this.instance = io('http://localhost:3001'); 
     }
 
-    sendMessage(eventName: string, msg: any) {
+    sendMessage(eventName: string, msg: any = null) {
         console.log( 'send', eventName, msg );
         this.instance.emit(eventName, JSON.stringify(msg));
     }

@@ -3,7 +3,7 @@ var express = require('express'),
     http = require('http').Server(app),
     io = require('socket.io')(http),
     path = require('path'),
-    port = process.env.PORT || 3000,
+    port = process.env.PORT || 3001,
     secretKey = 'checkers-checkers-checkers-checkers-secret',
     bodyParser = require('body-parser'),
     model = require('./model')('http://localhost:8888/checkers/checkers.php'),
@@ -45,7 +45,6 @@ io.on('connection', (socket) => {
         
         controller.hello(socket.id, data.playerId)
         .then(data => {
-            // console.log( data )
             socket.emit('helloFromServer', JSON.stringify(data));
       
             if (data && data.user) {
@@ -57,13 +56,15 @@ io.on('connection', (socket) => {
     socket.on('createMeeting', (event) => {
         if (event) {
             const data = JSON.parse(event);
-
+           
             if (data && data.user) {
                 controller.newMeeting(data.type, data.user)
-                .then(data => {
-                    if (data) { 
-                        socket.broadcast.emit('newMeeting', JSON.stringify(data.meeting)); 
-                        socket.emit('meetingCreated', JSON.stringify(data));
+                .then(_data => {
+                    if (_data) { 
+                        if (data.user !== 'you') {
+                            socket.broadcast.emit('newMeeting', JSON.stringify(_data.meeting)); 
+                        }
+                        socket.emit('meetingCreated', JSON.stringify(_data));
                     }
                 })
             }
@@ -90,6 +91,16 @@ io.on('connection', (socket) => {
             controller.removeMeeting(data.tokenId)
             .then((data) => {
                 io.emit('removeMeeting', JSON.stringify(data));
+            });
+        }
+    });
+
+    socket.on('getData', (event) => {
+        if (event) {
+            const data = JSON.parse(event);
+            controller.getData(data.token)
+            .then((event) => {
+                socket.emit('currentMeeting', JSON.stringify(event));
             });
         }
     })
@@ -124,6 +135,16 @@ io.on('connection', (socket) => {
                     ));
                 }
             });
+        }
+    });
+
+    socket.on('newGame', (e) => {
+        if (e) {
+            const data = JSON.parse(e);
+            controller.newGame(data)
+            .then(d => {
+                socket.emit('meetingCreated', JSON.stringify(d));
+            })
         }
     })
 });

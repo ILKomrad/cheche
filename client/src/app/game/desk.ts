@@ -30,6 +30,14 @@ export class Desk {
         this.createDesk(cells.length + 1);
     }
 
+    restart(chips) {
+        this.chips.forEach(c => {
+            this.gameRenderer.removeFromScene(c.getMesh());
+        });
+        this.chips = [];
+        this.createChips(chips);
+    }
+
     removeHighlightCells() {
         this.highlights.forEach(h => {
             this.gameRenderer.removeFromScene(h); 
@@ -88,21 +96,6 @@ export class Desk {
         }
     }
 
-    // createDesk(cellsLength) {
-    //     this.desk = this.common.createBoxMesh(
-    //         {w: this.gameSettings.deskSize.w, h: this.gameSettings.deskSize.h, deep: this.gameSettings.deskSize.deep},
-    //         {x: -Math.PI / 2},
-    //         this.gameSettings.deskColor
-    //     );
-    //     this.desk.material.map = this.meshLoader.geom['treeTexture'];
-    //     this.desk.position.set(this.gameSettings.deskPosition.x - 50, this.gameSettings.deskPosition.y, this.gameSettings.deskPosition.z - 50);
-    //     this.desk.name = 'desk';
-    //     this.desk.receiveShadow = true;
-    //     this.gameRenderer.addToScene(this.desk);  
-    //     this.desk.geometry.translate( 50, -50, 0 );
-    //     this.addNumbers(cellsLength - 1);
-    //     this.addBorder();
-    // }
     createDesk(cellsLength) {
         this.desk = this.common.createBoxMesh(
             {w: this.gameSettings.deskSize.w, h: this.gameSettings.deskSize.h, deep: this.gameSettings.deskSize.deep},
@@ -197,13 +190,10 @@ export class Desk {
         } else {
             cell.material.opacity = 0.4;
         }
-        // if (colorName === 'w') {
-        //     cell.material.opacity = 0.4;
-        // }
+ 
         cell.position.set(x, 0.15, y);
         cell.name = name;
         cell.renderOrder = 2; //fix blend bug
-        // cell.material.map = this.meshLoader.geom['cell'];
         cell.receiveShadow = true;
         cell.meshType = 'cell';
         this.cells.push(cell);

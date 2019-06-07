@@ -144,6 +144,26 @@ class Controller {
         return data;
     }
 
+    async getData(token) {
+        let data = {mettings: []},
+            currentMeetingId;
+        
+        if (token) { 
+            data['user'] = await this.getUserByToken(token); 
+        }
+    
+        if (data['user'] && data['user'].inGame) { 
+            currentMeetingId = data['user'].currentMeetingId;
+            const currentGame = await this.getGame(data['user'].inGame);
+            data['currentMeetingId'] = currentMeetingId;
+            data['currentMeeting'] = await this.getMeetingById(currentMeetingId);
+            data['currentGame'] = this.game.generate(currentGame.type);
+            data['currentGame'].setData(currentGame);
+        }
+
+        return data;
+    }
+
     async makeStepInGame(gameId, steps, userId) {
         let currentGame = await this.getGame(gameId);
         const game = this.game.generate(currentGame.type);
@@ -156,7 +176,7 @@ class Controller {
             if (game.checkRange(step.from, userId)) {
                 valid = game.makeStep(step, (steps.length > 1));
             }
-            console.log('valid', valid);
+            
         })
       
         if (valid) { 
@@ -170,7 +190,7 @@ class Controller {
        
         if (user && (user.inGame !== null)) {
             const game = await this.makeStepInGame(user.inGame, data.steps, user.id);
-            // console.log('game', game);
+           
             if (game) {
                 let opponentId;
                 game.players.forEach(player => {
@@ -179,25 +199,97 @@ class Controller {
                     } 
                 }); 
                 const opponent = await this.getUser(opponentId);
-        
-                let result = await this.model.makeStep(game);
+                await this.model.makeStep(game);
+                
+                if (game.whoWin) {
+                    const meeting = await this.finishGame(user.currentMeetingId, game); 
+                    await this.model.finishGame(meeting);
+                    await this.newGame(meeting);
+                }
 
                 return {game, opponentSocketId: opponent.socketId};
             } 
         }
     }
 
+    async newGame(meeting) {
+        const game = await this.createNewGame(meeting.score[0], 'giveaway', meeting.score[1]);
+        const _meeting = await this.addGameToMeeting(meeting.id, game.id, game.type);
+
+        meeting.score.forEach(player => {
+            this.model.setMeetingToUser(player.id, meeting.id, game.id);
+        });
+    }
+
+    createNewGame(user, type, secondUser) {   
+        return new Promise(res => {
+            const game = this.game.generate(type);
+            game.init();
+            game.addPlayer(user.id);
+
+            if (secondUser) { game.addPlayer(secondUser.id); }
+
+            this.model.addGame(game).then(gameId => {
+                game.id = gameId;
+                res(game);
+            })
+        });
+    }
+
+    async addGameToMeeting(meetingId, gameId, gameType) {
+        const meeting = await this.getMeetingById(meetingId);
+        meeting.games.push({id: gameId, type: gameType});
+        await this.model.addGameToMeeting(meeting.id, meeting.games, {id: gameId, type: gameType});
+        return meeting;
+    }
+
+    async finishGame(meetingId, game) {
+        const meeting = await this.getMeetingById(meetingId),
+            players = game.players;
+        let winId;
+
+        players.forEach(s => {
+            if (s.range === game.whoWin) {
+                winId = s.id;
+            }
+        });
+
+        meeting.score.forEach(s => {
+            if (s.id === winId) {
+                s.score = s.score + 1;
+            }
+        })
+        
+        return meeting;
+    }
+
     async newMeeting(type, user) {
         let meeting, game;
-        const _user = await this.getUserByToken(user.playerId);
 
-        if (_user) { game = await this.createNewGame(_user, type); }
-       
-        if (game) { meeting = await this.createNewMeeting(_user, game); }
-       
-        if (meeting) { this.model.setMeetingToUser(_user.id, meeting.id, game.id); }
+        if (user === 'you') {
+            const bot = await this.createBot(type);
+            meeting = bot.meeting;
+            game = bot.game;
+        } else {
+            const _user = await this.getUserByToken(user.playerId);
+
+            if (_user) { game = await this.createNewGame(_user, type); }
+        
+            if (game) { meeting = await this.createNewMeeting(_user, game); }
+        
+            if (meeting) { this.model.setMeetingToUser(_user.id, meeting.id, game.id); }
+        }
        
         return {meeting, game};
+    }
+
+    async createBot(type) {
+        const game = await this.createNewGame({id: 'you'}, type);
+        const meeting = await this.createNewMeeting({id: 'you', name: 'you'}, game);
+        const readyMeeting = await this.startMeeting({id: 777, name: 'bot'}, meeting);
+        game.players.push({ id: 777, name: 'bot', range: 'b' });
+
+        return {meeting: readyMeeting, game};
     }
     
     async startMeeting(secondPlayer, meeting) {
@@ -211,7 +303,7 @@ class Controller {
             meeting.currentGame = currentGame;
             meeting.isStart = 1;
             this.model.startMeeting(meeting);
-            
+           
             if (currentGame.players.length === 1) { 
                 currentGame.players.push({ id: secondPlayer.id, range: 'b' });
             }
@@ -255,19 +347,6 @@ class Controller {
         });
     }
 
-    createNewGame(user, type) {   
-        return new Promise(res => {
-            const game = this.game.generate(type);
-            game.init();
-            game.addPlayer(user.id);
-        
-            this.model.addGame(game).then(gameId => {
-                game.id = gameId;
-                res(game);
-            })
-        });
-    }
-
     createNewMeeting(user, game) {
         return new Promise(res => {
             const meeting = new Meeting();
@@ -297,12 +376,6 @@ class Controller {
         }
 
         return user.currentMeetingId;
-    }
-
-    newGame() {
-        const game = this.game.generate('classic');
-        game.init();
-        game.checkValid({d: 'd'}, {ds: 'ds'});
     }
 
     getGame(id) {
@@ -345,7 +418,8 @@ class Controller {
             score: JSON.parse(data.score),
             firstPlayer: data.firstPlayer,
             secondPlayer: data.secondPlayer,
-            currentGame: JSON.parse(data.currentGame)
+            currentGame: JSON.parse(data.currentGame),
+            games: JSON.parse(data.games),
         }
 
         return meeting;

@@ -1,4 +1,10 @@
 <div class="meeting-list">
+  <div class="flex flex-center flex-around meeting">
+    <div class="meeting__inner">
+      <h5 class="meeting__title">play with bot</h5>
+    </div>
+    <button (click)="select('robot')" class="btn btn_md btn_default">start</button>
+  </div>
   <div class="flex flex-center flex-around meeting" *ngFor="let meeting of (meetings | meetingsPipe: userId)">
     <div class="meeting__inner">
       <h5 class="meeting__title">{{meeting.currentGame.type}}</h5>

@@ -11,6 +11,7 @@ export class AuthService {
     isLoggedIn = new BehaviorSubject<any>(null);
     user: User = new User();
     state = 'guest';
+    bot = false;
 
     constructor(
         private httpService: HttpService
@@ -98,5 +99,9 @@ export class AuthService {
 
     getTocken() {
         return localStorage.getItem('checkers_playerId');
+    }
+
+    createBot() {
+        this.bot = true;
     }
 }

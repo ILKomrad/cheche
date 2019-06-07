@@ -33,6 +33,7 @@ export class GameViewComponent {
     @ViewChild('container') container: ElementRef;
     @Output() step = new EventEmitter<any>();
     @Output() gameStart = new EventEmitter<any>();
+    @Output() newGame = new EventEmitter<any>();
     viewState = 'splash';
 
     constructor(
@@ -48,6 +49,8 @@ export class GameViewComponent {
     ngOnChanges() {
         if (this.state.alias === 'gameOver') {
             this.isGameOver = this.state.additional;
+        } else {
+            this.isGameOver = false;
         }
     }
 
@@ -73,6 +76,11 @@ export class GameViewComponent {
             }
             this.stopRender();
         });
+    }
+
+    restartGameView(currentGame, range) {
+        this.desk.restart(currentGame.paths);
+        this.stopRender();
     }
 
     addTable() {
@@ -231,7 +239,8 @@ export class GameViewComponent {
             i++;
         }
     }
+
+    createNewGame() {
+        this.newGame.emit();
+    }
 }
-
-
-//todo два шага дается - после первого шага попадаем в дамки - у опонента не происходит трансформации
