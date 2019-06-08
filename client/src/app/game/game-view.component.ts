@@ -71,7 +71,8 @@ export class GameViewComponent {
             window.addEventListener('resize', this.onResize);
             this.addTable();
 
-            if (this.currentGame.nextStep) {
+            if (this.currentGame.nextStep && (range === this.currentGame.whosTurn)) {
+            // if (this.currentGame.nextStep) {
                 this.showNextStep();
             }
             this.stopRender();

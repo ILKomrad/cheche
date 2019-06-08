@@ -22,6 +22,8 @@ export class GameComponent {
     state = {alias: 'waiting', additional: null};
     gameStart = false;
     isRestart = false;
+    meetingsService$;
+    dataService$;
 
     @ViewChild(GameViewComponent)
     private gameViewComponent: GameViewComponent;
@@ -55,7 +57,7 @@ export class GameComponent {
     }
 
     ngOnInit() {
-        this.dataService.getCurrentGame()
+        this.dataService$ = this.dataService.getCurrentGame()
         .subscribe(currentGame => {
             if (currentGame && currentGame.paths) {
                 this.currentGame = this.checkers.getGame(currentGame);
@@ -76,18 +78,23 @@ export class GameComponent {
                 }
                 
                 this.updateInterface();
-                this.currentGame.setNextStep();
+                // this.currentGame.setNextStep();
                 this.gameViewComponent.updateCurrentGame(this.currentGame);
             }
         });
 
-        this.meetingsService.stepHandler().subscribe(async(steps) => {
+        this.meetingsService$ = this.meetingsService.stepHandler().subscribe(async(steps) => {
             console.log('sub', steps.steps)
             if (steps.steps) {
                 this.stepHandler(steps.steps);
             }
         })
     }
+
+    ngOnDestroy() {
+        this.meetingsService$.unsubscribe();
+        this.dataService$.unsubscribe();
+      }
 
     updateInterface() {
         this.compareData({
@@ -103,6 +110,7 @@ export class GameComponent {
     getRange() {
         const userId = this.authService.bot ? 'you' : this.authService.getUserId();
         let range;
+      
         this.currentGame.players.forEach(player => {
             if (player.id === userId) {
                 range = player.range;

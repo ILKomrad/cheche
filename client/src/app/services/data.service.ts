@@ -41,7 +41,6 @@ export class DataService {
     }
 
     isStart() {
-        return true;
         if (this.currentGame && this.currentGame.players) {
             return this.currentGame.players.length === 2;
         } else {

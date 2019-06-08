@@ -39,8 +39,12 @@ export class AppComponent {
           this.authService.setUser(data.user);
         }
 
-        this.dataService.setCurrentMeeting(data.currentMeeting, data.currentGame);
-        this.dataService.setData(data.mettings);
+        if (!data.currentMeeting && !data.currentGame) {
+          this.router.navigate(['/']);
+        } else {
+          this.dataService.setCurrentMeeting(data.currentMeeting, data.currentGame);
+          this.dataService.setData(data.mettings);
+        }
 
         this.httpService.listen('currentMeeting')
         .subscribe((data: any) => {

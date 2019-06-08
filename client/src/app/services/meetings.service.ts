@@ -12,13 +12,13 @@ export class MeetingsService {
         private httpService: HttpService
     ) {}
 
-    createMeeting(type, user) {
-        this.httpService.sendMessage('createMeeting', {type, user});
+    createMeeting(type, user, token) {
+        this.httpService.sendMessage('createMeeting', {type, user, token});
     }
 
     selectMeeting(token, meetingId) {
         if (meetingId === 'robot') {
-            this.createMeeting('giveaway', 'you');
+            this.createMeeting('giveaway', 'you', token);
         } else {
             this.httpService.sendMessage('selectMeeting', {playerId: token, meetingId: meetingId});
         }

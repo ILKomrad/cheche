@@ -364,7 +364,7 @@ export class CheckersGame {
                 filterHits.push(hit);
             }
         });
-       
+        
         if (filterHits.length) {
             return filterHits;
         } else {

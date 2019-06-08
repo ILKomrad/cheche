@@ -58,7 +58,7 @@ io.on('connection', (socket) => {
             const data = JSON.parse(event);
            
             if (data && data.user) {
-                controller.newMeeting(data.type, data.user)
+                controller.newMeeting(data.type, data.user, data.token)
                 .then(_data => {
                     if (_data) { 
                         if (data.user !== 'you') {
