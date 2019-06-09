@@ -25,6 +25,7 @@ export class GameComponent {
     isRestart = false;
     meetingsService$;
     dataService$;
+    isBot;
 
     @ViewChild(GameViewComponent)
     private gameViewComponent: GameViewComponent;
@@ -43,7 +44,6 @@ export class GameComponent {
     setState() {
         if (this.dataService.isStart() || this.authService.bot) {
             this.state = {alias: 'start', additional: null};
-            this.isBot = true;
         } else {
             this.state = {alias: 'waiting', additional: null};
         }
@@ -63,6 +63,7 @@ export class GameComponent {
         this.dataService$ = this.dataService.getCurrentGame()
         .subscribe(currentGame => {
             if (currentGame && currentGame.paths) {
+                if (this.authService.bot) { this.isBot = true; }
                 this.currentGame = this.checkers.getGame(currentGame);
                 const range = this.getRange();
                 
