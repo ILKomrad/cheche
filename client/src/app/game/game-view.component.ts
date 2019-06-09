@@ -30,10 +30,12 @@ export class GameViewComponent {
     stopRenderFlag = false;
     common = new ThreeCommon();
     @Input() state;
+    @Input() isBot;
     @ViewChild('container') container: ElementRef;
     @Output() step = new EventEmitter<any>();
     @Output() gameStart = new EventEmitter<any>();
     @Output() newGame = new EventEmitter<any>();
+    @Output() leaveGame = new EventEmitter<any>();
     viewState = 'splash';
 
     constructor(
@@ -44,6 +46,7 @@ export class GameViewComponent {
         this.onResize = this.onResize.bind(this);
         this.animator = new Animator(this.soundService);
         this.hideSplash = this.hideSplash.bind(this);
+        console.log( '%c constructor ', 'background: red' )
     }
 
     ngOnChanges() {
@@ -55,6 +58,7 @@ export class GameViewComponent {
     }
 
     createGameView(currentGame, range) {
+        console.log( '%c createGameView ', 'background: red' )
         this.isInit = true;
         this.range = range;
         this.currentGame = currentGame;
@@ -77,6 +81,11 @@ export class GameViewComponent {
             }
             this.stopRender();
         });
+    }
+
+    ngOnDestroy() {
+        window.removeEventListener('mousedown', this.onDocumentMouseDown);
+        window.removeEventListener('resize', this.onResize);
     }
 
     restartGameView(currentGame, range) {
@@ -243,5 +252,10 @@ export class GameViewComponent {
 
     createNewGame() {
         this.newGame.emit();
+    }
+
+    onLeaveGame() {
+        this.desk.clear();
+        this.leaveGame.emit();
     }
 }

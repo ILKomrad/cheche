@@ -58,7 +58,7 @@ export class AppComponent {
 
         this.httpService.listen('meetingCreated')
         .subscribe((data: any) => {
-          this.dataService.addData(data.meeting);
+          if (!this.authService.bot) {this.dataService.addData(data.meeting);}
           this.dataService.setCurrentMeeting(data.meeting, data.game);
           this.authService.inGame(data.meeting, data.game);
           this.router.navigate(['/game']);

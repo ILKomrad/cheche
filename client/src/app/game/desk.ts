@@ -31,11 +31,15 @@ export class Desk {
     }
 
     restart(chips) {
+        this.clear();
+        this.createChips(chips);
+    }
+
+    clear() {
         this.chips.forEach(c => {
             this.gameRenderer.removeFromScene(c.getMesh());
         });
         this.chips = [];
-        this.createChips(chips);
     }
 
     removeHighlightCells() {

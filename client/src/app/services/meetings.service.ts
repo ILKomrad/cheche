@@ -12,13 +12,13 @@ export class MeetingsService {
         private httpService: HttpService
     ) {}
 
-    createMeeting(type, user, token) {
-        this.httpService.sendMessage('createMeeting', {type, user, token});
+    createMeeting(type, user) {
+        this.httpService.sendMessage('createMeeting', {type, user});
     }
 
     selectMeeting(token, meetingId) {
         if (meetingId === 'robot') {
-            this.createMeeting('giveaway', 'you', token);
+            this.createMeeting('giveaway', 'you');
         } else {
             this.httpService.sendMessage('selectMeeting', {playerId: token, meetingId: meetingId});
         }
@@ -39,6 +39,10 @@ export class MeetingsService {
 
     stepHandler() {
         return this.step$;
+    }
+
+    removeSteps() {
+        this.step$.next({});
     }
 
     opponentStep(steps) {

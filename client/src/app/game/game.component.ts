@@ -1,6 +1,7 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
-import { DataService } from 'src/app/services/data.service';
+import { Router } from '@angular/router';
 
+import { DataService } from 'src/app/services/data.service';
 import { Checkers, StepGenerator } from './checkers/checkers';
 import { GameViewComponent } from 'src/app/game/game-view.component';
 import { MeetingsService } from 'src/app/services/meetings.service';
@@ -34,6 +35,7 @@ export class GameComponent {
         private authService: AuthService,
         private soundService: SoundService,
         private stepGeneratorService: StepGeneratorService,
+        private router: Router
     ) {
         this.checkers = Checkers;
     }
@@ -41,6 +43,7 @@ export class GameComponent {
     setState() {
         if (this.dataService.isStart() || this.authService.bot) {
             this.state = {alias: 'start', additional: null};
+            this.isBot = true;
         } else {
             this.state = {alias: 'waiting', additional: null};
         }
@@ -62,7 +65,7 @@ export class GameComponent {
             if (currentGame && currentGame.paths) {
                 this.currentGame = this.checkers.getGame(currentGame);
                 const range = this.getRange();
-             
+                
                 if (this.currentGame && !this.gameViewComponent.isInit) { 
                     this.gameViewComponent.createGameView(this.currentGame, range); 
                 }
@@ -94,6 +97,7 @@ export class GameComponent {
     ngOnDestroy() {
         this.meetingsService$.unsubscribe();
         this.dataService$.unsubscribe();
+        this.meetingsService.removeSteps()
       }
 
     updateInterface() {
@@ -241,5 +245,10 @@ export class GameComponent {
 
     onGameStart() {
         this.gameStart = true;
+    }
+
+    leaveGame() {
+        this.authService.inGame(null, null);
+        this.router.navigate(['/']);
     }
 }

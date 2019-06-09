@@ -221,7 +221,7 @@ class Controller {
         });
     }
 
-    createNewGame(user, type, secondUser) {   
+    createNewGame(user, type, secondUser, isBot) {   
         return new Promise(res => {
             const game = this.game.generate(type);
             game.init();
@@ -229,10 +229,15 @@ class Controller {
 
             if (secondUser) { game.addPlayer(secondUser.id); }
 
-            this.model.addGame(game).then(gameId => {
-                game.id = gameId;
+            if (isBot) {
+                game.id = Date.now();
                 res(game);
-            })
+            } else {
+                this.model.addGame(game).then(gameId => {
+                    game.id = gameId;
+                    res(game);
+                })
+            }
         });
     }
 
@@ -284,16 +289,16 @@ class Controller {
     }
 
     async createBot(type) {
-        const game = await this.createNewGame({id: 'you'}, type);
-        const meeting = await this.createNewMeeting({id: 'you', name: 'you'}, game);
-        const readyMeeting = await this.startMeeting({id: 777, name: 'bot'}, meeting);
-        game.players.push({id: 777, name: 'bot', range: 'b'});
+        const game = await this.createNewGame({id: 'you'}, type, null, true);
+        const meeting = await this.createNewMeeting({id: 'you', name: 'you'}, game, true);
+        const readyMeeting = await this.startMeeting({id: 777, name: 'bot'}, meeting, game);
+        // game.players.push({id: 777, name: 'bot', range: 'b'});
 
         return {meeting: readyMeeting, game};
     }
     
-    async startMeeting(secondPlayer, meeting) {
-        const currentGame = await this.getGame(meeting.currentGame.id);
+    async startMeeting(secondPlayer, meeting, isBot) {
+        const currentGame = isBot ? isBot : await this.getGame(meeting.currentGame.id);
 
         if (meeting.isStart !== 1) {
             if (meeting.score.length === 1) { 
@@ -302,12 +307,14 @@ class Controller {
             meeting.secondPlayer = secondPlayer.id;
             meeting.currentGame = currentGame;
             meeting.isStart = 1;
-            this.model.startMeeting(meeting);
+            
+            if (!isBot) { this.model.startMeeting(meeting); }
            
             if (currentGame.players.length === 1) { 
                 currentGame.players.push({ id: secondPlayer.id, range: 'b' });
             }
-            this.model.startGame(currentGame);
+            
+            if (!isBot) { this.model.startGame(currentGame); }
 
             return meeting;
         } else {
@@ -347,18 +354,23 @@ class Controller {
         });
     }
 
-    createNewMeeting(user, game) {
+    createNewMeeting(user, game, isBot) {
         return new Promise(res => {
             const meeting = new Meeting();
             meeting.addPlayer({id: user.id, name: user.name, category: user.category, score: 0});
             meeting.setCurrentGame(game.id, game.type);
             meeting.addGame(game);
             meeting.firstPlayer = user.id;
-           
-            this.model.addMeeting(meeting, user.id).then(meetingId => {
-                meeting.setId(meetingId);
+            
+            if (isBot) {
+                meeting.setId(Date.now());
                 res(meeting);
-            })
+            } else {
+                this.model.addMeeting(meeting, user.id).then(meetingId => {
+                    meeting.setId(meetingId);
+                    res(meeting);
+                })
+            }
         });
     }
 

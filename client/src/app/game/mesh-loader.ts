@@ -13,6 +13,7 @@ export class MeshLoader {
         'helvetica': 'assets/fonts/helvetiker_regular.typeface.json'
     }
     geom = {};
+    load = false;
     // treeTexture = new THREE.TextureLoader().load( 'assets/floor-wood.jpg' );
     // treeTextureSmall = new THREE.TextureLoader().load( 'assets/floor-wood-small.jpg' );
 
@@ -52,11 +53,17 @@ export class MeshLoader {
         })
     }
 
+    loadFinish() {
+        this.load = true;
+        return Promise.resolve();
+    }
+
     waitLoadData() {
         return Promise.all([
             this.loadFromTo(this.models, this.geom, 'json'),
             this.loadFromTo(this.textures, this.geom, 'texture'),
-            this.loadFromTo(this.fonts, this.geom, 'text')
+            this.loadFromTo(this.fonts, this.geom, 'text'),
+            this.loadFinish()
         ])
     }
 }
