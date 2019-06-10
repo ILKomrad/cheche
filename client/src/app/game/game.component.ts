@@ -99,6 +99,7 @@ export class GameComponent {
         this.meetingsService$.unsubscribe();
         this.dataService$.unsubscribe();
         this.meetingsService.removeSteps()
+        this.authService.bot = false;
       }
 
     updateInterface() {

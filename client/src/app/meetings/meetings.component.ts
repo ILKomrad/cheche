@@ -6,25 +6,7 @@ import { MeetingsService } from '../services/meetings.service';
 
 @Component({
     templateUrl: './meetings.component.html',
-    styles: [`
-        :host {
-            display: block;
-            padding: 4vmin;
-            height: 100%;
-            background: url('../../assets/table4.jpg') repeat;
-            color: #fff;
-        }
-
-        .inGame__title {
-            margin-bottom: 1.5rem;
-            text-align: center;
-            text-transform: uppercase;
-        }
-
-        .inGame .btn {
-            margin: .5rem;
-        }
-    `]
+    styleUrls: ['./meetings.component.scss']
 })
 export class MeetingsComponent {
     meetings;
@@ -76,7 +58,7 @@ export class MeetingsComponent {
     }
 
     continueGame() {
-        if (this.dataService.getCurrentMeeting() === undefined) {
+        if (this.dataService.getCurrentMeeting() !== undefined) {
             this.meetingsService.continueMeeting(this.authService.getTocken());
         }
     }

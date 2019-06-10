@@ -95,6 +95,7 @@ export class AppComponent {
         this.httpService.listen('continueGame')
         .subscribe((data: any) => {
           this.dataService.setCurrentMeeting(data.currentMeeting, data.currentGame);
+          this.router.navigate(['/game']);
         });
       });
     }

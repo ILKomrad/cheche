@@ -80,9 +80,11 @@ class Controller {
     async continueGame(token) {
         let data = {};
         let user = await this.getUserByToken(token);
+        console.log( user, data )
         data['currentMeeting'] = await this.getMeetingById(user.currentMeetingId);
+        console.log( user, data )
         data['currentGame'] = await this.getGame(user.inGame);
-        
+        console.log( user, data )
         return data;
     }
 

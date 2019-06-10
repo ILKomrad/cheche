@@ -7,6 +7,7 @@ import { DragAndDrop } from './drag-and-drop';
 import { Animator } from './animator';
 import { SoundService } from 'src/app/services/sound.service';
 import { ThreeCommon } from 'src/app/game/common';
+import { MeshLoaderService } from 'src/app/services/mesh-loader.service';
 
 declare var THREE: any;
 declare var TWEEN: any;
@@ -39,14 +40,15 @@ export class GameViewComponent {
     viewState = 'splash';
 
     constructor(
-        private soundService: SoundService
+        private soundService: SoundService,
+        private meshLoaderService: MeshLoaderService
     ) {
         this.gameRender = this.gameRender.bind(this);
         this.onDocumentMouseDown = this.onDocumentMouseDown.bind(this);
         this.onResize = this.onResize.bind(this);
         this.animator = new Animator(this.soundService);
         this.hideSplash = this.hideSplash.bind(this);
-        console.log( '%c constructor ', 'background: red' )
+        this.init = this.init.bind(this);
     }
 
     ngOnChanges() {
@@ -58,29 +60,36 @@ export class GameViewComponent {
     }
 
     createGameView(currentGame, range) {
-        console.log( '%c createGameView ', 'background: red' )
         this.isInit = true;
         this.range = range;
         this.currentGame = currentGame;
         this.gameRenderer = new Renderer();
         this.gameRenderer.createEnvironment(range, this.container.nativeElement);
         // this.gameRenderer.setCamera()
-        this.meshLoader = new MeshLoader();
-        this.meshLoader.waitLoadData().then(() => {  
-            this.startRender();   
-            this.desk = new Desk(this.gameRenderer, this.meshLoader, this.common);
-            this.desk.create(currentGame.cells, currentGame.paths);
-            this.dragAndDrop = new DragAndDrop(this.gameRenderer, this.desk.getDeskMesh());
-            window.addEventListener('mousedown', this.onDocumentMouseDown);
-            window.addEventListener('resize', this.onResize);
-            this.addTable();
+        // this.meshLoader = new MeshLoader();
 
-            if (this.currentGame.nextStep && (range === this.currentGame.whosTurn)) {
-            // if (this.currentGame.nextStep) {
-                this.showNextStep();
-            }
-            this.stopRender();
-        });
+        if (!this.meshLoaderService.load) {
+            this.meshLoaderService.waitLoadData().then(() => {  
+                this.init();
+            });
+        } else {
+            this.init();
+        }
+    }
+
+    init() {
+        this.startRender();   
+        this.desk = new Desk(this.gameRenderer, this.meshLoaderService, this.common);
+        this.desk.create(this.currentGame.cells, this.currentGame.paths);
+        this.dragAndDrop = new DragAndDrop(this.gameRenderer, this.desk.getDeskMesh());
+        window.addEventListener('mousedown', this.onDocumentMouseDown);
+        window.addEventListener('resize', this.onResize);
+        this.addTable();
+
+        if (this.currentGame.nextStep && (this.range === this.currentGame.whosTurn)) {
+            this.showNextStep();
+        }
+        this.stopRender();
     }
 
     ngOnDestroy() {
@@ -99,7 +108,7 @@ export class GameViewComponent {
             {x: -Math.PI / 2},
             '#fff'
         );
-        table.material.map = this.meshLoader.geom['table'];
+        table.material.map = this.meshLoaderService.geom['table'];
         table.position.set(0, -3, 0);
         table.name = name;
         table.receiveShadow = true;

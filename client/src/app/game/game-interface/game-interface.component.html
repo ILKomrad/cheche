@@ -22,3 +22,17 @@
         </h5>
     </div>
 </div>
+<div class="menu">
+    <button (click)="warnOpen('newGame')" title="new game" class="material-icons btn">autorenew</button>
+    <a routerLink="/" title="go to list" class="material-icons btn">list</a>
+    <button (click)="warnOpen()" title="sound off" class="material-icons btn">volume_up</button>
+</div>
+<div class="warn" [ngClass]="{'show': isWarnOpen}">
+    <div class="warn__message">
+        <h5 class="warn__title">{{warnMessage}}</h5>
+        <div class="flex">
+            <button class="btn">yes</button>
+            <button class="btn">no</button>
+        </div>
+    </div>
+</div>

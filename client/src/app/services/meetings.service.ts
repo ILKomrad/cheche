@@ -34,6 +34,7 @@ export class MeetingsService {
     }
 
     continueMeeting(token) {
+        console.log( 'continueGame', token )
         this.httpService.sendMessage('continueGame', {token});
     }
 

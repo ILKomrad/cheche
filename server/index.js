@@ -114,6 +114,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('continueGame', function(event) {
+        console.log( event )
         if (event) {
             const data = JSON.parse(event);
             controller.continueGame(data.token)

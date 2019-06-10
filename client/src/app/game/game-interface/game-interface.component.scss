@@ -143,3 +143,59 @@
     }
 }
 
+.menu {
+    position: absolute;
+    top: 50%;
+    left: 1%;
+    transform: translateY(-50%);
+
+    .btn {
+        font-size: 3rem;
+        margin: .5rem;
+        display: block;
+    }
+}
+
+.warn {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, .7);
+    z-index: 10;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .5s;
+
+    .flex {
+        justify-content: center;
+    }
+
+    &.show {
+        opacity: 1;
+        pointer-events: all;
+    }
+
+    &__message {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 2vmin;
+    }
+
+    &__title {
+        text-align: center;
+        text-transform: uppercase;
+        color: #fff;
+        font: 1.5rem $mainFont;
+        margin-bottom: 1rem;
+    }
+
+    .btn {
+        margin: 2vmin;
+        padding: 3vmin 5vmin;
+        font: 1.5rem $mainFont;
+    }
+}
