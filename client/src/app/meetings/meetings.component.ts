@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { AuthService } from 'src/app/services/auth.service';
 import { DataService } from 'src/app/services/data.service';
@@ -18,7 +19,8 @@ export class MeetingsComponent {
     constructor(
         private authService: AuthService,
         private dataService: DataService,
-        private meetingsService: MeetingsService
+        private meetingsService: MeetingsService,
+        private router: Router
     ) {}
 
     ngOnInit() {
@@ -51,15 +53,11 @@ export class MeetingsComponent {
 
     selectMeeting(meetingId) {
         this.meetingsService.selectMeeting(this.authService.getTocken(), meetingId);
-
-        if (meetingId === 'robot') {
-            this.authService.createBot();
-        }
     }
 
     continueGame() {
         if (this.dataService.getCurrentMeeting() !== undefined) {
-            this.meetingsService.continueMeeting(this.authService.getTocken());
+            this.router.navigate(['/game']);
         }
     }
 }

@@ -294,6 +294,8 @@ class Controller {
         const game = await this.createNewGame({id: 'you'}, type, null, true);
         const meeting = await this.createNewMeeting({id: 'you', name: 'you'}, game, true);
         const readyMeeting = await this.startMeeting({id: 777, name: 'bot'}, meeting, game);
+        game.bot = true;
+        meeting.bot = true;
         // game.players.push({id: 777, name: 'bot', range: 'b'});
 
         return {meeting: readyMeeting, game};

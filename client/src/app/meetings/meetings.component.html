@@ -15,7 +15,7 @@
             </div>
         </div>
     </div>
-    <div *ngIf="meetings" class="flex-col flex-col_8">
+    <div *ngIf="meetings" class="flex-col flex-col_6">
         <app-meeting-list (selectGame)="selectMeeting($event)" [userId]="userId" [meetings]="meetings"></app-meeting-list>
     </div>
 </div>

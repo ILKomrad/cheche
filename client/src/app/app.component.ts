@@ -38,12 +38,12 @@ export class AppComponent {
         } else {
           this.authService.setUser(data.user);
         }
-
+        this.dataService.setData(data.mettings);
+  
         if (!data.currentMeeting && !data.currentGame) {
           this.router.navigate(['/']);
         } else {
           this.dataService.setCurrentMeeting(data.currentMeeting, data.currentGame);
-          this.dataService.setData(data.mettings);
         }
 
         this.httpService.listen('currentMeeting')
@@ -79,6 +79,7 @@ export class AppComponent {
         .subscribe((data: any) => {
           this.dataService.setCurrentMeeting(data, data.currentGame);
           this.router.navigate(['/game']);
+          this.authService.inGame(data.id, data.currentGame.id);
         });
 
         this.httpService.listen('makeStep')

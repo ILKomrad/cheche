@@ -42,7 +42,7 @@ export class GameComponent {
     }
 
     setState() {
-        if (this.dataService.isStart() || this.authService.bot) {
+        if (this.dataService.isStart() || this.currentGame.bot) {
             this.state = {alias: 'start', additional: null};
         } else {
             this.state = {alias: 'waiting', additional: null};
@@ -63,8 +63,8 @@ export class GameComponent {
         this.dataService$ = this.dataService.getCurrentGame()
         .subscribe(currentGame => {
             if (currentGame && currentGame.paths) {
-                if (this.authService.bot) { this.isBot = true; }
                 this.currentGame = this.checkers.getGame(currentGame);
+                if (this.currentGame.bot) { this.isBot = true; }
                 const range = this.getRange();
                 
                 if (this.currentGame && !this.gameViewComponent.isInit) { 
@@ -86,7 +86,7 @@ export class GameComponent {
                 this.gameViewComponent.updateCurrentGame(this.currentGame);
             }
         });
-
+        this.meetingsService.removeSteps();
         this.meetingsService$ = this.meetingsService.stepHandler().subscribe(async(steps) => {
             console.log('sub', steps.steps)
             if (steps.steps) {
@@ -99,7 +99,7 @@ export class GameComponent {
         this.meetingsService$.unsubscribe();
         this.dataService$.unsubscribe();
         this.meetingsService.removeSteps()
-        this.authService.bot = false;
+        // this.authService.bot = false;
       }
 
     updateInterface() {
@@ -114,7 +114,7 @@ export class GameComponent {
     }
 
     getRange() {
-        const userId = this.authService.bot ? 'you' : this.authService.getUserId();
+        const userId = this.currentGame.bot ? 'you' : this.authService.getUserId();
         let range;
       
         this.currentGame.players.forEach(player => {
@@ -215,7 +215,7 @@ export class GameComponent {
             this.steps.push({step, hitChips});
            
             if (!this.currentGame.nextStep || (this.currentGame.nextStep.length === 0)) {
-                if (!this.authService.bot) {
+                if (!this.currentGame.bot) {
                     this.meetingsService.makeStep(this.steps.slice(), this.authService.getPlayerId()); 
                 } else {
                     if (!this.currentGame.whoWin) {
@@ -227,6 +227,7 @@ export class GameComponent {
                                 this.currentGame.makeStep(step.step, data.steps.length);
                             });
                             this.currentGame.setNextStep();
+                            this.dataService.setCurrentGame(this.currentGame);
                             this.meetingsService.opponentStep(data.steps);   
                             this.steps = [];    
                             gen = null;

@@ -7,7 +7,7 @@ export class MeetingsPipe {
     transform(meetings, userId) {
         if (userId) {
             return meetings.filter(m => {
-                return m.firstPlayer !== userId;
+                return (m.firstPlayer !== userId && !m.bot);
             });
         } else {
             return meetings;

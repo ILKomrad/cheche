@@ -11,7 +11,6 @@ export class AuthService {
     isLoggedIn = new BehaviorSubject<any>(null);
     user: User = new User();
     state = 'guest';
-    bot = false;
 
     constructor(
         private httpService: HttpService
@@ -68,6 +67,7 @@ export class AuthService {
     }
 
     setState() {
+        console.warn( this.user.currentMeetingId )
         if (this.user.currentMeetingId !== null) {
             this.state = 'inGame';
         } else if (this.user.id !== null) {
@@ -99,9 +99,5 @@ export class AuthService {
 
     getTocken() {
         return localStorage.getItem('checkers_playerId');
-    }
-
-    createBot() {
-        this.bot = true;
     }
 }
