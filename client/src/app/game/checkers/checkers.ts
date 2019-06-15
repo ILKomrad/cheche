@@ -53,8 +53,7 @@ export class CheckersGame {
 
         if (isQueen) {
             hitChips = this.getHitChipsByQueen(from, to, paths);
-            
-            if (hitChips && !this.checkHits(hitChips)) { return; }
+            // if (hitChips && !this.checkHits(hitChips)) { return; } // dont need becose check (hitChips.length >= 2) in getHitChipsByQueen
         } else {
             hitChips = this.getHitChips(from, to, paths);
 
@@ -72,7 +71,7 @@ export class CheckersGame {
                 flag = Math.abs(hitChips[index + 1][0] - hit[0]) > 1;
             }
         });
-
+        
         return flag;
     }
 
@@ -160,10 +159,10 @@ export class CheckersGame {
             fromX += 1 * directionX;
             fromY += 1 * directionY;
             let hitRange = _paths[fromY][fromX];
-
+            
             if (hitRange !== '0') { hitChips.push([fromX, fromY]); }
 
-            if ((range === this.transformRange(hitRange)) || (hitChips.length >= 2)) {
+            if ((range === this.transformRange(hitRange)) || (hitChips.length >= 2) || (hitRange === 'h')) {
                 hitChips = undefined;  
                 break;
             }
@@ -184,7 +183,7 @@ export class CheckersGame {
                 hitPosY = from[1] + deltaY / 2,
                 hitRange = this.transformRange(_paths[hitPosY][hitPosX])
 
-            if ((range !== hitRange) && (hitRange !== '0')) { hitChips.push([hitPosX, hitPosY]); }
+            if ((range !== hitRange) && (hitRange !== '0') && (hitRange !== 'h')) { hitChips.push([hitPosX, hitPosY]); }
         }
 
         return hitChips;
@@ -197,7 +196,7 @@ export class CheckersGame {
         if (hits !== undefined) {
             this.stepAction(step, hits, multistep);
         } 
-      
+       
         return hits;
     }
 
@@ -211,10 +210,25 @@ export class CheckersGame {
         if (withHit) {
             hits = this.checkAttack(step);
         }
-        
+        console.log( hits )
         if (!hits || (hits.length === 0)) {
             this.whosTurn = this.transformRange(range) === 'w' ? 'b' : 'w';
+            this.removeHits();
         }
+    }
+
+    removeHits() {
+        this.paths = this.paths.map(row => {
+            row = row.map(col => {
+                if (col === 'h') {
+                    col = '0';
+                }
+
+                return col;
+            })
+
+            return row;
+        })
     }
 
     stepAction(step, hits, multistep) {   
@@ -226,7 +240,7 @@ export class CheckersGame {
         if (withHit) {
             hits.forEach(h => {
                 let range = this.paths[h[1]][h[0]];
-                this.paths[h[1]][h[0]] = '0';
+                this.paths[h[1]][h[0]] = 'h';
 
                 if (this.transformRange(range) === 'b') {
                     this.hitsChips.w.push(range);
@@ -235,7 +249,7 @@ export class CheckersGame {
                 }
             })
         }
-        
+        console.log( this.paths )
         this.postStepProcessor(step, userRange, withHit, multistep); 
     }
 

@@ -77,6 +77,16 @@ export class GameViewComponent {
         }
     }
 
+    async removeAllHits(steps) {
+        let z = 0;
+        this.startRender();
+        while (z < steps.length) {
+            await this.removeHits(steps[z].hitChips);
+            z++;
+        }
+        this.stopRender();
+    } 
+
     init() {
         this.startRender();   
         this.desk = new Desk(this.gameRenderer, this.meshLoaderService, this.common);
@@ -99,6 +109,11 @@ export class GameViewComponent {
 
     restartGameView(currentGame, range) {
         this.desk.restart(currentGame.paths);
+        this.currentGame = currentGame;
+        console.log( this.currentGame.nextStep, range, this.currentGame.whosTurn, this.currentGame )
+        if (this.currentGame.nextStep && (range === this.currentGame.whosTurn)) {
+            this.showNextStep();
+        }
         this.stopRender();
     }
 
@@ -251,6 +266,7 @@ export class GameViewComponent {
         let i = 0;
         while (i < hitChips.length) {
             let chipName = hitChips[i];
+            console.log( chipName, hitChips )
             let chip = this.desk.getChip(chipName);
             await this.animator.removeFromDesk(chip.getMaterial())
             this.gameRenderer.removeFromScene(chip.getMesh());

@@ -181,10 +181,10 @@ export class GameComponent {
         
         await this.postStep(ifOpponent, step, multiStep);
 
-        if (hitChips.length) {
-            this.soundService.reproduceSound('remove');
-            await this.gameViewComponent.removeHits(hitChips);
-        }
+        // if (hitChips.length) {
+        //     this.soundService.reproduceSound('remove');
+        //     await this.gameViewComponent.removeHits(hitChips);
+        // }
         this.gameViewComponent.stopRender();
     }
 
@@ -204,6 +204,8 @@ export class GameComponent {
 
             i++;
         }
+
+        await this.gameViewComponent.removeAllHits(steps);
     }
 
     async onStep(step) {
@@ -216,9 +218,10 @@ export class GameComponent {
             this.steps.push({step, hitChips});
            
             if (!this.currentGame.nextStep || (this.currentGame.nextStep.length === 0)) {
+                await this.gameViewComponent.removeAllHits(this.steps);
+
                 if (!this.currentGame.bot) {
-                    console.log('ddddd')
-                    // this.meetingsService.makeStep(this.steps.slice(), this.authService.getPlayerId()); 
+                    this.meetingsService.makeStep(this.steps.slice(), this.authService.getPlayerId()); 
                 } else {
                     if (!this.currentGame.whoWin) {
                         setTimeout(() => {

@@ -29,26 +29,26 @@ class Checkers {
             ['w', 'b', 'w', 'b', 'w', 'b', 'w', 'b'],
             ['b', 'w', 'b', 'w', 'b', 'w', 'b', 'w']
         ]; 
-        // this.paths = [
-        //     ['0', 'b', '0', 'b', '0', 'b', '0', 'b'],
-        //     ['b', '0', 'b', '0', 'b', '0', 'b', '0'],
-        //     ['0', 'b', '0', 'b', '0', 'b', '0', 'b'],
-        //     ['0', '0', '0', '0', '0', '0', '0', '0'],
-        //     ['0', '0', '0', '0', '0', '0', '0', '0'],
-        //     ['w', '0', 'w', '0', 'w', '0', 'w', '0'],
-        //     ['0', 'w', '0', 'w', '0', 'w', '0', 'w'],
-        //     ['w', '0', 'w', '0', 'w', '0', 'w', '0']
-        // ];
         this.paths = [
+            ['0', 'b', '0', 'b', '0', 'b', '0', 'b'],
+            ['b', '0', 'b', '0', 'b', '0', 'b', '0'],
+            ['0', 'b', '0', 'b', '0', 'b', '0', 'b'],
             ['0', '0', '0', '0', '0', '0', '0', '0'],
-            ['0', '0', 'w', '0', 'w', '0', '0', '0'],
             ['0', '0', '0', '0', '0', '0', '0', '0'],
-            ['0', '0', '0', '0', 'w', '0', 'w', '0'],
-            ['0', '0', '0', 'b', '0', '0', '0', '0'],
-            ['0', '0', 'w', '0', '0', '0', 'w', '0'],
-            ['0', '0', '0', 'w', '0', 'w', '0', 'w'],
-            ['0', '0', '0', '0', 'w', '0', 'w', '0']
+            ['w', '0', 'w', '0', 'w', '0', 'w', '0'],
+            ['0', 'w', '0', 'w', '0', 'w', '0', 'w'],
+            ['w', '0', 'w', '0', 'w', '0', 'w', '0']
         ];
+        // this.paths = [
+        //     ['0', '0', '0', '0', '0', '0', '0', '0'],
+        //     ['0', '0', 'w', '0', 'w', '0', '0', '0'],
+        //     ['0', '0', '0', '0', '0', '0', '0', '0'],
+        //     ['b', '0', '0', '0', '0', '0', 'ww', '0'],
+        //     ['0', 'b', '0', 'b', '0', '0', '0', '0'],
+        //     ['0', '0', '0', '0', 'b', '0', 'w', '0'],
+        //     ['0', 'b', '0', '0', '0', 'w', '0', 'w'],
+        //     ['0', '0', '0', '0', 'w', '0', 'w', '0']
+        // ];
         this.hitsChips = {
             'w': [],
             'b': []
@@ -108,8 +108,6 @@ class Checkers {
        
         if (isQueen) {
             hitChips = this.getHitChipsByQueen(from, to, paths);
-           
-            if (hitChips && !this.checkHits(hitChips)) { return; }
         } else {
             hitChips = this.getHitChips(from, to, paths);
 
@@ -117,18 +115,6 @@ class Checkers {
         }
        
         return hitChips;
-    }
-
-    checkHits(hitChips) {
-        let flag = true;
-
-        hitChips.forEach((hit, index) => {
-            if (flag && hitChips[index + 1]) {
-                flag = Math.abs(hitChips[index + 1][0] - hit[0]) > 1;
-            }
-        });
-
-        return flag;
     }
 
     transformRange(range) {
@@ -213,7 +199,7 @@ class Checkers {
                 hitChips.push([fromX, fromY]); 
             }
             
-            if ((range === this.transformRange(hitRange)) || (hitChips.length >= 2)) { 
+            if ((range === this.transformRange(hitRange)) || (hitChips.length >= 2) || (hitRange === 'h')) {
                 hitChips = undefined;  
                 break;
             }
@@ -234,7 +220,7 @@ class Checkers {
                 hitPosY = from[1] + deltaY / 2,
                 hitRange = this.transformRange(_paths[hitPosY][hitPosX])
                 
-            if ((range !== hitRange) && (hitRange !== '0')) { hitChips.push([hitPosX, hitPosY]); }
+            if ((range !== hitRange) && (hitRange !== '0') && (hitRange !== 'h')) { hitChips.push([hitPosX, hitPosY]); }
         }
 
         return hitChips;
@@ -256,10 +242,26 @@ class Checkers {
         if (withHit) {
             hits = this.checkAttack(step);
         }
-       
+        console.log( hits )
         if (!hits || (hits.length === 0)) {
             this.whosTurn = this.transformRange(range) === 'w' ? 'b' : 'w';
+            this.removeHits();
         }
+    }
+
+    removeHits() {
+        this.paths = this.paths.map(row => {
+            row = row.map(col => {
+                if (col === 'h') {
+                    col = '0';
+                }
+
+                return col;
+            })
+
+            return row;
+        })
+        console.log( this.paths )
     }
 
     stepAction(step, hits, multistep) {   
@@ -271,7 +273,7 @@ class Checkers {
         if (withHit) {
             hits.forEach(h => {
                 let range = this.paths[h[1]][h[0]];
-                this.paths[h[1]][h[0]] = '0';
+                this.paths[h[1]][h[0]] = 'h';
 
                 if (this.transformRange(range) === 'b') {
                     this.hitsChips.w.push(range);
