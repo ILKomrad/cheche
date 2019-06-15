@@ -163,7 +163,7 @@ export class CheckersGame {
 
             if (hitRange !== '0') { hitChips.push([fromX, fromY]); }
 
-            if (range === this.transformRange(hitRange)) { 
+            if ((range === this.transformRange(hitRange)) || (hitChips.length >= 2)) {
                 hitChips = undefined;  
                 break;
             }
@@ -205,13 +205,13 @@ export class CheckersGame {
         return this.whosTurn;
     }
 
-    setTurn(range, pos, withHit = false) {
+    setTurn(range, step, withHit = false) {
         let hits;
         
         if (withHit) {
-            hits = this.checkAttack(pos);
+            hits = this.checkAttack(step);
         }
-
+        
         if (!hits || (hits.length === 0)) {
             this.whosTurn = this.transformRange(range) === 'w' ? 'b' : 'w';
         }
@@ -250,19 +250,19 @@ export class CheckersGame {
             this.newQueen = null;
         }
         
-        this.setTurn(userRange, step.to, withHit);
+        this.setTurn(userRange, step, withHit);
        
         if (this.whosTurn === this.transformRange(range)) {
             this.setNextStep(step);
         } else {
             this.nextStep = [];
         }
-
+       
         this.whoWin = this.isGameOver();
     }
 
-    checkAttack(pos) {
-        let hits = this.getPosibleHits(pos);
+    checkAttack(step) {
+        let hits = this.getPosibleHits(step.to);
 
         return hits;
     }
@@ -385,7 +385,7 @@ export class CheckersGame {
 
     setNextStep(step = null) {
         this.nextStep = [];
-
+        
         if (step) {
             let hits = this.getPosibleHits(step.to);
                        
@@ -564,8 +564,8 @@ export class StepGenerator {
 
         this.game.setNextStep();
         let nextStep = this.game.nextStep.slice();
-        this.reset();
-        
+        //this.reset();
+        console.log( nextStep )
         if (nextStep.length) { 
             let hitsStep = [];
             nextStep.forEach(step => {
@@ -574,13 +574,14 @@ export class StepGenerator {
                 hitsStep.push(possibleStep);
                 this.reset();
             });
+            console.log( hitsStep )
             bestStep = this.getBestHitStep(hitsStep);
             bestStep = this.formatStep(bestStep);
         } else {
             bestStep = this.game.getPosibleSteps();
             bestStep = this.getBestStep(bestStep);
         }
-    
+        
         return {steps: bestStep, game: this.game};
     }
 
@@ -602,7 +603,7 @@ export class StepGenerator {
         if (best.length === 0) {
             best = steps[ThreeCommon.randomInteger(0, steps.length - 1)];
         }
-
+        
         return best;
     }
 
@@ -615,9 +616,21 @@ export class StepGenerator {
         return steps;
     }
 
-    getAllHits(name, possibleHits) {
-        let hits = this.game.getPosibleHits([name[0], name[1]]);
+    checkPossibleHits(steps) {
+        const step = steps[0].step;
+        const paths = ThreeCommon.copyArray(this.game.paths);
+        paths[steps.from[1]][step.from[0]] = this.game.paths[step.to[1]][step.to[0]];
+        // steps = hits.filter(h => {
+        //     return this.checkValidStep(h.from, h.to, true, paths);
+        // });
+        return steps;
+    }
 
+    getAllHits(name, possibleHits) {
+        // const paths = ThreeCommon.copyArray(this.game.paths);
+        const hits = this.game.getPosibleHits([name[0], name[1]]),
+            range = this.game.transformRange(this.game.paths[name[1]][name[0]]);
+      
         if (hits.length) {
             possibleHits.push(hits);
             this.game.makeStep(hits[0]);

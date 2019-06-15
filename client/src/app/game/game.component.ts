@@ -82,7 +82,8 @@ export class GameComponent {
                 }
                 
                 this.updateInterface();
-                // this.currentGame.setNextStep();
+
+                if (!this.currentGame.nextStep) { this.currentGame.setNextStep(); }
                 this.gameViewComponent.updateCurrentGame(this.currentGame);
             }
         });
@@ -216,13 +217,15 @@ export class GameComponent {
            
             if (!this.currentGame.nextStep || (this.currentGame.nextStep.length === 0)) {
                 if (!this.currentGame.bot) {
-                    this.meetingsService.makeStep(this.steps.slice(), this.authService.getPlayerId()); 
+                    console.log('ddddd')
+                    // this.meetingsService.makeStep(this.steps.slice(), this.authService.getPlayerId()); 
                 } else {
                     if (!this.currentGame.whoWin) {
                         setTimeout(() => {
                             let gen = new StepGenerator();
                             gen.init(this.currentGame);
                             let data = gen.getStep();
+                            console.log('data', data)
                             data.steps.forEach(step => {
                                 this.currentGame.makeStep(step.step, data.steps.length);
                             });

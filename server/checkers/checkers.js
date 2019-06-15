@@ -29,26 +29,26 @@ class Checkers {
             ['w', 'b', 'w', 'b', 'w', 'b', 'w', 'b'],
             ['b', 'w', 'b', 'w', 'b', 'w', 'b', 'w']
         ]; 
-        this.paths = [
-            ['0', 'b', '0', 'b', '0', 'b', '0', 'b'],
-            ['b', '0', 'b', '0', 'b', '0', 'b', '0'],
-            ['0', 'b', '0', 'b', '0', 'b', '0', 'b'],
-            ['0', '0', '0', '0', '0', '0', '0', '0'],
-            ['0', '0', '0', '0', '0', '0', '0', '0'],
-            ['w', '0', 'w', '0', 'w', '0', 'w', '0'],
-            ['0', 'w', '0', 'w', '0', 'w', '0', 'w'],
-            ['w', '0', 'w', '0', 'w', '0', 'w', '0']
-        ];
         // this.paths = [
-        //     ['0', '0', '0', '0', '0', '0', '0', '0'],
-        //     ['0', '0', '0', '0', '0', '0', '0', '0'],
-        //     ['0', 'b', '0', 'b', '0', 'b', '0', '0'],
+        //     ['0', 'b', '0', 'b', '0', 'b', '0', 'b'],
+        //     ['b', '0', 'b', '0', 'b', '0', 'b', '0'],
+        //     ['0', 'b', '0', 'b', '0', 'b', '0', 'b'],
         //     ['0', '0', '0', '0', '0', '0', '0', '0'],
         //     ['0', '0', '0', '0', '0', '0', '0', '0'],
         //     ['w', '0', 'w', '0', 'w', '0', 'w', '0'],
         //     ['0', 'w', '0', 'w', '0', 'w', '0', 'w'],
         //     ['w', '0', 'w', '0', 'w', '0', 'w', '0']
         // ];
+        this.paths = [
+            ['0', '0', '0', '0', '0', '0', '0', '0'],
+            ['0', '0', 'w', '0', 'w', '0', '0', '0'],
+            ['0', '0', '0', '0', '0', '0', '0', '0'],
+            ['0', '0', '0', '0', 'w', '0', 'w', '0'],
+            ['0', '0', '0', 'b', '0', '0', '0', '0'],
+            ['0', '0', 'w', '0', '0', '0', 'w', '0'],
+            ['0', '0', '0', 'w', '0', 'w', '0', 'w'],
+            ['0', '0', '0', '0', 'w', '0', 'w', '0']
+        ];
         this.hitsChips = {
             'w': [],
             'b': []
@@ -108,14 +108,14 @@ class Checkers {
        
         if (isQueen) {
             hitChips = this.getHitChipsByQueen(from, to, paths);
-            
+           
             if (hitChips && !this.checkHits(hitChips)) { return; }
         } else {
             hitChips = this.getHitChips(from, to, paths);
 
             if (!this.checkFarAndDirection(from, to, hitChips, isQueen)) { return; }
         }
-
+       
         return hitChips;
     }
 
@@ -209,14 +209,16 @@ class Checkers {
             fromY += 1 * directionY;
             let hitRange = _paths[fromY][fromX];
             
-            if (hitRange !== '0') { hitChips.push([fromX, fromY]); }
-
-            if (range === this.transformRange(hitRange)) { 
+            if (hitRange !== '0') { 
+                hitChips.push([fromX, fromY]); 
+            }
+            
+            if ((range === this.transformRange(hitRange)) || (hitChips.length >= 2)) { 
                 hitChips = undefined;  
                 break;
             }
         }
-
+       
         return hitChips;
     }
 
@@ -248,11 +250,11 @@ class Checkers {
         } 
     }
 
-    setTurn(range, pos, withHit = false) {
+    setTurn(range, step, withHit = false) {
         let hits;
 
         if (withHit) {
-            hits = this.checkAttack(pos);
+            hits = this.checkAttack(step);
         }
        
         if (!hits || (hits.length === 0)) {
@@ -293,13 +295,13 @@ class Checkers {
             this.newQueen = null;
         }
 
-        this.setTurn(range, step.to, withHit);
+        this.setTurn(range, step, withHit);
         this.whoWin = this.isGameOver();
         this.setNextStep();
     }
 
-    checkAttack(pos) {
-        let hits = this.getPosibleHits(pos);
+    checkAttack(step) {
+        let hits = this.getPosibleHits(step.to);
 
         return hits;
     }
@@ -445,7 +447,7 @@ class Checkers {
                     
                     if (range === this.whosTurn) {
                         let hits = this.getPosibleHits([colIndex, rowIndex]);
-                       
+                        
                         if (hits && hits.length) {
                             this.nextStep = this.nextStep.concat(hits);
                         }
