@@ -56,12 +56,15 @@ export class DragAndDrop {
         function drop(event) {
             if (onDrop) {
                 const intersects = th.getIntersects(event);
+                let cellName;
                 
                 for (let item in intersects) {       
                     if (intersects[item].object.meshType === 'cell') {
-                        onDrop(intersects[item].object.name);
+                        cellName = intersects[item].object.name
                     }
                 }
+
+                onDrop(cellName);
             }
 
             window.removeEventListener('mousemove', drug);

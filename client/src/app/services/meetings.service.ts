@@ -53,4 +53,8 @@ export class MeetingsService {
     newGame(tokenId) {
         this.httpService.sendMessage('getData', {token: tokenId});
     }
+
+    finishGame(tokenId) {
+        this.httpService.sendMessage('finishGame', {token: tokenId});
+    }
 }

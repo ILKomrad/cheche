@@ -1,10 +1,17 @@
 <div class="wrap">
-    <div *ngIf="result" class="win">
-        <h5 class="win__title">YOU WIN</h5>   
-    </div>
-    <div *ngIf="!result" class="loose">
-        <h5 class="win__title">YOU LOOSE</h5>   
-    </div>
+    <ng-container *ngIf="!meetingFinish">
+        <div *ngIf="result" class="win">
+            <h5 class="win__title">YOU WIN</h5>   
+        </div>
+        <div *ngIf="!result" class="loose">
+            <h5 class="win__title">YOU LOOSE</h5>   
+        </div>
+    </ng-container>
+    <ng-container *ngIf="meetingFinish">
+        <div class="win">
+            <h5 class="win__title">the meeting is over</h5>   
+        </div>
+    </ng-container>
     <div class="content">
         <ng-content></ng-content>
     </div>

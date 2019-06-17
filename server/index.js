@@ -77,7 +77,7 @@ io.on('connection', (socket) => {
             controller.selectMeeting(data.playerId, data.meetingId)
             .then((data) => {
                 if (data) {
-                    socket.broadcast.emit('removeMeeting', JSON.stringify(data.meeting.id));
+                    io.emit('removeMeeting', JSON.stringify(data.meeting.id));
                     socket.emit('startMeeting', JSON.stringify(data.meeting));
                     io.to(data.socketId + '').emit('startMeeting', JSON.stringify(data.meeting));
                 }
@@ -103,7 +103,20 @@ io.on('connection', (socket) => {
                 socket.emit('currentMeeting', JSON.stringify(event));
             });
         }
-    })
+    });
+
+    socket.on('finishGame', (event) => {
+        if (event) {
+            const data = JSON.parse(event);
+            controller.onNewGame(data.token)
+            .then((event) => {
+                socket.emit('currentMeeting', JSON.stringify(event));
+                io.to(event.opponentSocketId + '').emit('opponentStep', 
+                    JSON.stringify({game: event.oldGame}
+                ));
+            });
+        }
+    });
 
     socket.on('disconnect', function() {
         console.log('disconnect', socket.id, playerId);

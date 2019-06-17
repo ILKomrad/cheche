@@ -26,6 +26,7 @@ export class GameComponent {
     meetingsService$;
     dataService$;
     isBot;
+    soundState;
 
     @ViewChild(GameViewComponent)
     private gameViewComponent: GameViewComponent;
@@ -85,22 +86,32 @@ export class GameComponent {
 
                 if (!this.currentGame.nextStep) { this.currentGame.setNextStep(); }
                 this.gameViewComponent.updateCurrentGame(this.currentGame);
+            } else if (this.isStart) {
+                this.gameViewComponent.opponentDisconect();
             }
+            console.log( currentGame, this.isStart );
         });
         this.meetingsService.removeSteps();
         this.meetingsService$ = this.meetingsService.stepHandler().subscribe(async(steps) => {
-            console.log('sub', steps.steps)
             if (steps.steps) {
                 this.stepHandler(steps.steps);
+            } else if (this.currentGame && this.currentGame.whoWin) {
+                this.setState();
             }
-        })
+        });
+        this.soundService.getState().subscribe(state => {
+            this.soundState = state;
+        });
+    }
+
+    onSoundSwitch() {
+        this.soundService.soundToggle();
     }
 
     ngOnDestroy() {
         this.meetingsService$.unsubscribe();
         this.dataService$.unsubscribe();
         this.meetingsService.removeSteps()
-        // this.authService.bot = false;
       }
 
     updateInterface() {
@@ -177,14 +188,8 @@ export class GameComponent {
     async makeStep(hitChips, step, ifOpponent = false, multiStep = false) {
         this.gameViewComponent.startRender();
         await this.gameViewComponent.makeStep(step.from, step.to, ifOpponent);
-        this.soundService.reproduceSound('step');
-        
+        this.soundService.reproduceSound('step');        
         await this.postStep(ifOpponent, step, multiStep);
-
-        // if (hitChips.length) {
-        //     this.soundService.reproduceSound('remove');
-        //     await this.gameViewComponent.removeHits(hitChips);
-        // }
         this.gameViewComponent.stopRender();
     }
 
@@ -210,7 +215,7 @@ export class GameComponent {
 
     async onStep(step) {
         let hitChips = this.currentGame.makeStep(step);
-        
+
         if (hitChips === undefined) {
             this.gameViewComponent.cancelStep(step.from);
         } else {
@@ -218,7 +223,7 @@ export class GameComponent {
             this.steps.push({step, hitChips});
            
             if (!this.currentGame.nextStep || (this.currentGame.nextStep.length === 0)) {
-                await this.gameViewComponent.removeAllHits(this.steps);
+                this.gameViewComponent.removeAllHits(this.steps);
 
                 if (!this.currentGame.bot) {
                     this.meetingsService.makeStep(this.steps.slice(), this.authService.getPlayerId()); 
@@ -228,7 +233,6 @@ export class GameComponent {
                             let gen = new StepGenerator();
                             gen.init(this.currentGame);
                             let data = gen.getStep();
-                            console.log('data', data)
                             data.steps.forEach(step => {
                                 this.currentGame.makeStep(step.step, data.steps.length);
                             });
@@ -250,6 +254,12 @@ export class GameComponent {
         this.isStart = false;
         this.isRestart = true;
         this.meetingsService.newGame(this.authService.getPlayerId());
+    }
+
+    finishGame() {
+        this.isStart = false;
+        this.isRestart = true;
+        this.meetingsService.finishGame(this.authService.getPlayerId());
     }
 
     onGameStart() {

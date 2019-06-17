@@ -80,12 +80,40 @@ class Controller {
     async continueGame(token) {
         let data = {};
         let user = await this.getUserByToken(token);
-        console.log( user, data )
         data['currentMeeting'] = await this.getMeetingById(user.currentMeetingId);
-        console.log( user, data )
         data['currentGame'] = await this.getGame(user.inGame);
-        console.log( user, data )
         return data;
+    }
+
+    async onNewGame(token) {
+        const user = await this.getUserByToken(token);
+        let currentGame, opponentId, data = {};
+
+        if (user && (user.inGame !== null)) {
+            let currentGame = await this.getGame(user.inGame);
+            data['oldGame'] = this.game.generate(currentGame.type);
+            data['oldGame'].setData(currentGame);
+            data['oldGame'].win(user.id);
+            const meeting = await this.finishGame(user.currentMeetingId, data['oldGame']); 
+            await this.model.finishGame(meeting);
+            await this.model.gameWin(data['oldGame'].whoWin, data['oldGame'].id);
+            const _data = await this.newGame(meeting);
+            data['user'] = await this.getUserByToken(token); 
+            data['currentMeetingId'] = _data['meeting'].id;
+            data['currentMeeting'] = _data['meeting'];
+            const _currentGame = await this.getGame(_data.game.id);
+            data['currentGame'] = this.game.generate(_currentGame.type);
+            data['currentGame'].setData(_currentGame);
+            data['oldGame'].players.forEach(player => {
+                if (player.id !== user.id) {
+                    opponentId = player.id;
+                } 
+            }); 
+            const opponent = await this.getUser(opponentId);
+            data['opponentSocketId'] = opponent.socketId;
+            
+            return data;
+        }
     }
 
     login(player, socketId) {
@@ -221,6 +249,8 @@ class Controller {
         meeting.score.forEach(player => {
             this.model.setMeetingToUser(player.id, meeting.id, game.id);
         });
+
+        return {game, meeting: _meeting};
     }
 
     createNewGame(user, type, secondUser, isBot) {   
@@ -380,14 +410,16 @@ class Controller {
 
     async removeMeeting(token) {
         const user = await this.getUserByToken(token);
-        const meeting = await this.getMeetingById(user.currentMeetingId);
-        this.model.removeMeeting(user.currentMeetingId);
-        this.model.removeGame(user.inGame);
-        this.model.leaveMeeting(user.id);
+        const meeting = await this.getMeetingById(user.currentMeetingId), that = this;
+        that.model.removeMeeting(user.currentMeetingId);
+        that.model.removeGame(user.inGame);
+        that.model.leaveMeeting(user.id);
 
         if (meeting && meeting.score) {
             meeting.score.forEach(player => {
-                if (player.id !== user.id) { this.model.leaveMeeting(player.id); }
+                if (player.id !== user.id) { 
+                    that.model.leaveMeeting(player.id); 
+                }
             });
         }
 

@@ -29,26 +29,26 @@ class Checkers {
             ['w', 'b', 'w', 'b', 'w', 'b', 'w', 'b'],
             ['b', 'w', 'b', 'w', 'b', 'w', 'b', 'w']
         ]; 
-        // this.paths = [
-        //     ['0', 'b', '0', 'b', '0', 'b', '0', 'b'],
-        //     ['b', '0', 'b', '0', 'b', '0', 'b', '0'],
-        //     ['0', 'b', '0', 'b', '0', 'b', '0', 'b'],
-        //     ['0', '0', '0', '0', '0', '0', '0', '0'],
-        //     ['0', '0', '0', '0', '0', '0', '0', '0'],
-        //     ['w', '0', 'w', '0', 'w', '0', 'w', '0'],
-        //     ['0', 'w', '0', 'w', '0', 'w', '0', 'w'],
-        //     ['w', '0', 'w', '0', 'w', '0', 'w', '0']
-        // ];
         this.paths = [
+            ['0', 'b', '0', 'b', '0', 'b', '0', 'b'],
+            ['b', '0', 'b', '0', 'b', '0', 'b', '0'],
+            ['0', 'b', '0', 'b', '0', 'b', '0', 'b'],
             ['0', '0', '0', '0', '0', '0', '0', '0'],
-            ['0', '0', 'w', '0', 'w', '0', '0', '0'],
             ['0', '0', '0', '0', '0', '0', '0', '0'],
-            ['0', '0', '0', '0', 'w', '0', '0', '0'],
-            ['0', 'w', '0', '0', '0', '0', '0', '0'],
-            ['b', '0', 'w', '0', '0', '0', 'w', '0'],
+            ['w', '0', 'w', '0', 'w', '0', 'w', '0'],
             ['0', 'w', '0', 'w', '0', 'w', '0', 'w'],
-            ['0', '0', '0', '0', 'w', '0', 'w', '0']
+            ['w', '0', 'w', '0', 'w', '0', 'w', '0']
         ];
+        // this.paths = [
+        //     ['0', '0', '0', '0', '0', '0', '0', '0'],
+        //     ['0', '0', 'w', '0', '0', '0', '0', '0'],
+        //     ['0', '0', '0', '0', '0', 'w', '0', '0'],
+        //     ['0', '0', '0', '0', 'w', '0', '0', '0'],
+        //     ['0', 'w', '0', '0', '0', '0', '0', '0'],
+        //     ['b', '0', 'w', '0', '0', '0', 'w', '0'],
+        //     ['0', 'w', '0', 'w', '0', 'w', '0', 'w'],
+        //     ['0', '0', '0', '0', 'w', '0', 'w', '0']
+        // ];
         // this.paths = [
         //     ['0', '0', '0', '0', '0', '0', '0', '0'],
         //     ['0', '0', 'w', '0', 'w', '0', '0', '0'],
@@ -66,10 +66,6 @@ class Checkers {
         this.whosTurn = 'w';
         this.whoWin = null;
         this.players = [];
-    }
-
-    checkTurn(userId) {
-        // console.log( this.players, userId );
     }
 
     isCellExist(to) {
@@ -311,6 +307,14 @@ class Checkers {
         this.setNextStep();
     }
 
+    win(playerId) {
+        this.players.forEach(player => {
+            if (player.id !== playerId) {
+                this.whoWin = player.range;
+            }
+        });
+    }
+
     checkAttack(step) {
         let hits = this.getPosibleHits(step.to);
 
@@ -357,41 +361,6 @@ class Checkers {
 
         return possiblePaths;
     }
-
-    // getPosibleHits(name) {
-    //     let possiblePaths = this.getLastCells(name),
-    //         hits = [];
-
-    //     possiblePaths.forEach(tos => {
-    //         tos.forEach(to => {
-    //             let h = this.checkValidStep(name, to, true);
-               
-    //             if (h && h.length) {
-    //                 hits.push({hits: h, to, from: name});
-    //             }
-    //         });
-    //     });
-        
-    //     return hits;
-    // }
-
-    // setNextStep() {
-    //     this.nextStep = [];
- 
-    //     this.paths.forEach((row, rowIndex) => {
-    //         row.forEach((chip, colIndex) => {
-    //             let range = this.transformRange(chip);
-
-    //             if (range === this.whosTurn) {
-    //                 let hits = this.getPosibleHits([colIndex, rowIndex]);
-                    
-    //                 if (hits && hits.length) {
-    //                     this.nextStep = this.nextStep.concat(hits);
-    //                 }
-    //             }
-    //         })
-    //     })
-    // }
 
     getPosibleHits(name, paths = null) {
         let possiblePaths = this.getLastCells(name, paths),
@@ -464,18 +433,6 @@ class Checkers {
             });
         }
     }
-
-    // isGameOver() {
-    //     let whoWin;
-
-    //     if (this.hitsChips['w'].length === 12) {
-    //         whoWin = 'w';
-    //     } else if (this.hitsChips['b'].length === 12) {
-    //         whoWin = 'b';
-    //     }
-
-    //     return whoWin;
-    // }
 
     isGameOver() {
         let whoWin;

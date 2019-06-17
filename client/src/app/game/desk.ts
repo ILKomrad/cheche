@@ -39,6 +39,7 @@ export class Desk {
         this.chips.forEach(c => {
             this.gameRenderer.removeFromScene(c.getMesh());
         });
+        this.removeHighlightCells(); 
         this.chips = [];
     }
 

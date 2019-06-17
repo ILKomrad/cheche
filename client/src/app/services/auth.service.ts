@@ -11,6 +11,7 @@ export class AuthService {
     isLoggedIn = new BehaviorSubject<any>(null);
     user: User = new User();
     state = 'guest';
+    bot;
 
     constructor(
         private httpService: HttpService
@@ -30,7 +31,6 @@ export class AuthService {
     }
 
     logout() {
-        console.warn('logout');
         localStorage.removeItem('checkers_playerId');
 
         if (this.user && this.user.id) {
@@ -47,7 +47,6 @@ export class AuthService {
     }
 
     setUser(user: User) {
-        console.warn('setUser', user);
         this.user = user;
         this.setState();
         this.isLoggedIn.next(user.playerId);
@@ -67,7 +66,6 @@ export class AuthService {
     }
 
     setState() {
-        console.warn( this.user.currentMeetingId )
         if (this.user.currentMeetingId !== null) {
             this.state = 'inGame';
         } else if (this.user.id !== null) {

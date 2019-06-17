@@ -7,32 +7,22 @@
         <div class="player__col player__col_range">
             <div class="player__range" [ngClass]="{w: player.range === 'w', b: player.range === 'b'}"></div>
         </div>
-        <h5 class="player__col player__score">
-            {{player.score.score}}
-        </h5>
-        <div class="player__col player__hits">
-            <!-- <div class="player__hit" 
-                [ngClass]="{player__hit_w: hit === 'w', player__hit_b: hit === 'b'}" 
-                *ngFor="let hit of player.hitsChips">
-            </div> -->
-            {{player.hitsChips.length}}
-        </div>
-        <h5 class="player__col player__name">
-            {{player.score.name}}
-        </h5>
+        <h5 class="player__col player__score">{{player.score.score}}</h5>
+        <div class="player__col player__hits">{{player.hitsChips.length}}</div>
+        <h5 class="player__col player__name">{{player.score.name}}</h5>
     </div>
 </div>
 <div class="menu">
     <button (click)="warnOpen('newGame')" title="new game" class="material-icons btn">autorenew</button>
     <a routerLink="/" title="go to list" class="material-icons btn">list</a>
-    <button (click)="warnOpen()" title="sound off" class="material-icons btn">volume_up</button>
+    <button (click)="soundSwitch()" title="sound off" class="material-icons btn">{{(soundState === 'on' ? 'volume_up' : 'volume_off')}}</button>
 </div>
 <div class="warn" [ngClass]="{'show': isWarnOpen}">
     <div class="warn__message">
         <h5 class="warn__title">{{warnMessage}}</h5>
         <div class="flex">
-            <button class="btn">yes</button>
-            <button class="btn">no</button>
+            <button (click)="confirmation('yes')" class="btn">yes</button>
+            <button (click)="confirmation('no')" class="btn">no</button>
         </div>
     </div>
 </div>

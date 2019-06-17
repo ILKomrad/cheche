@@ -135,6 +135,15 @@ class Model {
         });
     }
 
+    async gameWin(win, gameId) {
+        return this.http.sendPost({
+            gameWin: {
+                whoWin: win,
+                gameId: gameId
+            }
+        });
+    }
+
     async addGameToMeeting(meetingId, games, currentGame) {
         return this.http.sendPost({
             addGameToMeeting: {

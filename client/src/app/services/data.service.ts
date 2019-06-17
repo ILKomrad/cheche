@@ -30,10 +30,8 @@ export class DataService {
     }
 
     setCurrentGame(currentGame) {
-        console.log( 'setCurrentGame', currentGame );
         this.currentGame = currentGame;
         this.currentGame$.next(currentGame);
-        // this.authService.setCurrentMeetingId(currentGame.id, data.game.id);
     }
 
     getCurrentGame() {
@@ -55,7 +53,6 @@ export class DataService {
     }
 
     setCurrentMeeting(meeting, currentGame) {
-        console.log( 'setCurrentMeeting', meeting, currentGame );
         this.currentMeeting = meeting;
         this.setCurrentGame(currentGame);
 
@@ -81,6 +78,5 @@ export class DataService {
     removeData(id) {
         this.data = this.data.filter(meeting => meeting.id !== id);
         this.data$.next(this.data);
-        console.log('removeData', this.data);
     }
 }

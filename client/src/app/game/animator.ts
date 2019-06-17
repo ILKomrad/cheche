@@ -34,7 +34,7 @@ export class Animator {
 
         return new Promise((res) => {
             const tween = new TWEEN.Tween(from)
-                .to(to, 500)
+                .to(to, 200)
                 .easing(TWEEN.Easing.Quadratic.Out)
                 .onUpdate(() => {
                     material.opacity = from.val;
@@ -53,7 +53,7 @@ export class Animator {
 
         return new Promise((res) => {
             const tween = new TWEEN.Tween(from)
-                .to(posTo, 500)
+                .to(posTo, 400)
                 .easing(TWEEN.Easing.Quadratic.Out)
                 .onUpdate(() => {
                     let pers;
@@ -77,7 +77,7 @@ export class Animator {
     move(from, to) {
         return new Promise((res) => {
             const tween = new TWEEN.Tween(from)
-                .to(to, 350)
+                .to(to, 200)
                 .easing(TWEEN.Easing.Quadratic.Out)
                 .onComplete(() => {
                     res();
@@ -100,7 +100,7 @@ export class Animator {
 
         return new Promise((res) => {
             const tween = new TWEEN.Tween(fromFov)
-                .to(toFov, 1000)
+                .to(toFov, 1100)
                 .easing(TWEEN.Easing.Quadratic.Out)
                 .onUpdate(() => {
                     let pers = 1 - (Math.abs(toFov.f - fromFov.f) / fovDelta);
@@ -138,7 +138,7 @@ export class Animator {
         let from = {x: 0},
             to = {x: 1000};
         this.sound.reproduceSound('lamp');
-        this.soundDump('lamp', 3000);
+        // this.soundDump('lamp', 3000);
 
         return new Promise((res) => {
             const tween = new TWEEN.Tween(from)

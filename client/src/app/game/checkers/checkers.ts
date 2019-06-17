@@ -10,6 +10,8 @@ export class CheckersGame {
     newQueen;
     whoWin;
     players;
+    nextStep;
+    whosTurn;
 
     init(currentGame) {
         for (let i in currentGame) {
@@ -533,11 +535,7 @@ export class CheckersGame {
 
 export class StepGenerator {
     initialObj = {};
-    game = {};
-
-    constructor() {
-        // this.reset = this.reset.bind(this);
-    }
+    game = new CheckersGame();
 
     copy(from, to, i = false) {
         for (let u in from) {

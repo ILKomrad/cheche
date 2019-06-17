@@ -3,14 +3,14 @@
         <app-auth *ngIf="authState === 'guest'" class="fullHeight flex flex-center"></app-auth>
         <app-meeting-generator *ngIf="authState === 'isLogin'" (create)="createMeeting($event)" class="fullHeight flex flex-center"></app-meeting-generator>
         <div *ngIf="authState === 'waiting'">
-            создается встреча
+            meeting is created
         </div>
         <div class="fullHeight flex flex-center inGame" *ngIf="authState === 'inGame'">
             <div>
-                <p class="inGame__title">ты в игре мудел</p>
+                <p class="inGame__title">you are in the game</p>
                 <div class="flex">
-                    <button class="btn btn_md" (click)="leaveMeeting()">Выйти из игры</button>
-                    <button (click)="continueGame()" class="btn btn_md">Продолжить</button>
+                    <button class="btn btn_md" (click)="leaveMeeting()">Quit game</button>
+                    <button (click)="continueGame()" class="btn btn_md">Continue</button>
                 </div>
             </div>
         </div>

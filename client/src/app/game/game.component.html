@@ -5,4 +5,9 @@
     (step)="onStep($event)"
     [isBot]="isBot"
     (leaveGame)="leaveGame()"></game-view>
-<game-interface [ngClass]="{'show': gameStart}" [data]="interfaceData"></game-interface>
+<game-interface 
+    [soundState]="soundState"
+    (newGame)="finishGame()" 
+    [ngClass]="{'show': gameStart}" 
+    (onSoundSwitch)="onSoundSwitch()"
+    [data]="interfaceData"></game-interface>

@@ -68,11 +68,17 @@ export class AppComponent {
         .subscribe((id: any) => {
           this.dataService.removeData(id);
           const currentMeetingId = this.dataService.getCurrentMeetingId();
-         
+
           if (currentMeetingId === id) {
             this.dataService.setCurrentMeeting(null, null);
             this.authService.leaveMeeting();
           }
+        });
+
+        this.httpService.listen('meetingFinish')
+        .subscribe(() => {
+          this.dataService.setCurrentMeeting(null, null);
+          this.authService.leaveMeeting();
         });
 
         this.httpService.listen('startMeeting')
@@ -89,8 +95,8 @@ export class AppComponent {
 
         this.httpService.listen('opponentStep')
         .subscribe((data: any) => {
-          this.meetingService.opponentStep(data.steps);
           this.dataService.setCurrentGame(data.game);
+          this.meetingService.opponentStep(data.steps);
         });
 
         this.httpService.listen('continueGame')

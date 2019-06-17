@@ -29,6 +29,7 @@ export class GameViewComponent {
     isGameOver;
     animator;
     stopRenderFlag = false;
+    isMeetingFinish = false;
     common = new ThreeCommon();
     @Input() state;
     @Input() isBot;
@@ -65,8 +66,6 @@ export class GameViewComponent {
         this.currentGame = currentGame;
         this.gameRenderer = new Renderer();
         this.gameRenderer.createEnvironment(range, this.container.nativeElement);
-        // this.gameRenderer.setCamera()
-        // this.meshLoader = new MeshLoader();
 
         if (!this.meshLoaderService.load) {
             this.meshLoaderService.waitLoadData().then(() => {  
@@ -169,7 +168,7 @@ export class GameViewComponent {
     }
 
     onDocumentMouseDown(event) {
-        if ((this.state.alias !== 'waiting') && !this.isGameOver) {
+        if ((event.which === 1) && (this.state.alias !== 'waiting') && !this.isGameOver) {
             const that = this,
                 intersects = that.dragAndDrop.getIntersects(event);
             
@@ -188,7 +187,6 @@ export class GameViewComponent {
 
                         that.dragAndDrop.start(target, (cellName) => {
                             this.viewState = 'idle';
-                            let cell = that.desk.getCellPosition(cellName);
                             that.step.emit({to: cellName, from: target.name});
                         });
                     }
@@ -267,6 +265,7 @@ export class GameViewComponent {
         while (i < hitChips.length) {
             let chipName = hitChips[i];
             let chip = this.desk.getChip(chipName);
+            this.soundService.reproduceSound('remove');
             await this.animator.removeFromDesk(chip.getMaterial())
             this.gameRenderer.removeFromScene(chip.getMesh());
             chip.setName([]);
@@ -281,5 +280,10 @@ export class GameViewComponent {
     onLeaveGame() {
         this.desk.clear();
         this.leaveGame.emit();
+    }
+
+    opponentDisconect() {
+        this.isGameOver = true;
+        this.isMeetingFinish = true;
     }
 }
