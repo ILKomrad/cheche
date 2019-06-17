@@ -29,24 +29,34 @@ class Checkers {
             ['w', 'b', 'w', 'b', 'w', 'b', 'w', 'b'],
             ['b', 'w', 'b', 'w', 'b', 'w', 'b', 'w']
         ]; 
+        // this.paths = [
+        //     ['0', 'b', '0', 'b', '0', 'b', '0', 'b'],
+        //     ['b', '0', 'b', '0', 'b', '0', 'b', '0'],
+        //     ['0', 'b', '0', 'b', '0', 'b', '0', 'b'],
+        //     ['0', '0', '0', '0', '0', '0', '0', '0'],
+        //     ['0', '0', '0', '0', '0', '0', '0', '0'],
+        //     ['w', '0', 'w', '0', 'w', '0', 'w', '0'],
+        //     ['0', 'w', '0', 'w', '0', 'w', '0', 'w'],
+        //     ['w', '0', 'w', '0', 'w', '0', 'w', '0']
+        // ];
         this.paths = [
-            ['0', 'b', '0', 'b', '0', 'b', '0', 'b'],
-            ['b', '0', 'b', '0', 'b', '0', 'b', '0'],
-            ['0', 'b', '0', 'b', '0', 'b', '0', 'b'],
             ['0', '0', '0', '0', '0', '0', '0', '0'],
+            ['0', '0', 'w', '0', 'w', '0', '0', '0'],
             ['0', '0', '0', '0', '0', '0', '0', '0'],
-            ['w', '0', 'w', '0', 'w', '0', 'w', '0'],
+            ['0', '0', '0', '0', 'w', '0', '0', '0'],
+            ['0', 'w', '0', '0', '0', '0', '0', '0'],
+            ['b', '0', 'w', '0', '0', '0', 'w', '0'],
             ['0', 'w', '0', 'w', '0', 'w', '0', 'w'],
-            ['w', '0', 'w', '0', 'w', '0', 'w', '0']
+            ['0', '0', '0', '0', 'w', '0', 'w', '0']
         ];
         // this.paths = [
         //     ['0', '0', '0', '0', '0', '0', '0', '0'],
         //     ['0', '0', 'w', '0', 'w', '0', '0', '0'],
         //     ['0', '0', '0', '0', '0', '0', '0', '0'],
-        //     ['b', '0', '0', '0', '0', '0', 'ww', '0'],
-        //     ['0', 'b', '0', 'b', '0', '0', '0', '0'],
-        //     ['0', '0', '0', '0', 'b', '0', 'w', '0'],
-        //     ['0', 'b', '0', '0', '0', 'w', '0', 'w'],
+        //     ['0', '0', '0', '0', 'w', '0', '0', '0'],
+        //     ['0', '0', '0', 'bb', '0', '0', '0', '0'],
+        //     ['b', '0', 'w', '0', '0', '0', 'w', '0'],
+        //     ['0', '0', '0', 'w', '0', 'w', '0', 'w'],
         //     ['0', '0', '0', '0', 'w', '0', 'w', '0']
         // ];
         this.hitsChips = {
@@ -242,7 +252,7 @@ class Checkers {
         if (withHit) {
             hits = this.checkAttack(step);
         }
-        console.log( hits )
+        
         if (!hits || (hits.length === 0)) {
             this.whosTurn = this.transformRange(range) === 'w' ? 'b' : 'w';
             this.removeHits();
@@ -261,7 +271,6 @@ class Checkers {
 
             return row;
         })
-        console.log( this.paths )
     }
 
     stepAction(step, hits, multistep) {   
@@ -389,48 +398,45 @@ class Checkers {
             hits = [],
             _to = [],
             isQueen = this.isQueen(name);
-       
+
         possiblePaths.forEach(tos => {
+            let flag = false;
+
+            if (isQueen) {
+                tos.forEach(to => {
+                    let h = this.checkValidStep(name, to, true, paths);
+                    
+                    if (h && h.length && this.getFakeHits({from: name, to})) {
+                        flag = true;
+                    }
+                });
+            }
+
             tos.forEach(to => {
                 let h = this.checkValidStep(name, to, true, paths);
-     
-                if (h && h.length) {
+
+                if (h && h.length && (!flag || this.getFakeHits({from: name, to}))) {
                     hits.push({hits: h, to, from: name});
                 }
             });
         });
-        hits = this.filterPosibleHits(hits, isQueen);
 
         return hits;
     }
 
-    filterPosibleHits(hits, isQueen) {
-        const filterHits = [];
-
-        if (!isQueen) { return hits; }
-
-        hits.forEach(hit => {
-            if (this.getFakeHits({from: hit.from, to: hit.to})) {
-                filterHits.push(hit);
-            }
-        });
-   
-        if (filterHits.length) {
-            return filterHits;
-        } else {
-            return hits;
-        }
-    }
-
     getFakeHits(step) {
         const paths = this.copyArray(this.paths),
-            h = this.checkValidStep(step.from, step.to, true, paths)[0];
-        paths[step.from[1]][step.from[0]] = '0';
-        paths[h[1]][h[0]] = '0';
-        paths[step.to[1]][step.to[0]] = this.paths[step.from[1]][step.from[0]];
-        let hits = this.getPosibleHits(step.to, paths);
-        
-        return (hits.length >= 1);
+            _hits = this.checkValidStep(step.from, step.to, true, paths);
+
+        if (_hits && _hits.length) {
+            const h = _hits[0];
+            paths[step.from[1]][step.from[0]] = '0';
+            paths[h[1]][h[0]] = 'h';
+            paths[step.to[1]][step.to[0]] = this.paths[step.from[1]][step.from[0]];
+            let hits = this.getPosibleHits(step.to, paths);
+            
+            return (hits.length >= 1);
+        } 
     }
 
     setNextStep(step = null) {
