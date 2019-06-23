@@ -152,6 +152,7 @@ var AppComponent = /** @class */ (function () {
             this.soundService.startLoad();
             this.httpService.sendMessage('hello', { playerId: this.authService.getTocken() });
             this.httpService.listen('helloFromServer').subscribe(function (data) {
+                _this.dataService.start();
                 if (data.user === undefined) {
                     _this.authService.logout();
                 }
@@ -179,8 +180,8 @@ var AppComponent = /** @class */ (function () {
                         _this.dataService.addData(data.meeting);
                     }
                     _this.dataService.setCurrentMeeting(data.meeting, data.game);
-                    _this.authService.inGame(data.meeting, data.game);
                     _this.router.navigate(['/game']);
+                    _this.authService.inGame(data.meeting, data.game);
                 });
                 _this.httpService.listen('removeMeeting')
                     .subscribe(function (id) {
@@ -204,12 +205,13 @@ var AppComponent = /** @class */ (function () {
                 });
                 _this.httpService.listen('makeStep')
                     .subscribe(function (data) {
+                    _this.meetingService.opponentStep(data.whoWin);
                     _this.dataService.setCurrentGame(data);
                 });
                 _this.httpService.listen('opponentStep')
                     .subscribe(function (data) {
-                    _this.dataService.setCurrentGame(data.game);
                     _this.meetingService.opponentStep(data.steps);
+                    _this.dataService.setCurrentGame(data.game);
                 });
                 _this.httpService.listen('continueGame')
                     .subscribe(function (data) {
@@ -258,8 +260,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _app_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./app.component */ "./src/app/app.component.ts");
 /* harmony import */ var _user_area_user_area_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./user-area/user-area.component */ "./src/app/user-area/user-area.component.ts");
 /* harmony import */ var _components_select_select_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./components/select/select.component */ "./src/app/components/select/select.component.ts");
-/* harmony import */ var _components_alert_alert_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./components/alert/alert.component */ "./src/app/components/alert/alert.component.ts");
-
 
 
 
@@ -275,8 +275,7 @@ var AppModule = /** @class */ (function () {
             declarations: [
                 _app_component__WEBPACK_IMPORTED_MODULE_4__["AppComponent"],
                 _user_area_user_area_component__WEBPACK_IMPORTED_MODULE_5__["UserAreaComponent"],
-                _components_select_select_component__WEBPACK_IMPORTED_MODULE_6__["SelectComponent"],
-                _components_alert_alert_component__WEBPACK_IMPORTED_MODULE_7__["AlertComponent"]
+                _components_select_select_component__WEBPACK_IMPORTED_MODULE_6__["SelectComponent"]
             ],
             imports: [
                 _angular_platform_browser__WEBPACK_IMPORTED_MODULE_1__["BrowserModule"],
@@ -287,62 +286,6 @@ var AppModule = /** @class */ (function () {
         })
     ], AppModule);
     return AppModule;
-}());
-
-
-
-/***/ }),
-
-/***/ "./src/app/components/alert/alert.component.html":
-/*!*******************************************************!*\
-  !*** ./src/app/components/alert/alert.component.html ***!
-  \*******************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-module.exports = "<p>\n  alert works!\n</p>\n"
-
-/***/ }),
-
-/***/ "./src/app/components/alert/alert.component.scss":
-/*!*******************************************************!*\
-  !*** ./src/app/components/alert/alert.component.scss ***!
-  \*******************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-module.exports = "\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJzcmMvYXBwL2NvbXBvbmVudHMvYWxlcnQvYWxlcnQuY29tcG9uZW50LnNjc3MifQ== */"
-
-/***/ }),
-
-/***/ "./src/app/components/alert/alert.component.ts":
-/*!*****************************************************!*\
-  !*** ./src/app/components/alert/alert.component.ts ***!
-  \*****************************************************/
-/*! exports provided: AlertComponent */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AlertComponent", function() { return AlertComponent; });
-/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
-
-
-var AlertComponent = /** @class */ (function () {
-    function AlertComponent() {
-    }
-    AlertComponent.prototype.ngOnInit = function () {
-    };
-    AlertComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
-        Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
-            selector: 'app-alert',
-            template: __webpack_require__(/*! ./alert.component.html */ "./src/app/components/alert/alert.component.html"),
-            styles: [__webpack_require__(/*! ./alert.component.scss */ "./src/app/components/alert/alert.component.scss")]
-        }),
-        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [])
-    ], AlertComponent);
-    return AlertComponent;
 }());
 
 
@@ -488,14 +431,17 @@ var AuthService = /** @class */ (function () {
     AuthService.prototype.login = function (email, password) {
         var _this = this;
         this.httpService.sendMessage('login', { email: email, password: password });
-        this.httpService.listenPromise('loginResult')
-            .then(function (data) {
-            if (data && data.playerId) {
-                _this.setUser(data);
-            }
-            else {
-                _this.logout();
-            }
+        return new Promise(function (res) {
+            _this.httpService.listenPromise('loginResult')
+                .then(function (data) {
+                res(data);
+                if (data && data.playerId) {
+                    _this.setUser(data);
+                }
+                else {
+                    _this.logout();
+                }
+            });
         });
     };
     AuthService.prototype.logout = function () {
@@ -591,6 +537,12 @@ var DataService = /** @class */ (function () {
         this.currentGame$ = new rxjs__WEBPACK_IMPORTED_MODULE_2__["BehaviorSubject"]({});
         this.data = [];
     }
+    DataService.prototype.start = function () {
+        this.appInit = true;
+    };
+    DataService.prototype.isInit = function () {
+        return this.appInit;
+    };
     DataService.prototype.setData = function (data) {
         this.data = data;
         this.data$.next(data);
@@ -674,7 +626,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var HttpService = /** @class */ (function () {
     function HttpService() {
-        this.instance = io('http://localhost:3001');
+        this.instance = io();
     }
     HttpService.prototype.sendMessage = function (eventName, msg) {
         if (msg === void 0) { msg = null; }
@@ -684,11 +636,13 @@ var HttpService = /** @class */ (function () {
     HttpService.prototype.listenPromise = function (eventName) {
         var _this = this;
         return new Promise(function (res) {
-            _this.instance.on(eventName, function (event) {
+            var clbck = function (event) {
+                _this.instance.removeListener(eventName, clbck);
                 var data = JSON.parse(event);
                 console.log('listenPromise', eventName, data);
                 res(data);
-            });
+            };
+            _this.instance.on(eventName, clbck);
         });
     };
     HttpService.prototype.listen = function (eventName) {

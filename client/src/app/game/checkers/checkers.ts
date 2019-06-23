@@ -421,7 +421,6 @@ export class CheckersGame {
                 })
             });
         }
-        console.log('this.nextStep', this.nextStep)
     }
 
     isGameOver() {

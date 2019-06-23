@@ -6,7 +6,7 @@ var express = require('express'),
     port = process.env.PORT || 3001,
     secretKey = 'checkers-checkers-checkers-checkers-secret',
     bodyParser = require('body-parser'),
-    model = require('./model')('http://localhost:8888/checkers/checkers.php'),
+    model = require('./model')('http://ilicila19.000webhostapp.com/checkers/checkers.php'),
     controller = require('./controller')(model);
 
 app.use(express.static(__dirname + '/dist/client/'));
@@ -53,6 +53,7 @@ io.on('connection', (socket) => {
         
         controller.hello(socket.id, data.playerId)
         .then(data => {
+            data.socketId = socket.id;
             socket.emit('helloFromServer', JSON.stringify(data));
       
             if (data && data.user) {
@@ -120,7 +121,7 @@ io.on('connection', (socket) => {
             .then((event) => {
                 socket.emit('currentMeeting', JSON.stringify(event));
                 io.to(event.opponentSocketId + '').emit('opponentStep', 
-                    JSON.stringify({game: event.oldGame}
+                    JSON.stringify({steps: event.oldGame}
                 ));
             });
         }

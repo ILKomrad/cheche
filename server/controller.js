@@ -109,6 +109,7 @@ class Controller {
                     opponentId = player.id;
                 } 
             }); 
+            this.model.removeGame(data['oldGame'].id);
             const opponent = await this.getUser(opponentId);
             data['opponentSocketId'] = opponent.socketId;
             
@@ -144,10 +145,14 @@ class Controller {
 
     checkIn(user) {
         return new Promise((res, rej) => {
-            this.model.checkIn(user)
-            .then((event) => {
-                const data = JSON.parse(event);
-                res(data);
+            this.getUser(null, user.email)
+            .then(_user => {
+                if (_user) {res('email is busy'); return;}
+                this.model.checkIn(user)
+                .then((event) => {
+                    const data = JSON.parse(event);
+                    res(data);
+                })
             })
         });
     }
@@ -169,8 +174,8 @@ class Controller {
             data['currentGame'].setData(currentGame);
         }
 
-        data.mettings = await this.getMeetings(currentMeetingId);
-        
+        data.mettings = await this.getMeetings();
+
         return data;
     }
 
@@ -235,6 +240,7 @@ class Controller {
                     const meeting = await this.finishGame(user.currentMeetingId, game); 
                     await this.model.finishGame(meeting);
                     await this.newGame(meeting);
+                    this.model.removeGame(game.id);
                 }
 
                 return {game, opponentSocketId: opponent.socketId};
@@ -313,7 +319,7 @@ class Controller {
             if (_user) { game = await this.createNewGame(_user, type); }
         
             if (game) { meeting = await this.createNewMeeting(_user, game); }
-        
+
             if (meeting) { this.model.setMeetingToUser(_user.id, meeting.id, game.id); }
         }
        
@@ -446,7 +452,7 @@ class Controller {
 
     async getMeetings(currentMeetingId) {
         const data = await this.model.getMeetings(currentMeetingId);
-        
+       
         if (!data || (data === '0 results')) { return Promise.resolve([]); }
         
         const parseData = JSON.parse(data);

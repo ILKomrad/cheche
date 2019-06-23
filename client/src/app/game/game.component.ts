@@ -72,6 +72,7 @@ export class GameComponent {
             if (currentGame && currentGame.paths) {
                 this.currentGame = this.checkers.getGame(currentGame);
                 if (this.currentGame.bot) { this.isBot = true; }
+
                 if (!this.currentGame.nextStep) { this.currentGame.setNextStep(); }
                 const range = this.getRange();
                 

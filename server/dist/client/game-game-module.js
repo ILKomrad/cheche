@@ -764,7 +764,6 @@ var StepGenerator = /** @class */ (function () {
         this.getFakeHits(nextStep, this.game.paths, stepsArray);
         var f = new StepFormater();
         f.format(stepsArray);
-        console.log(f.steps);
         return f.steps;
     };
     StepGenerator.prototype.getFakeHits = function (steps, _paths, stepsArray) {
@@ -1465,7 +1464,7 @@ module.exports = "<div class=\"wrap\">\n    <ng-container *ngIf=\"!meetingFinish
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = ":host {\n  position: absolute;\n  z-index: 11;\n  bottom: 0;\n  top: 0;\n  left: 0;\n  right: 0;\n  background: rgba(0, 0, 0, 0.6); }\n\n.wrap {\n  padding: 3rem;\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  -webkit-transform: translate(-50%, -50%);\n          transform: translate(-50%, -50%);\n  background: #fff; }\n\n.win__title {\n  font: 2rem verdana;\n  color: #000;\n  text-align: center; }\n\n.content {\n  margin-top: 3vmin;\n  display: flex;\n  align-items: center;\n  justify-content: center; }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9Vc2Vycy9pbGEvRG9jdW1lbnRzL3Byb2dyYW0vYW5nL2NoZWNrZXJzL25ldy9jbGllbnQvc3JjL2FwcC9nYW1lL2dhbWUtb3Zlci9nYW1lLW92ZXIuY29tcG9uZW50LnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDSSxtQkFBa0I7RUFDbEIsWUFBVztFQUNYLFVBQVM7RUFDVCxPQUFNO0VBQ04sUUFBTztFQUNQLFNBQVE7RUFDUiwrQkFBNkIsRUFDaEM7O0FBRUQ7RUFDSSxjQUFhO0VBQ2IsbUJBQWtCO0VBQ2xCLFNBQVE7RUFDUixVQUFTO0VBQ1QseUNBQWdDO1VBQWhDLGlDQUFnQztFQUNoQyxpQkFBZ0IsRUFDbkI7O0FBRUQ7RUFDSSxtQkFBa0I7RUFDbEIsWUFBVztFQUNYLG1CQUFrQixFQUNyQjs7QUFFRDtFQUNJLGtCQUFpQjtFQUNqQixjQUFhO0VBQ2Isb0JBQW1CO0VBQ25CLHdCQUF1QixFQUMxQiIsImZpbGUiOiJzcmMvYXBwL2dhbWUvZ2FtZS1vdmVyL2dhbWUtb3Zlci5jb21wb25lbnQuc2NzcyIsInNvdXJjZXNDb250ZW50IjpbIjpob3N0IHtcbiAgICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gICAgei1pbmRleDogMTE7XG4gICAgYm90dG9tOiAwO1xuICAgIHRvcDogMDtcbiAgICBsZWZ0OiAwO1xuICAgIHJpZ2h0OiAwO1xuICAgIGJhY2tncm91bmQ6IHJnYmEoMCwgMCwgMCwgLjYpO1xufVxuXG4ud3JhcCB7XG4gICAgcGFkZGluZzogM3JlbTtcbiAgICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gICAgdG9wOiA1MCU7XG4gICAgbGVmdDogNTAlO1xuICAgIHRyYW5zZm9ybTogdHJhbnNsYXRlKC01MCUsIC01MCUpO1xuICAgIGJhY2tncm91bmQ6ICNmZmY7XG59XG5cbi53aW5fX3RpdGxlIHtcbiAgICBmb250OiAycmVtIHZlcmRhbmE7XG4gICAgY29sb3I6ICMwMDA7XG4gICAgdGV4dC1hbGlnbjogY2VudGVyO1xufVxuXG4uY29udGVudCB7XG4gICAgbWFyZ2luLXRvcDogM3ZtaW47XG4gICAgZGlzcGxheTogZmxleDtcbiAgICBhbGlnbi1pdGVtczogY2VudGVyO1xuICAgIGp1c3RpZnktY29udGVudDogY2VudGVyO1xufSJdfQ== */"
+module.exports = ":host {\n  position: absolute;\n  z-index: 11;\n  bottom: 0;\n  top: 0;\n  left: 0;\n  right: 0;\n  background: rgba(0, 0, 0, 0.6); }\n\n.wrap {\n  padding: 3rem;\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  -webkit-transform: translate(-50%, -50%);\n          transform: translate(-50%, -50%);\n  background: #fff; }\n\n.win__title {\n  font: 2rem verdana;\n  color: #000;\n  text-align: center;\n  text-transform: uppercase; }\n\n.content {\n  margin-top: 3vmin;\n  display: flex;\n  align-items: center;\n  justify-content: center; }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9Vc2Vycy9pbGEvRG9jdW1lbnRzL3Byb2dyYW0vYW5nL2NoZWNrZXJzL25ldy9jbGllbnQvc3JjL2FwcC9nYW1lL2dhbWUtb3Zlci9nYW1lLW92ZXIuY29tcG9uZW50LnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDSSxtQkFBa0I7RUFDbEIsWUFBVztFQUNYLFVBQVM7RUFDVCxPQUFNO0VBQ04sUUFBTztFQUNQLFNBQVE7RUFDUiwrQkFBNkIsRUFDaEM7O0FBRUQ7RUFDSSxjQUFhO0VBQ2IsbUJBQWtCO0VBQ2xCLFNBQVE7RUFDUixVQUFTO0VBQ1QseUNBQWdDO1VBQWhDLGlDQUFnQztFQUNoQyxpQkFBZ0IsRUFDbkI7O0FBRUQ7RUFDSSxtQkFBa0I7RUFDbEIsWUFBVztFQUNYLG1CQUFrQjtFQUNsQiwwQkFBeUIsRUFDNUI7O0FBRUQ7RUFDSSxrQkFBaUI7RUFDakIsY0FBYTtFQUNiLG9CQUFtQjtFQUNuQix3QkFBdUIsRUFDMUIiLCJmaWxlIjoic3JjL2FwcC9nYW1lL2dhbWUtb3Zlci9nYW1lLW92ZXIuY29tcG9uZW50LnNjc3MiLCJzb3VyY2VzQ29udGVudCI6WyI6aG9zdCB7XG4gICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgIHotaW5kZXg6IDExO1xuICAgIGJvdHRvbTogMDtcbiAgICB0b3A6IDA7XG4gICAgbGVmdDogMDtcbiAgICByaWdodDogMDtcbiAgICBiYWNrZ3JvdW5kOiByZ2JhKDAsIDAsIDAsIC42KTtcbn1cblxuLndyYXAge1xuICAgIHBhZGRpbmc6IDNyZW07XG4gICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgIHRvcDogNTAlO1xuICAgIGxlZnQ6IDUwJTtcbiAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZSgtNTAlLCAtNTAlKTtcbiAgICBiYWNrZ3JvdW5kOiAjZmZmO1xufVxuXG4ud2luX190aXRsZSB7XG4gICAgZm9udDogMnJlbSB2ZXJkYW5hO1xuICAgIGNvbG9yOiAjMDAwO1xuICAgIHRleHQtYWxpZ246IGNlbnRlcjtcbiAgICB0ZXh0LXRyYW5zZm9ybTogdXBwZXJjYXNlO1xufVxuXG4uY29udGVudCB7XG4gICAgbWFyZ2luLXRvcDogM3ZtaW47XG4gICAgZGlzcGxheTogZmxleDtcbiAgICBhbGlnbi1pdGVtczogY2VudGVyO1xuICAgIGp1c3RpZnktY29udGVudDogY2VudGVyO1xufSJdfQ== */"
 
 /***/ }),
 
@@ -1662,9 +1661,10 @@ var GameViewComponent = /** @class */ (function () {
     };
     GameViewComponent.prototype.hideSplash = function () {
         var _this = this;
-        this.viewState = 'idle';
+        this.viewState = 'wait';
         this.startRender();
         this.animator.renderAnimation(this.gameRenderer.getCamera(), this.gameRenderer.getLight(), this.gameRenderer.getCameraPos()).then(function () {
+            _this.viewState = 'idle';
             _this.stopRender();
             _this.gameStart.emit();
         });
@@ -1686,7 +1686,6 @@ var GameViewComponent = /** @class */ (function () {
     };
     GameViewComponent.prototype.gameRender = function () {
         if (!this.stopRenderFlag) {
-            // console.log('render', Date.now());
             this.gameRenderer.render();
             TWEEN.update();
             requestAnimationFrame(this.gameRender);
@@ -1694,14 +1693,13 @@ var GameViewComponent = /** @class */ (function () {
     };
     GameViewComponent.prototype.onDocumentMouseDown = function (event) {
         var _this = this;
-        if ((event.which === 1) && (this.state.alias !== 'waiting') && !this.isGameOver) {
+        if ((event.which === 1) && (this.state.alias !== 'waiting') && !this.isGameOver && (this.viewState === 'idle')) {
             var that_1 = this, intersects = that_1.dragAndDrop.getIntersects(event);
             var _loop_1 = function (item) {
                 var target = intersects[item].object;
                 if (target.meshType === 'chip') {
                     var error = this_1.currentGame.canTouch(target.name, this_1.range);
                     if (error.length) {
-                        console.log('error', error);
                         this_1.viewState = 'idle';
                     }
                     else {
@@ -1740,14 +1738,12 @@ var GameViewComponent = /** @class */ (function () {
         this.stopRender();
     };
     GameViewComponent.prototype.stopRender = function () {
-        if (this.viewState !== 'drag') {
+        if (this.viewState !== 'drag' && this.viewState !== 'wait') {
             this.startRender();
             this.stopRenderFlag = true;
-            // console.warn('stopRender')
         }
     };
     GameViewComponent.prototype.startRender = function () {
-        // console.warn('startRender')
         this.stopRenderFlag = false;
         this.gameRender();
     };
@@ -1757,6 +1753,7 @@ var GameViewComponent = /** @class */ (function () {
             return tslib__WEBPACK_IMPORTED_MODULE_0__["__generator"](this, function (_a) {
                 switch (_a.label) {
                     case 0:
+                        this.viewState = 'wait';
                         cell = this.desk.getCellPosition(cellName), chip = this.desk.getChip(chipName);
                         chip.setName(cellName);
                         if (!anim) return [3 /*break*/, 2];
@@ -1767,17 +1764,21 @@ var GameViewComponent = /** @class */ (function () {
                     case 2:
                         chip.moveTo(cell.position.x, 0.1, cell.position.z);
                         _a.label = 3;
-                    case 3: return [2 /*return*/, Promise.resolve()];
+                    case 3:
+                        this.viewState = 'idle';
+                        return [2 /*return*/, Promise.resolve()];
                 }
             });
         });
     };
     GameViewComponent.prototype.newQueen = function (chipName) {
         return tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"](this, void 0, void 0, function () {
-            var chip, camera, cameraFov, startCameraPos, chipPos, posTo;
+            var prevState, chip, camera, cameraFov, startCameraPos, chipPos, posTo;
             return tslib__WEBPACK_IMPORTED_MODULE_0__["__generator"](this, function (_a) {
                 switch (_a.label) {
                     case 0:
+                        prevState = this.viewState;
+                        this.viewState = 'wait';
                         chip = this.desk.getChip(chipName), camera = this.gameRenderer.getCamera(), cameraFov = camera.fov, startCameraPos = { x: camera.position.x, y: camera.position.y, z: camera.position.z }, chipPos = chip.getPosition(), posTo = { x: chipPos.x, y: chipPos.y + 5, z: chipPos.z };
                         return [4 /*yield*/, this.animator.zoomTo(camera, posTo, { f: 8 }, posTo, { x: 0.89, y: -15, z: 0 })];
                     case 1:
@@ -1788,6 +1789,7 @@ var GameViewComponent = /** @class */ (function () {
                         return [4 /*yield*/, this.animator.zoomTo(camera, startCameraPos, { f: cameraFov }, { x: 0.89, y: -15, z: 0 }, posTo)];
                     case 3:
                         _a.sent();
+                        this.viewState = prevState;
                         return [2 /*return*/];
                 }
             });
@@ -1800,6 +1802,7 @@ var GameViewComponent = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         i = 0;
+                        this.viewState = 'wait';
                         _a.label = 1;
                     case 1:
                         if (!(i < hitChips.length)) return [3 /*break*/, 3];
@@ -1813,12 +1816,15 @@ var GameViewComponent = /** @class */ (function () {
                         chip.setName([]);
                         i++;
                         return [3 /*break*/, 1];
-                    case 3: return [2 /*return*/];
+                    case 3:
+                        this.viewState = 'idle';
+                        return [2 /*return*/];
                 }
             });
         });
     };
     GameViewComponent.prototype.createNewGame = function () {
+        this.isGameOver = false;
         this.newGame.emit();
     };
     GameViewComponent.prototype.onLeaveGame = function () {
@@ -1940,6 +1946,11 @@ var GameComponent = /** @class */ (function () {
         }
         if (this.currentGame && this.currentGame.whoWin) {
             this.state = { alias: 'gameOver', additional: this.currentGame.whoWin };
+        }
+        if (this.currentGame.whosTurn !== this.getRange() && !this.currentGame.whoWin) {
+            this.state = { alias: 'waiting', additional: null };
+        }
+        if (this.currentGame.whoWin) {
             if (this.getRange() === this.currentGame.whoWin) {
                 this.soundService.reproduceSound('win');
             }
@@ -1957,9 +1968,15 @@ var GameComponent = /** @class */ (function () {
                 if (_this.currentGame.bot) {
                     _this.isBot = true;
                 }
+                if (!_this.currentGame.nextStep) {
+                    _this.currentGame.setNextStep();
+                }
                 var range = _this.getRange();
-                if (_this.currentGame && !_this.gameViewComponent.isInit) {
+                if (_this.currentGame && !_this.gameViewComponent.isInit) { //init or continue
                     _this.gameViewComponent.createGameView(_this.currentGame, range);
+                }
+                else {
+                    _this.gameViewComponent.updateCurrentGame(_this.currentGame);
                 }
                 if (!_this.isStart && _this.dataService.isStart()) {
                     _this.setState();
@@ -1970,23 +1987,25 @@ var GameComponent = /** @class */ (function () {
                     _this.isRestart = false;
                 }
                 _this.updateInterface();
-                if (!_this.currentGame.nextStep) {
-                    _this.currentGame.setNextStep();
-                }
-                _this.gameViewComponent.updateCurrentGame(_this.currentGame);
             }
-            else if (_this.isStart) {
+            else if (_this.isStart && !_this.dataService.getCurrentMeeting()) { // opponent leave meeting
                 _this.gameViewComponent.opponentDisconect();
             }
-            console.log(currentGame, _this.isStart);
         });
         this.meetingsService.removeSteps();
-        this.meetingsService$ = this.meetingsService.stepHandler().subscribe(function (steps) { return tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"](_this, void 0, void 0, function () {
+        this.meetingsService$ = this.meetingsService.stepHandler().subscribe(function (data) { return tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"](_this, void 0, void 0, function () {
             return tslib__WEBPACK_IMPORTED_MODULE_0__["__generator"](this, function (_a) {
-                if (steps.steps) {
-                    this.stepHandler(steps.steps);
+                if (this.currentGame && this.currentGame.whoWin && data.steps !== 'w' && data.steps !== 'b') {
+                    return [2 /*return*/];
+                } // Opponent took a step before you clicked a new game
+                if (data.steps && data.steps !== 'w' && data.steps !== 'b' && !data.steps.whoWin) { //opponents step
+                    this.stepHandler(data.steps);
                 }
-                else if (this.currentGame && this.currentGame.whoWin) {
+                else if (data.steps === 'w' || data.steps === 'b') { // you win after your step
+                    this.setState();
+                }
+                else if (data.steps && data.steps.whoWin) { // opponent push NewGame
+                    this.currentGame = this.checkers.getGame(data.steps);
                     this.setState();
                 }
                 return [2 /*return*/];
@@ -2070,7 +2089,7 @@ var GameComponent = /** @class */ (function () {
                         if (!multiStep && this.currentGame.nextStep) {
                             this.gameViewComponent.showNextStep();
                         }
-                        if (!multiStep) {
+                        if (!multiStep && ifOpponent) {
                             this.setState();
                         }
                         return [2 /*return*/];
@@ -2141,45 +2160,51 @@ var GameComponent = /** @class */ (function () {
                         hitChips = this.currentGame.makeStep(step);
                         if (!(hitChips === undefined)) return [3 /*break*/, 1];
                         this.gameViewComponent.cancelStep(step.from);
-                        return [3 /*break*/, 3];
+                        return [3 /*break*/, 6];
                     case 1: return [4 /*yield*/, this.makeStep(hitChips, step)];
                     case 2:
                         _a.sent();
                         this.steps.push({ step: step, hitChips: hitChips });
-                        if (!this.currentGame.nextStep || (this.currentGame.nextStep.length === 0)) {
-                            this.gameViewComponent.removeAllHits(this.steps);
-                            if (!this.currentGame.bot) {
-                                this.meetingsService.makeStep(this.steps.slice(), this.authService.getPlayerId());
-                            }
-                            else {
-                                if (!this.currentGame.whoWin) {
-                                    setTimeout(function () {
-                                        var gen = new _checkers_checkers__WEBPACK_IMPORTED_MODULE_4__["StepGenerator"]();
-                                        gen.init(_this.currentGame);
-                                        var data = gen.getStep();
-                                        data.steps.forEach(function (step) {
-                                            _this.currentGame.makeStep(step.step, data.steps.length);
-                                        });
-                                        _this.currentGame.setNextStep();
-                                        _this.dataService.setCurrentGame(_this.currentGame);
-                                        _this.meetingsService.opponentStep(data.steps);
-                                        _this.steps = [];
-                                        gen = null;
-                                    }, 500);
-                                }
-                            }
-                            this.steps = [];
+                        if (!(!this.currentGame.nextStep || (this.currentGame.nextStep.length === 0))) return [3 /*break*/, 6];
+                        if (!!this.currentGame.bot) return [3 /*break*/, 3];
+                        this.gameViewComponent.removeAllHits(this.steps);
+                        this.meetingsService.makeStep(this.steps.slice(), this.authService.getPlayerId());
+                        return [3 /*break*/, 5];
+                    case 3: return [4 /*yield*/, this.gameViewComponent.removeAllHits(this.steps)];
+                    case 4:
+                        _a.sent();
+                        if (!this.currentGame.whoWin) {
+                            setTimeout(function () {
+                                var gen = new _checkers_checkers__WEBPACK_IMPORTED_MODULE_4__["StepGenerator"]();
+                                gen.init(_this.currentGame);
+                                var data = gen.getStep();
+                                data.steps.forEach(function (step) {
+                                    _this.currentGame.makeStep(step.step, data.steps.length);
+                                });
+                                _this.currentGame.setNextStep();
+                                _this.dataService.setCurrentGame(_this.currentGame);
+                                _this.meetingsService.opponentStep(data.steps);
+                                _this.steps = [];
+                                gen = null;
+                            }, 500);
                         }
-                        _a.label = 3;
-                    case 3: return [2 /*return*/];
+                        else {
+                            this.setState();
+                        }
+                        _a.label = 5;
+                    case 5:
+                        this.steps = [];
+                        _a.label = 6;
+                    case 6: return [2 /*return*/];
                 }
             });
         });
     };
     GameComponent.prototype.newGame = function () {
+        this.meetingsService.newGame(this.authService.getPlayerId());
         this.isStart = false;
         this.isRestart = true;
-        this.meetingsService.newGame(this.authService.getPlayerId());
+        this.isGameOver = false;
     };
     GameComponent.prototype.finishGame = function () {
         this.isStart = false;

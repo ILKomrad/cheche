@@ -30,6 +30,12 @@ class Model {
         this.http = new Http(url);
     }
 
+    helloo() {
+        const url = this.url + '?action=helloo';
+
+        return this.http.send(url);
+    }
+
     getUser(userId, email = false) {
         let url;
         

@@ -6694,6 +6694,109 @@ var ReactiveFormsModule = /** @class */ (function () {
 
 /***/ }),
 
+/***/ "./src/app/components/alert/alert.component.html":
+/*!*******************************************************!*\
+  !*** ./src/app/components/alert/alert.component.html ***!
+  \*******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = "<div class=\"alert\" [ngClass]=\"{'show': show}\">\n  <div class=\"alert__inner\">\n    <div class=\"alert__content\"><ng-content></ng-content></div>\n    <div class=\"alert__btns\">\n      <button (click)=\"onOk()\" class=\"btn btn_default btn_md\">yes</button>\n    </div>\n  </div>\n</div>\n"
+
+/***/ }),
+
+/***/ "./src/app/components/alert/alert.component.scss":
+/*!*******************************************************!*\
+  !*** ./src/app/components/alert/alert.component.scss ***!
+  \*******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = ".alert {\n  background: rgba(0, 0, 0, 0.6);\n  width: 100%;\n  height: 100%;\n  position: absolute;\n  top: 0;\n  left: 0;\n  bottom: 0;\n  right: 0;\n  z-index: 100;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  opacity: 0;\n  pointer-events: none;\n  transition: opacity .5s; }\n  .alert.show {\n    opacity: 1;\n    pointer-events: all; }\n  .alert__inner {\n    padding: 1.5rem;\n    background: rgba(255, 255, 255, 0.6);\n    border-radius: .25rem; }\n  .alert__btns {\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    margin-top: 1rem; }\n  .alert__content {\n    text-align: center;\n    font: 1.2rem Arial;\n    text-transform: uppercase; }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9Vc2Vycy9pbGEvRG9jdW1lbnRzL3Byb2dyYW0vYW5nL2NoZWNrZXJzL25ldy9jbGllbnQvc3JjL2FwcC9jb21wb25lbnRzL2FsZXJ0L2FsZXJ0LmNvbXBvbmVudC5zY3NzIiwiL1VzZXJzL2lsYS9Eb2N1bWVudHMvcHJvZ3JhbS9hbmcvY2hlY2tlcnMvbmV3L2NsaWVudC9zcmMvc2Nzcy9fdmFycy5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUVBO0VBQ0ksK0JBQTZCO0VBQzdCLFlBQVc7RUFDWCxhQUFZO0VBQ1osbUJBQWtCO0VBQ2xCLE9BQU07RUFDTixRQUFPO0VBQ1AsVUFBUztFQUNULFNBQVE7RUFDUixhQUFZO0VBQ1osY0FBYTtFQUNiLG9CQUFtQjtFQUNuQix3QkFBdUI7RUFDdkIsV0FBVTtFQUNWLHFCQUFvQjtFQUNwQix3QkFBdUIsRUF5QjFCO0VBeENEO0lBa0JRLFdBQVU7SUFDVixvQkFBbUIsRUFDdEI7RUFFRDtJQUNJLGdCQUFlO0lBQ2YscUNBQW1DO0lBQ25DLHNCQUFxQixFQUN4QjtFQUVEO0lBQ0ksY0FBYTtJQUNiLG9CQUFtQjtJQUNuQix3QkFBdUI7SUFDdkIsaUJBQWdCLEVBQ25CO0VBRUQ7SUFDSSxtQkFBa0I7SUFDbEIsbUJDdkNRO0lEd0NSLDBCQUF5QixFQUM1QiIsImZpbGUiOiJzcmMvYXBwL2NvbXBvbmVudHMvYWxlcnQvYWxlcnQuY29tcG9uZW50LnNjc3MiLCJzb3VyY2VzQ29udGVudCI6WyJAaW1wb3J0ICd2YXJzJztcblxuLmFsZXJ0IHtcbiAgICBiYWNrZ3JvdW5kOiByZ2JhKDAsIDAsIDAsIC42KTtcbiAgICB3aWR0aDogMTAwJTtcbiAgICBoZWlnaHQ6IDEwMCU7XG4gICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgIHRvcDogMDtcbiAgICBsZWZ0OiAwO1xuICAgIGJvdHRvbTogMDtcbiAgICByaWdodDogMDtcbiAgICB6LWluZGV4OiAxMDA7XG4gICAgZGlzcGxheTogZmxleDtcbiAgICBhbGlnbi1pdGVtczogY2VudGVyO1xuICAgIGp1c3RpZnktY29udGVudDogY2VudGVyO1xuICAgIG9wYWNpdHk6IDA7XG4gICAgcG9pbnRlci1ldmVudHM6IG5vbmU7XG4gICAgdHJhbnNpdGlvbjogb3BhY2l0eSAuNXM7XG5cbiAgICAmLnNob3cge1xuICAgICAgICBvcGFjaXR5OiAxO1xuICAgICAgICBwb2ludGVyLWV2ZW50czogYWxsO1xuICAgIH1cblxuICAgICZfX2lubmVyIHtcbiAgICAgICAgcGFkZGluZzogMS41cmVtO1xuICAgICAgICBiYWNrZ3JvdW5kOiByZ2JhKDI1NSwgMjU1LCAyNTUsIC42KTtcbiAgICAgICAgYm9yZGVyLXJhZGl1czogLjI1cmVtO1xuICAgIH1cblxuICAgICZfX2J0bnMge1xuICAgICAgICBkaXNwbGF5OiBmbGV4O1xuICAgICAgICBhbGlnbi1pdGVtczogY2VudGVyO1xuICAgICAgICBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjtcbiAgICAgICAgbWFyZ2luLXRvcDogMXJlbTtcbiAgICB9XG5cbiAgICAmX19jb250ZW50IHtcbiAgICAgICAgdGV4dC1hbGlnbjogY2VudGVyO1xuICAgICAgICBmb250OiAxLjJyZW0gJG1haW5Gb250O1xuICAgICAgICB0ZXh0LXRyYW5zZm9ybTogdXBwZXJjYXNlO1xuICAgIH1cbn0iLCIkbWFpbkZvbnQ6IEFyaWFsO1xuJG1haW5Db2xvcjogIzU3MmQxNTsiXX0= */"
+
+/***/ }),
+
+/***/ "./src/app/components/alert/alert.component.ts":
+/*!*****************************************************!*\
+  !*** ./src/app/components/alert/alert.component.ts ***!
+  \*****************************************************/
+/*! exports provided: AlertComponent */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AlertComponent", function() { return AlertComponent; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
+
+
+var AlertComponent = /** @class */ (function () {
+    function AlertComponent() {
+        this.ok = new _angular_core__WEBPACK_IMPORTED_MODULE_1__["EventEmitter"]();
+    }
+    AlertComponent.prototype.ngOnInit = function () {
+    };
+    AlertComponent.prototype.onOk = function () {
+        this.ok.emit();
+    };
+    tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Input"])(),
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:type", Object)
+    ], AlertComponent.prototype, "show", void 0);
+    tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Output"])(),
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:type", Object)
+    ], AlertComponent.prototype, "ok", void 0);
+    AlertComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
+            selector: 'app-alert',
+            template: __webpack_require__(/*! ./alert.component.html */ "./src/app/components/alert/alert.component.html"),
+            styles: [__webpack_require__(/*! ./alert.component.scss */ "./src/app/components/alert/alert.component.scss")]
+        }),
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [])
+    ], AlertComponent);
+    return AlertComponent;
+}());
+
+
+
+/***/ }),
+
+/***/ "./src/app/components/alert/alert.module.ts":
+/*!**************************************************!*\
+  !*** ./src/app/components/alert/alert.module.ts ***!
+  \**************************************************/
+/*! exports provided: AlertModule */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AlertModule", function() { return AlertModule; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/common */ "./node_modules/@angular/common/fesm5/common.js");
+/* harmony import */ var src_app_components_alert_alert_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/components/alert/alert.component */ "./src/app/components/alert/alert.component.ts");
+
+
+
+
+var AlertModule = /** @class */ (function () {
+    function AlertModule() {
+    }
+    AlertModule = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["NgModule"])({
+            imports: [_angular_common__WEBPACK_IMPORTED_MODULE_2__["CommonModule"]],
+            declarations: [src_app_components_alert_alert_component__WEBPACK_IMPORTED_MODULE_3__["AlertComponent"]],
+            exports: [src_app_components_alert_alert_component__WEBPACK_IMPORTED_MODULE_3__["AlertComponent"]]
+        })
+    ], AlertModule);
+    return AlertModule;
+}());
+
+
+
+/***/ }),
+
 /***/ "./src/app/meetings/auth/auth.component.html":
 /*!***************************************************!*\
   !*** ./src/app/meetings/auth/auth.component.html ***!
@@ -6701,7 +6804,7 @@ var ReactiveFormsModule = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<form [formGroup]=\"authForm\" class=\"form\" (submit)=\"onSubmit()\">\n    <h5 class=\"form__title\">{{formTitle}}</h5>\n    <p class=\"form__box\">\n        <input type=\"text\" required formControlName=\"email\" class=\"form__input\" placeholder=\"email\" autocomplete=\"off\">\n    </p>\n    <p class=\"form__box\">\n        <input type=\"text\" required formControlName=\"password\" class=\"form__input\" placeholder=\"пароль\" autocomplete=\"off\">\n    </p>\n    <ng-container *ngIf=\"state === 'checkIn'\">\n        <p class=\"form__box\">\n            <input type=\"text\" formControlName=\"category\" class=\"form__input\" placeholder=\"разряд\" autocomplete=\"off\">\n        </p>\n        <p class=\"form__box\">\n            <input type=\"text\" required formControlName=\"name\" class=\"form__input\" placeholder=\"имя\" autocomplete=\"off\">\n        </p>\n    </ng-container>\n    <p class=\"form__box\">\n        <button class=\"btn form__submit\">{{buttonLabel}}</button>\n    </p>\n    <a class=\"form__box authForm__toggle\" (click)=\"authToggle()\">{{toggleTitle}}</a>\n</form>"
+module.exports = "<form *ngIf=\"state === 'checkIn'\" [formGroup]=\"checkInForm\" class=\"form\" [ngClass]=\"{form_wait: wait}\" (submit)=\"checkIn()\">\n    <h5 class=\"form__title\">{{formTitle}}</h5>\n    <p class=\"form__box\">\n        <input type=\"text\" (input)=\"authError = ''\" required formControlName=\"email\" class=\"form__input\" placeholder=\"email\" autocomplete=\"off\">\n        <span class=\"input__error\">required</span>\n    </p>\n    <p class=\"form__box\">\n        <input type=\"text\" (input)=\"authError = ''\" required formControlName=\"password\" class=\"form__input\" placeholder=\"пароль\" autocomplete=\"off\">\n        <span class=\"input__error\">required</span>\n    </p>\n    <p class=\"form__box\">\n        <input type=\"text\" formControlName=\"category\" class=\"form__input\" placeholder=\"разряд\" autocomplete=\"off\">\n    </p>\n    <p class=\"form__box\">\n        <input  *ngIf=\"state === 'checkIn'\" type=\"text\" [required]=\"state === 'checkIn' ? true : false\" formControlName=\"name\" class=\"form__input\" placeholder=\"имя\" autocomplete=\"off\">\n        <span class=\"input__error\">required</span>\n    </p>\n    <p *ngIf=\"authError !== ''\" class=\"authForm-message\">{{authError}}</p>\n    <p class=\"form__box\">\n        <button [disabled]=\"checkInForm.invalid\" class=\"btn form__submit\">{{buttonLabel}}</button>\n    </p>\n    <a class=\"form__box authForm__toggle\" (click)=\"authToggle()\">{{toggleTitle}}</a>\n</form>\n<form *ngIf=\"state === 'login'\" [formGroup]=\"loginForm\" class=\"form\" [ngClass]=\"{form_wait: wait}\" (submit)=\"login()\">\n    <h5 class=\"form__title\">{{formTitle}}</h5>\n    <p class=\"form__box\">\n        <input type=\"text\" (input)=\"authError = ''\" required formControlName=\"email\" class=\"form__input\" placeholder=\"email\" autocomplete=\"off\">\n        <span class=\"input__error\">required</span>\n    </p>\n    <p class=\"form__box\">\n        <input type=\"text\" (input)=\"authError = ''\" required formControlName=\"password\" class=\"form__input\" placeholder=\"пароль\" autocomplete=\"off\">\n        <span class=\"input__error\">required</span>\n    </p>\n    <p *ngIf=\"authError !== ''\" class=\"authForm-message\">{{authError}}</p>\n    <p class=\"form__box\">\n        <button [disabled]=\"loginForm.invalid\" class=\"btn form__submit\">{{buttonLabel}}</button>\n    </p>\n    <a class=\"form__box authForm__toggle\" (click)=\"authToggle()\">{{toggleTitle}}</a>\n</form>"
 
 /***/ }),
 
@@ -6712,7 +6815,7 @@ module.exports = "<form [formGroup]=\"authForm\" class=\"form\" (submit)=\"onSub
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = ".authForm__toggle {\n  display: inline-block;\n  font: 1rem Arial;\n  border-bottom: 1px solid #fff;\n  cursor: pointer; }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9Vc2Vycy9pbGEvRG9jdW1lbnRzL3Byb2dyYW0vYW5nL2NoZWNrZXJzL25ldy9jbGllbnQvc3JjL2FwcC9tZWV0aW5ncy9hdXRoL2F1dGguY29tcG9uZW50LnNjc3MiLCIvVXNlcnMvaWxhL0RvY3VtZW50cy9wcm9ncmFtL2FuZy9jaGVja2Vycy9uZXcvY2xpZW50L3NyYy9zY3NzL192YXJzLnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBR0k7RUFDSSxzQkFBcUI7RUFDckIsaUJDTFE7RURNUiw4QkFBNkI7RUFDN0IsZ0JBQWUsRUFDbEIiLCJmaWxlIjoic3JjL2FwcC9tZWV0aW5ncy9hdXRoL2F1dGguY29tcG9uZW50LnNjc3MiLCJzb3VyY2VzQ29udGVudCI6WyJAaW1wb3J0ICd2YXJzJztcblxuLmF1dGhGb3JtIHtcbiAgICAmX190b2dnbGUge1xuICAgICAgICBkaXNwbGF5OiBpbmxpbmUtYmxvY2s7XG4gICAgICAgIGZvbnQ6IDFyZW0gJG1haW5Gb250O1xuICAgICAgICBib3JkZXItYm90dG9tOiAxcHggc29saWQgI2ZmZjtcbiAgICAgICAgY3Vyc29yOiBwb2ludGVyO1xuICAgIH1cbn0iLCIkbWFpbkZvbnQ6IEFyaWFsO1xuJG1haW5Db2xvcjogIzU3MmQxNTsiXX0= */"
+module.exports = ".authForm__toggle {\n  display: inline-block;\n  font: 1rem Arial;\n  border-bottom: 1px solid #fff;\n  cursor: pointer; }\n\n.authForm-message {\n  color: #fff;\n  font: 1.1rem Arial;\n  padding-top: 2rem;\n  text-transform: uppercase; }\n\n.wait {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  width: 100%; }\n\n.wait__title {\n    text-align: center;\n    font: 1.3rem Arial;\n    color: #fff;\n    text-transform: uppercase;\n    letter-spacing: .5rem; }\n\n.form__submit:disabled {\n  opacity: .5; }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9Vc2Vycy9pbGEvRG9jdW1lbnRzL3Byb2dyYW0vYW5nL2NoZWNrZXJzL25ldy9jbGllbnQvc3JjL2FwcC9tZWV0aW5ncy9hdXRoL2F1dGguY29tcG9uZW50LnNjc3MiLCIvVXNlcnMvaWxhL0RvY3VtZW50cy9wcm9ncmFtL2FuZy9jaGVja2Vycy9uZXcvY2xpZW50L3NyYy9zY3NzL192YXJzLnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBR0k7RUFDSSxzQkFBcUI7RUFDckIsaUJDTFE7RURNUiw4QkFBNkI7RUFDN0IsZ0JBQWUsRUFDbEI7O0FBRUQ7RUFDSSxZQUFXO0VBQ1gsbUJDWlE7RURhUixrQkFBaUI7RUFDakIsMEJBQXlCLEVBQzVCOztBQUdMO0VBQ0ksY0FBYTtFQUNiLG9CQUFtQjtFQUNuQix3QkFBdUI7RUFDdkIsWUFBVyxFQVNkOztBQVBHO0lBQ0ksbUJBQWtCO0lBQ2xCLG1CQzFCUTtJRDJCUixZQUFXO0lBQ1gsMEJBQXlCO0lBQ3pCLHNCQUFxQixFQUN4Qjs7QUFHTDtFQUNJLFlBQVcsRUFDZCIsImZpbGUiOiJzcmMvYXBwL21lZXRpbmdzL2F1dGgvYXV0aC5jb21wb25lbnQuc2NzcyIsInNvdXJjZXNDb250ZW50IjpbIkBpbXBvcnQgJ3ZhcnMnO1xuXG4uYXV0aEZvcm0ge1xuICAgICZfX3RvZ2dsZSB7XG4gICAgICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgICAgICAgZm9udDogMXJlbSAkbWFpbkZvbnQ7XG4gICAgICAgIGJvcmRlci1ib3R0b206IDFweCBzb2xpZCAjZmZmO1xuICAgICAgICBjdXJzb3I6IHBvaW50ZXI7XG4gICAgfVxuXG4gICAgJi1tZXNzYWdlIHtcbiAgICAgICAgY29sb3I6ICNmZmY7XG4gICAgICAgIGZvbnQ6IDEuMXJlbSAkbWFpbkZvbnQ7XG4gICAgICAgIHBhZGRpbmctdG9wOiAycmVtO1xuICAgICAgICB0ZXh0LXRyYW5zZm9ybTogdXBwZXJjYXNlO1xuICAgIH1cbn1cblxuLndhaXQge1xuICAgIGRpc3BsYXk6IGZsZXg7XG4gICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjtcbiAgICB3aWR0aDogMTAwJTtcblxuICAgICZfX3RpdGxlIHtcbiAgICAgICAgdGV4dC1hbGlnbjogY2VudGVyO1xuICAgICAgICBmb250OiAxLjNyZW0gJG1haW5Gb250O1xuICAgICAgICBjb2xvcjogI2ZmZjtcbiAgICAgICAgdGV4dC10cmFuc2Zvcm06IHVwcGVyY2FzZTtcbiAgICAgICAgbGV0dGVyLXNwYWNpbmc6IC41cmVtO1xuICAgIH1cbn1cblxuLmZvcm1fX3N1Ym1pdDpkaXNhYmxlZCB7XG4gICAgb3BhY2l0eTogLjU7XG59IiwiJG1haW5Gb250OiBBcmlhbDtcbiRtYWluQ29sb3I6ICM1NzJkMTU7Il19 */"
 
 /***/ }),
 
@@ -6742,24 +6845,25 @@ var AuthComponent = /** @class */ (function () {
         this.toggleTitle = 'Регистрация';
         this.state = 'login';
         this.buttonLabel = 'Войти';
+        this.authError = '';
+        this.wait = false;
     }
     AuthComponent.prototype.ngOnInit = function () {
-        this.authForm = this.fb.group({
+        this.checkInForm = this.fb.group({
             email: ['', _angular_forms__WEBPACK_IMPORTED_MODULE_2__["Validators"].required],
             password: ['', _angular_forms__WEBPACK_IMPORTED_MODULE_2__["Validators"].required],
             category: '',
-            name: ['', _angular_forms__WEBPACK_IMPORTED_MODULE_2__["Validators"].required]
+            name: ['']
+        });
+        this.loginForm = this.fb.group({
+            email: ['', _angular_forms__WEBPACK_IMPORTED_MODULE_2__["Validators"].required],
+            password: ['', _angular_forms__WEBPACK_IMPORTED_MODULE_2__["Validators"].required],
         });
     };
-    AuthComponent.prototype.onSubmit = function () {
-        if (this.state === 'login') {
-            this.login();
-        }
-        else {
-            this.checkIn();
-        }
-    };
     AuthComponent.prototype.authToggle = function () {
+        this.authError = '';
+        this.loginForm.reset();
+        this.checkInForm.reset();
         if (this.state === 'login') {
             this.state = 'checkIn';
             this.formTitle = 'Регистрация';
@@ -6774,19 +6878,42 @@ var AuthComponent = /** @class */ (function () {
         }
     };
     AuthComponent.prototype.login = function () {
-        var email = this.authForm.get('email').value, password = this.authForm.get('password').value;
-        this.authService.login(email, password);
+        var _this = this;
+        var email = this.loginForm.get('email').value, password = this.loginForm.get('password').value;
+        if (!email || !password) {
+            return;
+        }
+        this.wait = true;
+        this.authService.login(email, password).then(function (result) {
+            if (!result) {
+                _this.authError = 'auth error';
+                _this.state = 'login';
+                _this.wait = false;
+            }
+        });
     };
     AuthComponent.prototype.checkIn = function () {
+        var _this = this;
         var user = {};
-        user['email'] = this.authForm.get('email').value;
-        user['password'] = this.authForm.get('password').value;
-        user['category'] = this.authForm.get('category').value;
-        user['name'] = this.authForm.get('name').value;
-        this.authService.checkIn(user)
-            .then(function (data) {
-            console.log(data);
-        });
+        user['email'] = this.checkInForm.get('email').value;
+        user['password'] = this.checkInForm.get('password').value;
+        user['category'] = this.checkInForm.get('category').value;
+        user['name'] = this.checkInForm.get('name').value;
+        if (this.checkInForm.valid) {
+            this.wait = true;
+            this.authService.checkIn(user)
+                .then(function (data) {
+                if (!data || data === 'email is busy') {
+                    _this.authError = data;
+                    _this.wait = false;
+                }
+                else if (data) {
+                    _this.authToggle();
+                    _this.wait = false;
+                    _this.authError = 'registration completed successfully';
+                }
+            });
+        }
     };
     AuthComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
@@ -6889,7 +7016,7 @@ var MeetingGeneratorComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"meeting-list\">\n  <div class=\"flex flex-center flex-around meeting\">\n    <div class=\"meeting__inner\">\n      <h5 class=\"meeting__title\">play with bot</h5>\n    </div>\n    <button (click)=\"select('robot')\" class=\"btn btn_md btn_default\">start</button>\n  </div>\n  <div class=\"flex flex-center flex-around meeting\" *ngFor=\"let meeting of (meetings | meetingsPipe: userId)\">\n    <div class=\"meeting__inner\">\n      <h5 class=\"meeting__title\">{{meeting.currentGame.type}}</h5>\n      <p class=\"meeting__user\">\n        <span>{{meeting.score[0].name}}</span>\n        <span>{{meeting.score[0].category}}</span>\n      </p>\n    </div>\n    <button (click)=\"select(meeting.id)\" class=\"btn btn_md btn_default\">start</button>\n  </div>\n</div>"
+module.exports = "<div class=\"meeting-list\">\n  <div class=\"flex flex-center flex-around meeting\">\n    <div class=\"meeting__inner\">\n      <h5 class=\"meeting__title\">play with bot</h5>\n    </div>\n    <button (click)=\"select('robot')\" class=\"btn btn_md btn_default\">start</button>\n  </div>\n  <div class=\"flex flex-center flex-around meeting\" [ngClass]=\"{'disable': !userId}\" *ngFor=\"let meeting of (meetings | meetingsPipe: userId)\">\n    <div class=\"meeting__inner\">\n      <h5 class=\"meeting__title\">{{meeting.currentGame.type}}</h5>\n      <p class=\"meeting__user\">\n        <span>{{meeting.score[0].name}}</span>\n        <span>{{meeting.score[0].category}}</span>\n      </p>\n    </div>\n    <button (click)=\"select(meeting.id)\" class=\"btn btn_md btn_default\">start</button>\n  </div>\n</div>"
 
 /***/ }),
 
@@ -6900,7 +7027,7 @@ module.exports = "<div class=\"meeting-list\">\n  <div class=\"flex flex-center 
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = ".meeting {\n  padding: 1rem;\n  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);\n  border-radius: 1rem;\n  margin-top: 1rem;\n  background: rgba(255, 255, 255, 0.5); }\n  .meeting__title {\n    font: 1rem Arial;\n    text-transform: uppercase; }\n  .meeting__user {\n    margin-top: .5rem; }\n  .meeting__user span {\n      display: inline-block;\n      padding: 0 .5rem;\n      font: 1rem Arial; }\n  .meeting__user span:first-child {\n        padding-left: 0; }\n  .meeting__user span:last-child {\n        padding-right: 0; }\n  :host {\n  height: 100%;\n  overflow: auto;\n  display: block;\n  padding: .35rem; }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9Vc2Vycy9pbGEvRG9jdW1lbnRzL3Byb2dyYW0vYW5nL2NoZWNrZXJzL25ldy9jbGllbnQvc3JjL2FwcC9tZWV0aW5ncy9tZWV0aW5nLWxpc3QvbWVldGluZy1saXN0LmNvbXBvbmVudC5zY3NzIiwiL1VzZXJzL2lsYS9Eb2N1bWVudHMvcHJvZ3JhbS9hbmcvY2hlY2tlcnMvbmV3L2NsaWVudC9zcmMvc2Nzcy9fdmFycy5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUVBO0VBQ0ksY0FBYTtFQUNiLHdDQUFzQztFQUN0QyxvQkFBbUI7RUFDbkIsaUJBQWdCO0VBQ2hCLHFDQUFtQyxFQXdCdEM7RUF0Qkc7SUFDSSxpQkNWUTtJRFdSLDBCQUF5QixFQUM1QjtFQUVEO0lBQ0ksa0JBQWlCLEVBZXBCO0VBaEJBO01BSU8sc0JBQXFCO01BQ3JCLGlCQUFnQjtNQUNoQixpQkNwQkksRUQ2QlA7RUFmSjtRQVNXLGdCQUFlLEVBQ2xCO0VBVlI7UUFhVyxpQkFBZ0IsRUFDbkI7RUFLYjtFQUNJLGFBQVk7RUFDWixlQUFjO0VBQ2QsZUFBYztFQUNkLGdCQUNKLEVBQUMiLCJmaWxlIjoic3JjL2FwcC9tZWV0aW5ncy9tZWV0aW5nLWxpc3QvbWVldGluZy1saXN0LmNvbXBvbmVudC5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiQGltcG9ydCAndmFycyc7XG5cbi5tZWV0aW5nIHtcbiAgICBwYWRkaW5nOiAxcmVtO1xuICAgIGJveC1zaGFkb3c6IDAgMCAxNXB4IHJnYmEoMCwgMCwgMCwgLjUpO1xuICAgIGJvcmRlci1yYWRpdXM6IDFyZW07XG4gICAgbWFyZ2luLXRvcDogMXJlbTtcbiAgICBiYWNrZ3JvdW5kOiByZ2JhKDI1NSwgMjU1LCAyNTUsIC41KTtcblxuICAgICZfX3RpdGxlIHtcbiAgICAgICAgZm9udDogMXJlbSAkbWFpbkZvbnQ7XG4gICAgICAgIHRleHQtdHJhbnNmb3JtOiB1cHBlcmNhc2U7XG4gICAgfVxuXG4gICAgJl9fdXNlciB7XG4gICAgICAgIG1hcmdpbi10b3A6IC41cmVtO1xuXG4gICAgICAgIHNwYW4ge1xuICAgICAgICAgICAgZGlzcGxheTogaW5saW5lLWJsb2NrO1xuICAgICAgICAgICAgcGFkZGluZzogMCAuNXJlbTtcbiAgICAgICAgICAgIGZvbnQ6IDFyZW0gJG1haW5Gb250O1xuXG4gICAgICAgICAgICAmOmZpcnN0LWNoaWxkIHtcbiAgICAgICAgICAgICAgICBwYWRkaW5nLWxlZnQ6IDA7XG4gICAgICAgICAgICB9XG5cbiAgICAgICAgICAgICY6bGFzdC1jaGlsZCB7XG4gICAgICAgICAgICAgICAgcGFkZGluZy1yaWdodDogMDtcbiAgICAgICAgICAgIH1cbiAgICAgICAgfVxuICAgIH1cbn1cblxuOmhvc3Qge1xuICAgIGhlaWdodDogMTAwJTtcbiAgICBvdmVyZmxvdzogYXV0bztcbiAgICBkaXNwbGF5OiBibG9jaztcbiAgICBwYWRkaW5nOiAuMzVyZW1cbn0iLCIkbWFpbkZvbnQ6IEFyaWFsO1xuJG1haW5Db2xvcjogIzU3MmQxNTsiXX0= */"
+module.exports = ".meeting {\n  padding: 1rem;\n  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);\n  border-radius: 1rem;\n  margin-top: 1rem;\n  background: rgba(255, 255, 255, 0.5); }\n  .meeting__title {\n    font: 1rem Arial;\n    text-transform: uppercase; }\n  .meeting__user {\n    margin-top: .5rem; }\n  .meeting__user span {\n      display: inline-block;\n      padding: 0 .5rem;\n      font: 1rem Arial; }\n  .meeting__user span:first-child {\n        padding-left: 0; }\n  .meeting__user span:last-child {\n        padding-right: 0; }\n  .meeting.disable {\n    opacity: .5; }\n  :host {\n  height: 100%;\n  overflow: auto;\n  display: block;\n  padding: .35rem; }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9Vc2Vycy9pbGEvRG9jdW1lbnRzL3Byb2dyYW0vYW5nL2NoZWNrZXJzL25ldy9jbGllbnQvc3JjL2FwcC9tZWV0aW5ncy9tZWV0aW5nLWxpc3QvbWVldGluZy1saXN0LmNvbXBvbmVudC5zY3NzIiwiL1VzZXJzL2lsYS9Eb2N1bWVudHMvcHJvZ3JhbS9hbmcvY2hlY2tlcnMvbmV3L2NsaWVudC9zcmMvc2Nzcy9fdmFycy5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUVBO0VBQ0ksY0FBYTtFQUNiLHdDQUFzQztFQUN0QyxvQkFBbUI7RUFDbkIsaUJBQWdCO0VBQ2hCLHFDQUFtQyxFQTRCdEM7RUExQkc7SUFDSSxpQkNWUTtJRFdSLDBCQUF5QixFQUM1QjtFQUVEO0lBQ0ksa0JBQWlCLEVBZXBCO0VBaEJBO01BSU8sc0JBQXFCO01BQ3JCLGlCQUFnQjtNQUNoQixpQkNwQkksRUQ2QlA7RUFmSjtRQVNXLGdCQUFlLEVBQ2xCO0VBVlI7UUFhVyxpQkFBZ0IsRUFDbkI7RUExQmI7SUErQlEsWUFBVyxFQUNkO0VBR0w7RUFDSSxhQUFZO0VBQ1osZUFBYztFQUNkLGVBQWM7RUFDZCxnQkFDSixFQUFDIiwiZmlsZSI6InNyYy9hcHAvbWVldGluZ3MvbWVldGluZy1saXN0L21lZXRpbmctbGlzdC5jb21wb25lbnQuc2NzcyIsInNvdXJjZXNDb250ZW50IjpbIkBpbXBvcnQgJ3ZhcnMnO1xuXG4ubWVldGluZyB7XG4gICAgcGFkZGluZzogMXJlbTtcbiAgICBib3gtc2hhZG93OiAwIDAgMTVweCByZ2JhKDAsIDAsIDAsIC41KTtcbiAgICBib3JkZXItcmFkaXVzOiAxcmVtO1xuICAgIG1hcmdpbi10b3A6IDFyZW07XG4gICAgYmFja2dyb3VuZDogcmdiYSgyNTUsIDI1NSwgMjU1LCAuNSk7XG5cbiAgICAmX190aXRsZSB7XG4gICAgICAgIGZvbnQ6IDFyZW0gJG1haW5Gb250O1xuICAgICAgICB0ZXh0LXRyYW5zZm9ybTogdXBwZXJjYXNlO1xuICAgIH1cblxuICAgICZfX3VzZXIge1xuICAgICAgICBtYXJnaW4tdG9wOiAuNXJlbTtcblxuICAgICAgICBzcGFuIHtcbiAgICAgICAgICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgICAgICAgICAgIHBhZGRpbmc6IDAgLjVyZW07XG4gICAgICAgICAgICBmb250OiAxcmVtICRtYWluRm9udDtcblxuICAgICAgICAgICAgJjpmaXJzdC1jaGlsZCB7XG4gICAgICAgICAgICAgICAgcGFkZGluZy1sZWZ0OiAwO1xuICAgICAgICAgICAgfVxuXG4gICAgICAgICAgICAmOmxhc3QtY2hpbGQge1xuICAgICAgICAgICAgICAgIHBhZGRpbmctcmlnaHQ6IDA7XG4gICAgICAgICAgICB9XG4gICAgICAgIH1cbiAgICB9XG5cbiAgICAmLmRpc2FibGUge1xuICAgICAgICBvcGFjaXR5OiAuNTtcbiAgICB9XG59XG5cbjpob3N0IHtcbiAgICBoZWlnaHQ6IDEwMCU7XG4gICAgb3ZlcmZsb3c6IGF1dG87XG4gICAgZGlzcGxheTogYmxvY2s7XG4gICAgcGFkZGluZzogLjM1cmVtXG59IiwiJG1haW5Gb250OiBBcmlhbDtcbiRtYWluQ29sb3I6ICM1NzJkMTU7Il19 */"
 
 /***/ }),
 
@@ -7001,7 +7128,7 @@ var MeetingsPipe = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"fullHeight flex meeting\">\n    <div class=\"flex-col flex-col_4\">    \n        <app-auth *ngIf=\"authState === 'guest'\" class=\"fullHeight flex flex-center\"></app-auth>\n        <app-meeting-generator *ngIf=\"authState === 'isLogin'\" (create)=\"createMeeting($event)\" class=\"fullHeight flex flex-center\"></app-meeting-generator>\n        <div *ngIf=\"authState === 'waiting'\">\n            meeting is created\n        </div>\n        <div class=\"fullHeight flex flex-center inGame\" *ngIf=\"authState === 'inGame'\">\n            <div>\n                <p class=\"inGame__title\">you are in the game</p>\n                <div class=\"flex\">\n                    <button class=\"btn btn_md\" (click)=\"leaveMeeting()\">Quit game</button>\n                    <button (click)=\"continueGame()\" class=\"btn btn_md\">Continue</button>\n                </div>\n            </div>\n        </div>\n    </div>\n    <div *ngIf=\"meetings\" class=\"flex-col flex-col_6\">\n        <app-meeting-list (selectGame)=\"selectMeeting($event)\" [userId]=\"userId\" [meetings]=\"meetings\"></app-meeting-list>\n    </div>\n</div>"
+module.exports = "<div class=\"fullHeight flex meeting\">\n    <div class=\"flex-col flex-col_4\">    \n        <div class=\"meeting-left\" [ngClass]=\"{'vis': init}\">\n            <app-auth *ngIf=\"authState === 'guest'\" class=\"fullHeight flex flex-center\"></app-auth>\n            <app-meeting-generator *ngIf=\"authState === 'isLogin'\" (create)=\"createMeeting($event)\" class=\"fullHeight flex flex-center\"></app-meeting-generator>\n            <div class=\"fullHeight flex flex-center\" *ngIf=\"authState === 'waiting'\">\n                <h5 class=\"text_lg text_white title_lg\">wait...</h5>\n            </div>\n            <div class=\"fullHeight flex flex-center inGame\" *ngIf=\"authState === 'inGame'\">\n                <div>\n                    <p class=\"inGame__title\">you are in the game</p>\n                    <div class=\"flex\">\n                        <button class=\"btn btn_md\" (click)=\"leaveMeeting()\">Quit game</button>\n                        <button (click)=\"continueGame()\" class=\"btn btn_md\">Continue</button>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n    <div *ngIf=\"meetings\" class=\"flex-col flex-col_6\">\n        <app-meeting-list (selectGame)=\"selectMeeting($event)\" [userId]=\"userId\" [meetings]=\"meetings\"></app-meeting-list>\n    </div>\n</div>\n<user-room *ngIf=\"isLogin\" (logout)=\"onLogout()\"></user-room>\n<app-alert (ok)=\"closeMessage()\" [show]=\"alertShow\">{{alertMessage}}</app-alert>"
 
 /***/ }),
 
@@ -7012,7 +7139,7 @@ module.exports = "<div class=\"fullHeight flex meeting\">\n    <div class=\"flex
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = ":host {\n  display: block;\n  padding: 4vmin;\n  height: 100%;\n  background: url('table4.jpg') repeat;\n  color: #fff; }\n\n.inGame__title {\n  margin-bottom: 1.5rem;\n  text-align: center;\n  text-transform: uppercase; }\n\n.inGame .btn {\n  margin: .5rem; }\n\n@media all and (min-width: 1260px) {\n  .meeting {\n    width: 1260px;\n    margin: 0 auto; } }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9Vc2Vycy9pbGEvRG9jdW1lbnRzL3Byb2dyYW0vYW5nL2NoZWNrZXJzL25ldy9jbGllbnQvc3JjL2FwcC9tZWV0aW5ncy9tZWV0aW5ncy5jb21wb25lbnQuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNJLGVBQWM7RUFDZCxlQUFjO0VBQ2QsYUFBWTtFQUNaLHFDQUFpRDtFQUNqRCxZQUFXLEVBQ2Q7O0FBRUQ7RUFDSSxzQkFBcUI7RUFDckIsbUJBQWtCO0VBQ2xCLDBCQUF5QixFQUM1Qjs7QUFFRDtFQUNJLGNBQWEsRUFDaEI7O0FBRUQ7RUFDSTtJQUNJLGNBQWE7SUFDYixlQUFjLEVBQ2pCLEVBQUEiLCJmaWxlIjoic3JjL2FwcC9tZWV0aW5ncy9tZWV0aW5ncy5jb21wb25lbnQuc2NzcyIsInNvdXJjZXNDb250ZW50IjpbIjpob3N0IHtcbiAgICBkaXNwbGF5OiBibG9jaztcbiAgICBwYWRkaW5nOiA0dm1pbjtcbiAgICBoZWlnaHQ6IDEwMCU7XG4gICAgYmFja2dyb3VuZDogdXJsKCcuLi8uLi9hc3NldHMvdGFibGU0LmpwZycpIHJlcGVhdDtcbiAgICBjb2xvcjogI2ZmZjtcbn1cblxuLmluR2FtZV9fdGl0bGUge1xuICAgIG1hcmdpbi1ib3R0b206IDEuNXJlbTtcbiAgICB0ZXh0LWFsaWduOiBjZW50ZXI7XG4gICAgdGV4dC10cmFuc2Zvcm06IHVwcGVyY2FzZTtcbn1cblxuLmluR2FtZSAuYnRuIHtcbiAgICBtYXJnaW46IC41cmVtO1xufVxuXG5AbWVkaWEgYWxsIGFuZCAobWluLXdpZHRoOiAxMjYwcHgpIHtcbiAgICAubWVldGluZyB7XG4gICAgICAgIHdpZHRoOiAxMjYwcHg7XG4gICAgICAgIG1hcmdpbjogMCBhdXRvO1xuICAgIH1cbn0iXX0= */"
+module.exports = ":host {\n  display: block;\n  padding: 4vmin;\n  height: 100%;\n  background: url('table4.jpg') repeat;\n  color: #fff; }\n\n.inGame__title {\n  margin-bottom: 1.5rem;\n  text-align: center;\n  text-transform: uppercase; }\n\n.inGame .btn {\n  margin: .5rem; }\n\n.meeting-left {\n  opacity: 0;\n  transition: opacity .5s;\n  height: 100%; }\n\n.meeting-left.vis {\n    opacity: 1; }\n\n@media all and (min-width: 1260px) {\n  .meeting {\n    width: 1260px;\n    margin: 0 auto; } }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9Vc2Vycy9pbGEvRG9jdW1lbnRzL3Byb2dyYW0vYW5nL2NoZWNrZXJzL25ldy9jbGllbnQvc3JjL2FwcC9tZWV0aW5ncy9tZWV0aW5ncy5jb21wb25lbnQuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNJLGVBQWM7RUFDZCxlQUFjO0VBQ2QsYUFBWTtFQUNaLHFDQUFpRDtFQUNqRCxZQUFXLEVBQ2Q7O0FBRUQ7RUFDSSxzQkFBcUI7RUFDckIsbUJBQWtCO0VBQ2xCLDBCQUF5QixFQUM1Qjs7QUFFRDtFQUNJLGNBQWEsRUFDaEI7O0FBRUQ7RUFDSSxXQUFVO0VBQ1Ysd0JBQXVCO0VBQ3ZCLGFBQVksRUFLZjs7QUFSRDtJQU1RLFdBQVUsRUFDYjs7QUFHTDtFQUNJO0lBQ0ksY0FBYTtJQUNiLGVBQWMsRUFDakIsRUFBQSIsImZpbGUiOiJzcmMvYXBwL21lZXRpbmdzL21lZXRpbmdzLmNvbXBvbmVudC5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiOmhvc3Qge1xuICAgIGRpc3BsYXk6IGJsb2NrO1xuICAgIHBhZGRpbmc6IDR2bWluO1xuICAgIGhlaWdodDogMTAwJTtcbiAgICBiYWNrZ3JvdW5kOiB1cmwoJy4uLy4uL2Fzc2V0cy90YWJsZTQuanBnJykgcmVwZWF0O1xuICAgIGNvbG9yOiAjZmZmO1xufVxuXG4uaW5HYW1lX190aXRsZSB7XG4gICAgbWFyZ2luLWJvdHRvbTogMS41cmVtO1xuICAgIHRleHQtYWxpZ246IGNlbnRlcjtcbiAgICB0ZXh0LXRyYW5zZm9ybTogdXBwZXJjYXNlO1xufVxuXG4uaW5HYW1lIC5idG4ge1xuICAgIG1hcmdpbjogLjVyZW07XG59XG5cbi5tZWV0aW5nLWxlZnQge1xuICAgIG9wYWNpdHk6IDA7XG4gICAgdHJhbnNpdGlvbjogb3BhY2l0eSAuNXM7XG4gICAgaGVpZ2h0OiAxMDAlO1xuXG4gICAgJi52aXMge1xuICAgICAgICBvcGFjaXR5OiAxO1xuICAgIH1cbn1cblxuQG1lZGlhIGFsbCBhbmQgKG1pbi13aWR0aDogMTI2MHB4KSB7XG4gICAgLm1lZXRpbmcge1xuICAgICAgICB3aWR0aDogMTI2MHB4O1xuICAgICAgICBtYXJnaW46IDAgYXV0bztcbiAgICB9XG59Il19 */"
 
 /***/ }),
 
@@ -7047,6 +7174,9 @@ var MeetingsComponent = /** @class */ (function () {
         this.isLogin = null;
         this.userId = null;
         this.currentMeetingId = null;
+        this.alertMessage = '';
+        this.selectedMeeting = null;
+        this.alertShow = false;
     }
     MeetingsComponent.prototype.ngOnInit = function () {
         var _this = this;
@@ -7060,6 +7190,7 @@ var MeetingsComponent = /** @class */ (function () {
         });
         this.dataService.getData().subscribe(function (data) {
             _this.meetings = data;
+            _this.init = _this.dataService.isInit();
         });
     };
     MeetingsComponent.prototype.createMeeting = function (meetingType) {
@@ -7073,12 +7204,30 @@ var MeetingsComponent = /** @class */ (function () {
         this.authService.leaveMeeting();
     };
     MeetingsComponent.prototype.selectMeeting = function (meetingId) {
-        this.meetingsService.selectMeeting(this.authService.getTocken(), meetingId);
+        if (this.selectedMeeting === null) {
+            this.selectedMeeting = meetingId;
+        }
+        else {
+            return;
+        }
+        if (this.isLogin || meetingId === 'robot') {
+            this.meetingsService.selectMeeting(this.authService.getTocken(), meetingId);
+        }
+        else {
+            this.alertMessage = 'You must log in to play with other users';
+            this.alertShow = true;
+        }
+    };
+    MeetingsComponent.prototype.closeMessage = function () {
+        this.alertShow = false;
     };
     MeetingsComponent.prototype.continueGame = function () {
         if (this.dataService.getCurrentMeeting() !== undefined) {
             this.router.navigate(['/game']);
         }
+    };
+    MeetingsComponent.prototype.onLogout = function () {
+        this.authService.logout();
     };
     MeetingsComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
@@ -7117,6 +7266,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _meeting_list_meeting_list_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./meeting-list/meeting-list.component */ "./src/app/meetings/meeting-list/meeting-list.component.ts");
 /* harmony import */ var _meeting_generator_meeting_generator_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./meeting-generator/meeting-generator.component */ "./src/app/meetings/meeting-generator/meeting-generator.component.ts");
 /* harmony import */ var src_app_meetings_meeting_pipe__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! src/app/meetings/meeting.pipe */ "./src/app/meetings/meeting.pipe.ts");
+/* harmony import */ var src_app_meetings_user_room_user_room_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! src/app/meetings/user-room/user-room.component */ "./src/app/meetings/user-room/user-room.component.ts");
+/* harmony import */ var src_app_components_alert_alert_module__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! src/app/components/alert/alert.module */ "./src/app/components/alert/alert.module.ts");
+
+
 
 
 
@@ -7140,18 +7293,100 @@ var MeetingsModule = /** @class */ (function () {
                         path: '',
                         component: _meetings_component__WEBPACK_IMPORTED_MODULE_5__["MeetingsComponent"]
                     }
-                ])
+                ]),
+                src_app_components_alert_alert_module__WEBPACK_IMPORTED_MODULE_11__["AlertModule"]
             ],
             declarations: [
                 _meetings_component__WEBPACK_IMPORTED_MODULE_5__["MeetingsComponent"],
                 _auth_auth_component__WEBPACK_IMPORTED_MODULE_6__["AuthComponent"],
                 _meeting_list_meeting_list_component__WEBPACK_IMPORTED_MODULE_7__["MeetingListComponent"],
                 _meeting_generator_meeting_generator_component__WEBPACK_IMPORTED_MODULE_8__["MeetingGeneratorComponent"],
-                src_app_meetings_meeting_pipe__WEBPACK_IMPORTED_MODULE_9__["MeetingsPipe"]
+                src_app_meetings_meeting_pipe__WEBPACK_IMPORTED_MODULE_9__["MeetingsPipe"],
+                src_app_meetings_user_room_user_room_component__WEBPACK_IMPORTED_MODULE_10__["UserRoomComponent"],
             ]
         })
     ], MeetingsModule);
     return MeetingsModule;
+}());
+
+
+
+/***/ }),
+
+/***/ "./src/app/meetings/user-room/user-room.component.html":
+/*!*************************************************************!*\
+  !*** ./src/app/meetings/user-room/user-room.component.html ***!
+  \*************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = "<div class=\"user-logo\">\n    <button (click)=\"toggle($event)\">{{user.name.slice(0, 1)}}</button>\n</div>\n<div class=\"user-info\" [ngClass]=\"{'show': isOpen}\">\n    <h5 class=\"user-info__title\">{{user.name}}</h5> \n    <div class=\"user-info__btns\">\n        <button (click)=\"onLogout()\" class=\"btn btn_md btn_default user-info__btn\">logout</button>\n    </div>\n</div>\n"
+
+/***/ }),
+
+/***/ "./src/app/meetings/user-room/user-room.component.scss":
+/*!*************************************************************!*\
+  !*** ./src/app/meetings/user-room/user-room.component.scss ***!
+  \*************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = ":host {\n  position: absolute;\n  top: 1rem;\n  right: 1rem;\n  z-index: 50; }\n\n.user-logo button {\n  width: 3rem;\n  height: 3rem;\n  border-radius: 50%;\n  background: #fff;\n  color: #000;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  cursor: pointer;\n  text-transform: uppercase; }\n\n.user-info {\n  margin-top: 5px;\n  position: absolute;\n  top: 100%;\n  right: 0;\n  width: 10rem;\n  padding: 1rem;\n  background: #fff;\n  color: #000;\n  border-radius: .5rem;\n  opacity: 0;\n  pointer-events: none;\n  transition: opacity .5s; }\n\n.user-info.show {\n    opacity: 1;\n    pointer-events: all; }\n\n.user-info__title {\n    text-align: center;\n    text-transform: uppercase; }\n\n.user-info__btns {\n    margin-top: 1rem; }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9Vc2Vycy9pbGEvRG9jdW1lbnRzL3Byb2dyYW0vYW5nL2NoZWNrZXJzL25ldy9jbGllbnQvc3JjL2FwcC9tZWV0aW5ncy91c2VyLXJvb20vdXNlci1yb29tLmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0ksbUJBQWtCO0VBQ2xCLFVBQVM7RUFDVCxZQUFXO0VBQ1gsWUFBVyxFQUNkOztBQUVEO0VBRVEsWUFBVztFQUNYLGFBQVk7RUFDWixtQkFBa0I7RUFDbEIsaUJBQWdCO0VBQ2hCLFlBQVc7RUFDWCxjQUFhO0VBQ2Isb0JBQW1CO0VBQ25CLHdCQUF1QjtFQUN2QixnQkFBZTtFQUNmLDBCQUF5QixFQUM1Qjs7QUFHTDtFQUNJLGdCQUFlO0VBQ2YsbUJBQWtCO0VBQ2xCLFVBQVM7RUFDVCxTQUFRO0VBQ1IsYUFBWTtFQUNaLGNBQWE7RUFDYixpQkFBZ0I7RUFDaEIsWUFBVztFQUNYLHFCQUFvQjtFQUNwQixXQUFVO0VBQ1YscUJBQW9CO0VBQ3BCLHdCQUF1QixFQWUxQjs7QUEzQkQ7SUFlUSxXQUFVO0lBQ1Ysb0JBQW1CLEVBQ3RCOztBQUVEO0lBQ0ksbUJBQWtCO0lBQ2xCLDBCQUF5QixFQUM1Qjs7QUFFRDtJQUNJLGlCQUFnQixFQUNuQiIsImZpbGUiOiJzcmMvYXBwL21lZXRpbmdzL3VzZXItcm9vbS91c2VyLXJvb20uY29tcG9uZW50LnNjc3MiLCJzb3VyY2VzQ29udGVudCI6WyI6aG9zdCB7XG4gICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgIHRvcDogMXJlbTtcbiAgICByaWdodDogMXJlbTtcbiAgICB6LWluZGV4OiA1MDtcbn1cblxuLnVzZXItbG9nbyB7XG4gICAgYnV0dG9uIHtcbiAgICAgICAgd2lkdGg6IDNyZW07XG4gICAgICAgIGhlaWdodDogM3JlbTtcbiAgICAgICAgYm9yZGVyLXJhZGl1czogNTAlO1xuICAgICAgICBiYWNrZ3JvdW5kOiAjZmZmO1xuICAgICAgICBjb2xvcjogIzAwMDtcbiAgICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICAgICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gICAgICAgIGN1cnNvcjogcG9pbnRlcjtcbiAgICAgICAgdGV4dC10cmFuc2Zvcm06IHVwcGVyY2FzZTtcbiAgICB9XG59XG5cbi51c2VyLWluZm8ge1xuICAgIG1hcmdpbi10b3A6IDVweDtcbiAgICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gICAgdG9wOiAxMDAlO1xuICAgIHJpZ2h0OiAwO1xuICAgIHdpZHRoOiAxMHJlbTtcbiAgICBwYWRkaW5nOiAxcmVtO1xuICAgIGJhY2tncm91bmQ6ICNmZmY7XG4gICAgY29sb3I6ICMwMDA7XG4gICAgYm9yZGVyLXJhZGl1czogLjVyZW07XG4gICAgb3BhY2l0eTogMDtcbiAgICBwb2ludGVyLWV2ZW50czogbm9uZTtcbiAgICB0cmFuc2l0aW9uOiBvcGFjaXR5IC41cztcblxuICAgICYuc2hvdyB7XG4gICAgICAgIG9wYWNpdHk6IDE7XG4gICAgICAgIHBvaW50ZXItZXZlbnRzOiBhbGw7XG4gICAgfVxuXG4gICAgJl9fdGl0bGUge1xuICAgICAgICB0ZXh0LWFsaWduOiBjZW50ZXI7XG4gICAgICAgIHRleHQtdHJhbnNmb3JtOiB1cHBlcmNhc2U7XG4gICAgfVxuXG4gICAgJl9fYnRucyB7XG4gICAgICAgIG1hcmdpbi10b3A6IDFyZW07XG4gICAgfVxufSJdfQ== */"
+
+/***/ }),
+
+/***/ "./src/app/meetings/user-room/user-room.component.ts":
+/*!***********************************************************!*\
+  !*** ./src/app/meetings/user-room/user-room.component.ts ***!
+  \***********************************************************/
+/*! exports provided: UserRoomComponent */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UserRoomComponent", function() { return UserRoomComponent; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
+/* harmony import */ var src_app_services_auth_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/services/auth.service */ "./src/app/services/auth.service.ts");
+
+
+
+var UserRoomComponent = /** @class */ (function () {
+    function UserRoomComponent(authService) {
+        this.authService = authService;
+        this.isOpen = false;
+        this.logout = new _angular_core__WEBPACK_IMPORTED_MODULE_1__["EventEmitter"]();
+        this.toggle = this.toggle.bind(this);
+    }
+    UserRoomComponent.prototype.toggle = function (e) {
+        e.stopPropagation();
+        if (!this.isOpen) {
+            window.addEventListener('click', this.toggle);
+        }
+        else {
+            window.removeEventListener('click', this.toggle);
+        }
+        this.isOpen = !this.isOpen;
+    };
+    UserRoomComponent.prototype.onLogout = function () {
+        this.logout.emit();
+    };
+    UserRoomComponent.prototype.ngOnInit = function () {
+        this.user = this.authService.getUser();
+    };
+    tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Output"])(),
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:type", Object)
+    ], UserRoomComponent.prototype, "logout", void 0);
+    UserRoomComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
+            selector: 'user-room',
+            template: __webpack_require__(/*! ./user-room.component.html */ "./src/app/meetings/user-room/user-room.component.html"),
+            styles: [__webpack_require__(/*! ./user-room.component.scss */ "./src/app/meetings/user-room/user-room.component.scss")]
+        }),
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [src_app_services_auth_service__WEBPACK_IMPORTED_MODULE_2__["AuthService"]])
+    ], UserRoomComponent);
+    return UserRoomComponent;
 }());
 
 
