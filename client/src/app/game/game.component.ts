@@ -97,7 +97,7 @@ export class GameComponent {
         });
         this.meetingsService.removeSteps();
         this.meetingsService$ = this.meetingsService.stepHandler().subscribe(async(data) => {
-            if (this.currentGame && this.currentGame.whoWin) { return; } // Opponent took a step before you clicked a new game
+            if (this.currentGame && this.currentGame.whoWin && data.steps !== 'w' && data.steps !== 'b') { return; } // Opponent took a step before you clicked a new game
             
             if (data.steps && data.steps !== 'w' && data.steps !== 'b' && !data.steps.whoWin) { //opponents step
                 this.stepHandler(data.steps);
