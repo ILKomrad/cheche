@@ -9,7 +9,15 @@ var express = require('express'),
     model = require('./model')('http://localhost:8888/checkers/checkers.php'),
     controller = require('./controller')(model);
 
-app.use(express.static(__dirname));
+app.use(express.static(__dirname + '/dist/client/'));
+
+app.get('/', function(req, res) {
+    res.sendFile(path.join(__dirname + '/dist/client/index.html'));
+});
+
+app.get('*', function(req, res) {
+    res.sendFile(path.join(__dirname + '/dist/client/index.html'));
+})
 
 io.on('connection', (socket) => {
     console.log('connect');

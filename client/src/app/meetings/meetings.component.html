@@ -1,16 +1,18 @@
 <div class="fullHeight flex meeting">
     <div class="flex-col flex-col_4">    
-        <app-auth *ngIf="authState === 'guest'" class="fullHeight flex flex-center"></app-auth>
-        <app-meeting-generator *ngIf="authState === 'isLogin'" (create)="createMeeting($event)" class="fullHeight flex flex-center"></app-meeting-generator>
-        <div *ngIf="authState === 'waiting'">
-            meeting is created
-        </div>
-        <div class="fullHeight flex flex-center inGame" *ngIf="authState === 'inGame'">
-            <div>
-                <p class="inGame__title">you are in the game</p>
-                <div class="flex">
-                    <button class="btn btn_md" (click)="leaveMeeting()">Quit game</button>
-                    <button (click)="continueGame()" class="btn btn_md">Continue</button>
+        <div class="meeting-left" [ngClass]="{'vis': init}">
+            <app-auth *ngIf="authState === 'guest'" class="fullHeight flex flex-center"></app-auth>
+            <app-meeting-generator *ngIf="authState === 'isLogin'" (create)="createMeeting($event)" class="fullHeight flex flex-center"></app-meeting-generator>
+            <div class="fullHeight flex flex-center" *ngIf="authState === 'waiting'">
+                <h5 class="text_lg text_white title_lg">wait...</h5>
+            </div>
+            <div class="fullHeight flex flex-center inGame" *ngIf="authState === 'inGame'">
+                <div>
+                    <p class="inGame__title">you are in the game</p>
+                    <div class="flex">
+                        <button class="btn btn_md" (click)="leaveMeeting()">Quit game</button>
+                        <button (click)="continueGame()" class="btn btn_md">Continue</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -19,3 +21,5 @@
         <app-meeting-list (selectGame)="selectMeeting($event)" [userId]="userId" [meetings]="meetings"></app-meeting-list>
     </div>
 </div>
+<user-room *ngIf="isLogin" (logout)="onLogout()"></user-room>
+<app-alert (ok)="closeMessage()" [show]="alertShow">{{alertMessage}}</app-alert>

@@ -8,6 +8,7 @@ declare const io: any;
 })
 export class HttpService {
     instance;
+    prevSend;
 
     constructor() {
         this.instance = io('http://localhost:3001'); 
@@ -20,12 +21,14 @@ export class HttpService {
 
     listenPromise(eventName) {
         return new Promise(res => {
-            this.instance.on(eventName, (event) => {
+            const clbck = (event) => {
+                this.instance.removeListener(eventName, clbck);
                 const data = JSON.parse(event);
                 console.log( 'listenPromise', eventName, data );
                 res(data);
-            })
-        })
+            }
+            this.instance.on(eventName, clbck);
+        });
     }
 
     listen(eventName) {

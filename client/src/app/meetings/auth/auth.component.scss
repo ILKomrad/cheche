@@ -7,4 +7,30 @@
         border-bottom: 1px solid #fff;
         cursor: pointer;
     }
+
+    &-message {
+        color: #fff;
+        font: 1.1rem $mainFont;
+        padding-top: 2rem;
+        text-transform: uppercase;
+    }
+}
+
+.wait {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+
+    &__title {
+        text-align: center;
+        font: 1.3rem $mainFont;
+        color: #fff;
+        text-transform: uppercase;
+        letter-spacing: .5rem;
+    }
+}
+
+.form__submit:disabled {
+    opacity: .5;
 }

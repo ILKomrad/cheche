@@ -1,0 +1,9 @@
+<div class="user-logo">
+    <button (click)="toggle($event)">{{user.name.slice(0, 1)}}</button>
+</div>
+<div class="user-info" [ngClass]="{'show': isOpen}">
+    <h5 class="user-info__title">{{user.name}}</h5> 
+    <div class="user-info__btns">
+        <button (click)="onLogout()" class="btn btn_md btn_default user-info__btn">logout</button>
+    </div>
+</div>

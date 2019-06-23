@@ -5,7 +5,7 @@
     </div>
     <button (click)="select('robot')" class="btn btn_md btn_default">start</button>
   </div>
-  <div class="flex flex-center flex-around meeting" *ngFor="let meeting of (meetings | meetingsPipe: userId)">
+  <div class="flex flex-center flex-around meeting" [ngClass]="{'disable': !userId}" *ngFor="let meeting of (meetings | meetingsPipe: userId)">
     <div class="meeting__inner">
       <h5 class="meeting__title">{{meeting.currentGame.type}}</h5>
       <p class="meeting__user">

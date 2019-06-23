@@ -29,6 +29,10 @@
             }
         }
     }
+
+    &.disable {
+        opacity: .5;
+    }
 }
 
 :host {

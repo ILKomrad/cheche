@@ -16,6 +16,16 @@
     margin: .5rem;
 }
 
+.meeting-left {
+    opacity: 0;
+    transition: opacity .5s;
+    height: 100%;
+
+    &.vis {
+        opacity: 1;
+    }
+}
+
 @media all and (min-width: 1260px) {
     .meeting {
         width: 1260px;

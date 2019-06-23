@@ -15,6 +15,9 @@ export class MeetingsComponent {
     userId = null;
     currentMeetingId = null;
     authState;
+    init;
+    alertMessage = '';
+    alertShow = false;
 
     constructor(
         private authService: AuthService,
@@ -28,7 +31,7 @@ export class MeetingsComponent {
             if (token !== null) {
                 this.isLogin = token;
             }
-    
+            
             this.userId = this.authService.getUserId();
             this.currentMeetingId = this.authService.getCurrentMeetingId();
             this.authState = this.authService.getState();
@@ -36,6 +39,8 @@ export class MeetingsComponent {
 
         this.dataService.getData().subscribe(data => {
             this.meetings = data;
+
+            this.init = this.dataService.isInit();
         });
     }
 
@@ -52,12 +57,25 @@ export class MeetingsComponent {
     }
 
     selectMeeting(meetingId) {
-        this.meetingsService.selectMeeting(this.authService.getTocken(), meetingId);
+        if (this.isLogin || meetingId === 'robot') {
+            this.meetingsService.selectMeeting(this.authService.getTocken(), meetingId);
+        } else {
+            this.alertMessage = 'You must log in to play with other users';
+            this.alertShow = true;
+        }
+    }
+
+    closeMessage() {
+        this.alertShow = false;
     }
 
     continueGame() {
         if (this.dataService.getCurrentMeeting() !== undefined) {
             this.router.navigate(['/game']);
         }
+    }
+
+    onLogout() {
+        this.authService.logout();
     }
 }

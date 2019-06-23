@@ -421,6 +421,7 @@ export class CheckersGame {
                 })
             });
         }
+        console.log('this.nextStep', this.nextStep)
     }
 
     isGameOver() {
@@ -434,11 +435,11 @@ export class CheckersGame {
 
         let bestStep = this.getPosibleSteps(),
             hits = this.getAllPossibleHits();
-       
+            
         if ((bestStep.length === 0) && (hits.length === 0)) {
             whoWin = this.whosTurn === 'b' ? 'w' : 'b';
         }
-       
+        
         return whoWin;
     }
 
@@ -592,7 +593,7 @@ export class StepGenerator {
         this.getFakeHits(nextStep, this.game.paths, stepsArray);
         const f = new StepFormater();
         f.format(stepsArray);
-        console.log( f.steps )
+       
         return f.steps;
     }
 

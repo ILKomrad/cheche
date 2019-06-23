@@ -13,9 +13,18 @@ export class DataService {
     currentGame;
     currentMeetingId;
     currentMeeting;
+    appInit;
 
     constructor() {
         this.data = [];
+    }
+
+    start() {
+        this.appInit = true;
+    }
+
+    isInit() {
+        return this.appInit;
     }
 
     setData(data: Meeting[]) {

@@ -51,7 +51,13 @@ export class GameComponent {
 
         if (this.currentGame && this.currentGame.whoWin) {
             this.state = {alias: 'gameOver', additional: this.currentGame.whoWin};
-          
+        }
+       
+        if (this.currentGame.whosTurn !== this.getRange() && !this.currentGame.whoWin) {
+            this.state = {alias: 'waiting', additional: null};
+        }
+
+        if (this.currentGame.whoWin) { 
             if (this.getRange() === this.currentGame.whoWin) {
                 this.soundService.reproduceSound('win');
             } else {
@@ -66,10 +72,13 @@ export class GameComponent {
             if (currentGame && currentGame.paths) {
                 this.currentGame = this.checkers.getGame(currentGame);
                 if (this.currentGame.bot) { this.isBot = true; }
+                if (!this.currentGame.nextStep) { this.currentGame.setNextStep(); }
                 const range = this.getRange();
                 
-                if (this.currentGame && !this.gameViewComponent.isInit) { 
+                if (this.currentGame && !this.gameViewComponent.isInit) { //init or continue
                     this.gameViewComponent.createGameView(this.currentGame, range); 
+                } else {
+                    this.gameViewComponent.updateCurrentGame(this.currentGame);
                 }
               
                 if (!this.isStart && this.dataService.isStart()) {
@@ -81,21 +90,21 @@ export class GameComponent {
                     this.gameViewComponent.restartGameView(this.currentGame, range); 
                     this.isRestart = false;
                 }
-                
                 this.updateInterface();
-
-                if (!this.currentGame.nextStep) { this.currentGame.setNextStep(); }
-                this.gameViewComponent.updateCurrentGame(this.currentGame);
-            } else if (this.isStart) {
+            } else if (this.isStart && !this.dataService.getCurrentMeeting()) { // opponent leave meeting
                 this.gameViewComponent.opponentDisconect();
             }
-            console.log( currentGame, this.isStart );
         });
         this.meetingsService.removeSteps();
-        this.meetingsService$ = this.meetingsService.stepHandler().subscribe(async(steps) => {
-            if (steps.steps) {
-                this.stepHandler(steps.steps);
-            } else if (this.currentGame && this.currentGame.whoWin) {
+        this.meetingsService$ = this.meetingsService.stepHandler().subscribe(async(data) => {
+            if (this.currentGame && this.currentGame.whoWin) { return; } // Opponent took a step before you clicked a new game
+            
+            if (data.steps && data.steps !== 'w' && data.steps !== 'b' && !data.steps.whoWin) { //opponents step
+                this.stepHandler(data.steps);
+            } else if (data.steps === 'w' || data.steps === 'b') { // you win after your step
+                this.setState();
+            } else if (data.steps && data.steps.whoWin) { // opponent push NewGame
+                this.currentGame = this.checkers.getGame(data.steps);
                 this.setState();
             }
         });
@@ -182,7 +191,7 @@ export class GameComponent {
             this.gameViewComponent.showNextStep();
         }
 
-        if (!multiStep) { this.setState(); }
+        if (!multiStep && ifOpponent) { this.setState(); }
     }
 
     async makeStep(hitChips, step, ifOpponent = false, multiStep = false) {
@@ -223,11 +232,12 @@ export class GameComponent {
             this.steps.push({step, hitChips});
            
             if (!this.currentGame.nextStep || (this.currentGame.nextStep.length === 0)) {
-                this.gameViewComponent.removeAllHits(this.steps);
-
                 if (!this.currentGame.bot) {
+                    this.gameViewComponent.removeAllHits(this.steps);
                     this.meetingsService.makeStep(this.steps.slice(), this.authService.getPlayerId()); 
                 } else {
+                    await this.gameViewComponent.removeAllHits(this.steps);
+                   
                     if (!this.currentGame.whoWin) {
                         setTimeout(() => {
                             let gen = new StepGenerator();
@@ -242,6 +252,8 @@ export class GameComponent {
                             this.steps = [];    
                             gen = null;
                         }, 500);
+                    } else {
+                        this.setState();
                     }
                 }
         
@@ -251,9 +263,10 @@ export class GameComponent {
     }
 
     newGame() {
+        this.meetingsService.newGame(this.authService.getPlayerId());
         this.isStart = false;
         this.isRestart = true;
-        this.meetingsService.newGame(this.authService.getPlayerId());
+        this.isGameOver = false;
     }
 
     finishGame() {

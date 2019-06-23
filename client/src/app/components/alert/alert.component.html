@@ -1,3 +1,8 @@
-<p>
-  alert works!
-</p>
+<div class="alert" [ngClass]="{'show': show}">
+  <div class="alert__inner">
+    <div class="alert__content"><ng-content></ng-content></div>
+    <div class="alert__btns">
+      <button (click)="onOk()" class="btn btn_default btn_md">yes</button>
+    </div>
+  </div>
+</div>

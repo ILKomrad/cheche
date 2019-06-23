@@ -92,11 +92,30 @@ body,html {
     height: 100%;
 }
 
+.input__error {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    padding: .4rem;
+    background: red;
+    color: #fff;
+    font: 1rem $mainFont;
+    z-index: 10;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.form__input.ng-dirty.ng-invalid + .input__error {
+    opacity: 1;
+}
+
 .form {
     width: 100%;
 
     &__box {
         margin-top: 1rem;
+        position: relative;
     }
 
     &__input {
@@ -107,6 +126,11 @@ body,html {
         padding-left: .5rem;
         background: transparent;
         color: #fff;
+        border: 1px solid #fff;
+
+        &.ng-dirty.ng-invalid {
+            border-color: red;
+        }
     }
 
     &__title {
@@ -169,6 +193,10 @@ body,html {
             }
         }
     }
+
+    &_wait {
+        opacity: .4;
+    }
 }
 
 .material-icons {
@@ -188,6 +216,25 @@ body,html {
     -moz-osx-font-smoothing: grayscale;
     font-feature-settings: 'liga';
   }
+.text_lg {
+    font: 2rem $mainFont;
+}
+
+.text_white {
+    color: #fff;
+}
+
+.text_center {
+    text-align: center;
+}
+
+.title_lg {
+    font: 2rem $mainFont;
+    letter-spacing: .5rem;
+    width: 100%;
+    text-align: center;
+    text-transform: uppercase;
+}
 
 // @media (min-aspect-ratio: 16/9) {
 //     html {

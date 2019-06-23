@@ -1,21 +1,39 @@
-<form [formGroup]="authForm" class="form" (submit)="onSubmit()">
+<form *ngIf="state === 'checkIn'" [formGroup]="checkInForm" class="form" [ngClass]="{form_wait: wait}" (submit)="checkIn()">
     <h5 class="form__title">{{formTitle}}</h5>
     <p class="form__box">
-        <input type="text" required formControlName="email" class="form__input" placeholder="email" autocomplete="off">
+        <input type="text" (input)="authError = ''" required formControlName="email" class="form__input" placeholder="email" autocomplete="off">
+        <span class="input__error">required</span>
     </p>
     <p class="form__box">
-        <input type="text" required formControlName="password" class="form__input" placeholder="пароль" autocomplete="off">
+        <input type="text" (input)="authError = ''" required formControlName="password" class="form__input" placeholder="пароль" autocomplete="off">
+        <span class="input__error">required</span>
     </p>
-    <ng-container *ngIf="state === 'checkIn'">
-        <p class="form__box">
-            <input type="text" formControlName="category" class="form__input" placeholder="разряд" autocomplete="off">
-        </p>
-        <p class="form__box">
-            <input type="text" required formControlName="name" class="form__input" placeholder="имя" autocomplete="off">
-        </p>
-    </ng-container>
     <p class="form__box">
-        <button class="btn form__submit">{{buttonLabel}}</button>
+        <input type="text" formControlName="category" class="form__input" placeholder="разряд" autocomplete="off">
+    </p>
+    <p class="form__box">
+        <input  *ngIf="state === 'checkIn'" type="text" [required]="state === 'checkIn' ? true : false" formControlName="name" class="form__input" placeholder="имя" autocomplete="off">
+        <span class="input__error">required</span>
+    </p>
+    <p *ngIf="authError !== ''" class="authForm-message">{{authError}}</p>
+    <p class="form__box">
+        <button [disabled]="checkInForm.invalid" class="btn form__submit">{{buttonLabel}}</button>
+    </p>
+    <a class="form__box authForm__toggle" (click)="authToggle()">{{toggleTitle}}</a>
+</form>
+<form *ngIf="state === 'login'" [formGroup]="loginForm" class="form" [ngClass]="{form_wait: wait}" (submit)="login()">
+    <h5 class="form__title">{{formTitle}}</h5>
+    <p class="form__box">
+        <input type="text" (input)="authError = ''" required formControlName="email" class="form__input" placeholder="email" autocomplete="off">
+        <span class="input__error">required</span>
+    </p>
+    <p class="form__box">
+        <input type="text" (input)="authError = ''" required formControlName="password" class="form__input" placeholder="пароль" autocomplete="off">
+        <span class="input__error">required</span>
+    </p>
+    <p *ngIf="authError !== ''" class="authForm-message">{{authError}}</p>
+    <p class="form__box">
+        <button [disabled]="loginForm.invalid" class="btn form__submit">{{buttonLabel}}</button>
     </p>
     <a class="form__box authForm__toggle" (click)="authToggle()">{{toggleTitle}}</a>
 </form>

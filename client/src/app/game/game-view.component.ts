@@ -94,7 +94,7 @@ export class GameViewComponent {
         window.addEventListener('mousedown', this.onDocumentMouseDown);
         window.addEventListener('resize', this.onResize);
         this.addTable();
-
+       
         if (this.currentGame.nextStep && (this.range === this.currentGame.whosTurn)) {
             this.showNextStep();
         }
@@ -133,10 +133,10 @@ export class GameViewComponent {
     }
 
     hideSplash() {
-        this.viewState = 'idle';
-
+        this.viewState = 'wait';
         this.startRender();
         this.animator.renderAnimation(this.gameRenderer.getCamera(), this.gameRenderer.getLight(), this.gameRenderer.getCameraPos()).then(() => {
+            this.viewState = 'idle';
             this.stopRender();
             this.gameStart.emit();
         });
@@ -160,7 +160,6 @@ export class GameViewComponent {
 
     gameRender() {
         if (!this.stopRenderFlag) {
-            // console.log('render', Date.now());
             this.gameRenderer.render();
             TWEEN.update();
             requestAnimationFrame(this.gameRender);
@@ -168,7 +167,7 @@ export class GameViewComponent {
     }
 
     onDocumentMouseDown(event) {
-        if ((event.which === 1) && (this.state.alias !== 'waiting') && !this.isGameOver) {
+        if ((event.which === 1) && (this.state.alias !== 'waiting') && !this.isGameOver && (this.viewState === 'idle')) {
             const that = this,
                 intersects = that.dragAndDrop.getIntersects(event);
             
@@ -179,7 +178,6 @@ export class GameViewComponent {
                     let error = this.currentGame.canTouch(target.name, this.range);
 
                     if (error.length) {
-                        console.log( 'error', error );
                         this.viewState = 'idle';
                     } else {
                         this.startRender();
@@ -220,20 +218,19 @@ export class GameViewComponent {
     }
 
     stopRender() {
-        if (this.viewState !== 'drag') {
+        if (this.viewState !== 'drag' && this.viewState !== 'wait') {
             this.startRender();
             this.stopRenderFlag = true;
-            // console.warn('stopRender')
         }
     }
 
     startRender() {
-       // console.warn('startRender')
         this.stopRenderFlag = false;
         this.gameRender();
     }
 
     async makeStep(chipName, cellName, anim) {
+        this.viewState = 'wait';
         let cell = this.desk.getCellPosition(cellName),
             chip = this.desk.getChip(chipName);
        
@@ -244,11 +241,13 @@ export class GameViewComponent {
         } else {
             chip.moveTo(cell.position.x, 0.1, cell.position.z);
         }
-
+        this.viewState = 'idle';
         return Promise.resolve();
     }
 
     async newQueen(chipName) {
+        const prevState = this.viewState;
+        this.viewState = 'wait';
         let chip = this.desk.getChip(chipName),
             camera = this.gameRenderer.getCamera(),
             cameraFov = camera.fov,
@@ -258,10 +257,12 @@ export class GameViewComponent {
         await this.animator.zoomTo(camera, posTo, {f: 8}, posTo, {x: 0.89, y: -15, z: 0});
         await this.animator.transformToQueen(chip.getMesh());
         await this.animator.zoomTo(camera, startCameraPos, {f: cameraFov}, {x: 0.89, y: -15, z: 0}, posTo);
+        this.viewState = prevState;
     }
 
     async removeHits(hitChips) {
         let i = 0;
+        this.viewState = 'wait';
         while (i < hitChips.length) {
             let chipName = hitChips[i];
             let chip = this.desk.getChip(chipName);
@@ -271,9 +272,11 @@ export class GameViewComponent {
             chip.setName([]);
             i++;
         }
+        this.viewState = 'idle';
     }
 
     createNewGame() {
+        this.isGameOver = false;
         this.newGame.emit();
     }
 

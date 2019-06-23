@@ -8,11 +8,14 @@ import { AuthService } from 'src/app/services/auth.service';
     styleUrls: ['./auth.component.scss']
 })
 export class AuthComponent {
-    authForm: FormGroup;
+    checkInForm: FormGroup;
+    loginForm: FormGroup;
     formTitle = 'Войти';
     toggleTitle = 'Регистрация';
     state = 'login';
     buttonLabel = 'Войти';
+    authError: any = '';
+    wait = false;
 
     constructor(
         private fb: FormBuilder,
@@ -20,23 +23,23 @@ export class AuthComponent {
     ) {}
 
     ngOnInit() {
-        this.authForm = this.fb.group({
+        this.checkInForm = this.fb.group({
             email: ['', Validators.required],
             password: ['', Validators.required],
             category: '',
-            name: ['', Validators.required]
+            name: ['']
         });
-    }
-
-    onSubmit() {
-        if (this.state === 'login') {
-            this.login();
-        } else {
-            this.checkIn();
-        }
+        this.loginForm = this.fb.group({
+            email: ['', Validators.required],
+            password: ['', Validators.required],
+        })
     }
 
     authToggle() {
+        this.authError = '';
+        this.loginForm.reset();
+        this.checkInForm.reset();
+
         if (this.state === 'login') {
             this.state = 'checkIn';
             this.formTitle = 'Регистрация';
@@ -51,22 +54,40 @@ export class AuthComponent {
     }
 
     login() {
-        const email = this.authForm.get('email').value,
-            password = this.authForm.get('password').value;
-        
-        this.authService.login(email, password);
+        const email = this.loginForm.get('email').value,
+            password = this.loginForm.get('password').value;
+
+        if (!email || !password) {return;}
+        this.wait = true;
+        this.authService.login(email, password).then(result => {
+            if (!result) {
+                this.authError = 'auth error';
+                this.state = 'login';
+                this.wait = false;
+            }
+        })
     }
 
     checkIn() {
         const user = {};
-        user['email'] = this.authForm.get('email').value;
-        user['password'] = this.authForm.get('password').value;
-        user['category'] = this.authForm.get('category').value;
-        user['name'] = this.authForm.get('name').value;
+        user['email'] = this.checkInForm.get('email').value;
+        user['password'] = this.checkInForm.get('password').value;
+        user['category'] = this.checkInForm.get('category').value;
+        user['name'] = this.checkInForm.get('name').value;
         
-        this.authService.checkIn(user)
-        .then(data => {
-            console.log(data);
-        })
+        if (this.checkInForm.valid) {
+            this.wait = true;
+            this.authService.checkIn(user)
+            .then(data => {
+                if (!data || data === 'email is busy') {
+                    this.authError = data;
+                    this.wait = false;
+                } else if (data) {
+                    this.authToggle();
+                    this.wait = false;
+                    this.authError = 'registration completed successfully';
+                }
+            })
+        }
     }
 }

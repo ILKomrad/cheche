@@ -1,0 +1,50 @@
+:host {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 50;
+}
+
+.user-logo {
+    button {
+        width: 3rem;
+        height: 3rem;
+        border-radius: 50%;
+        background: #fff;
+        color: #000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        text-transform: uppercase;
+    }
+}
+
+.user-info {
+    margin-top: 5px;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 10rem;
+    padding: 1rem;
+    background: #fff;
+    color: #000;
+    border-radius: .5rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .5s;
+
+    &.show {
+        opacity: 1;
+        pointer-events: all;
+    }
+
+    &__title {
+        text-align: center;
+        text-transform: uppercase;
+    }
+
+    &__btns {
+        margin-top: 1rem;
+    }
+}

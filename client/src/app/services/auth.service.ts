@@ -20,13 +20,17 @@ export class AuthService {
     login(email, password) {
         this.httpService.sendMessage('login', {email, password}); 
 
-        this.httpService.listenPromise('loginResult')
-        .then((data: any) => {
-            if (data && data.playerId) {
-                this.setUser(data);
-            } else {
-                this.logout();
-            }
+        return new Promise(res => {
+            this.httpService.listenPromise('loginResult')
+            .then((data: any) => {
+                res(data);
+                
+                if (data && data.playerId) {
+                    this.setUser(data);
+                } else {
+                    this.logout();
+                }
+            });
         });
     }
 

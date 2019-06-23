@@ -33,6 +33,8 @@ export class AppComponent {
       this.httpService.sendMessage('hello', {playerId: this.authService.getTocken()});
 
       this.httpService.listen('helloFromServer').subscribe((data: any) => {
+        this.dataService.start();
+
         if (data.user === undefined) {
           this.authService.logout();
         } else {
@@ -60,8 +62,8 @@ export class AppComponent {
         .subscribe((data: any) => {
           if (!this.authService.bot) {this.dataService.addData(data.meeting);}
           this.dataService.setCurrentMeeting(data.meeting, data.game);
-          this.authService.inGame(data.meeting, data.game);
           this.router.navigate(['/game']);
+          this.authService.inGame(data.meeting, data.game);
         });
 
         this.httpService.listen('removeMeeting')
@@ -90,13 +92,13 @@ export class AppComponent {
 
         this.httpService.listen('makeStep')
         .subscribe((data: any) => {
-          this.dataService.setCurrentGame(data);
+          this.meetingService.opponentStep(data.whoWin);
         });
 
         this.httpService.listen('opponentStep')
         .subscribe((data: any) => {
-          this.dataService.setCurrentGame(data.game);
           this.meetingService.opponentStep(data.steps);
+          this.dataService.setCurrentGame(data.game);
         });
 
         this.httpService.listen('continueGame')
