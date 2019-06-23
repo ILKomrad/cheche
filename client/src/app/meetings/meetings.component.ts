@@ -17,6 +17,7 @@ export class MeetingsComponent {
     authState;
     init;
     alertMessage = '';
+    selectedMeeting = null;
     alertShow = false;
 
     constructor(
@@ -57,6 +58,12 @@ export class MeetingsComponent {
     }
 
     selectMeeting(meetingId) {
+        if (this.selectedMeeting === null) { 
+            this.selectedMeeting = meetingId; 
+        } else {
+            return;
+        }
+
         if (this.isLogin || meetingId === 'robot') {
             this.meetingsService.selectMeeting(this.authService.getTocken(), meetingId);
         } else {
