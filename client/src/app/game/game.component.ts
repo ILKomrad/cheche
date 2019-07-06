@@ -69,6 +69,7 @@ export class GameComponent {
     ngOnInit() {
         this.dataService$ = this.dataService.getCurrentGame()
         .subscribe(currentGame => {
+            console.log( 'currentGame', currentGame )
             if (currentGame && currentGame.paths) {
                 this.currentGame = this.checkers.getGame(currentGame);
                 if (this.currentGame.bot) { this.isBot = true; }
@@ -98,6 +99,7 @@ export class GameComponent {
         });
         this.meetingsService.removeSteps();
         this.meetingsService$ = this.meetingsService.stepHandler().subscribe(async(data) => {
+            console.log( data )
             if (this.currentGame && this.currentGame.whoWin && data.steps !== 'w' && data.steps !== 'b') { return; } // Opponent took a step before you clicked a new game
             
             if (data.steps && data.steps !== 'w' && data.steps !== 'b' && !data.steps.whoWin) { //opponents step

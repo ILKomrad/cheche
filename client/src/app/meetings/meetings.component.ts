@@ -36,6 +36,7 @@ export class MeetingsComponent {
             this.userId = this.authService.getUserId();
             this.currentMeetingId = this.authService.getCurrentMeetingId();
             this.authState = this.authService.getState();
+            console.log( this.authState, this.authService.getCurrentMeetingId() )
         })
 
         this.dataService.getData().subscribe(data => {

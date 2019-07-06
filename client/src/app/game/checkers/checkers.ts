@@ -265,15 +265,13 @@ export class CheckersGame {
         } else if (!multistep && !this.newQueen) {
             this.newQueen = null;
         }
-        
         this.setTurn(userRange, step, withHit);
-       
+      
         if (this.whosTurn === this.transformRange(range)) {
             this.setNextStep(step);
         } else {
             this.nextStep = [];
         }
-       
         this.whoWin = this.isGameOver();
     }
 
@@ -477,13 +475,13 @@ export class CheckersGame {
         return error;
     }
 
-    getPosibleSteps() {
-        let bestStep = [];
-        this.paths.forEach((row, rowIndex) => {
+    getPosibleSteps(p = null) {
+        let bestStep = [], paths = p ? p : this.paths;
+        paths.forEach((row, rowIndex) => {
             row.forEach((col, colIndex) => {
-                let range = this.transformRange(this.paths[rowIndex][colIndex]);
+                let range = this.transformRange(paths[rowIndex][colIndex]);
 
-                if ((this.paths[rowIndex][colIndex] !== 0) && (range === this.whosTurn)) {     
+                if ((paths[rowIndex][colIndex] !== 0) && (range === this.whosTurn)) {     
                     const s = this.getPossibleStep([colIndex, rowIndex]);
                     
                     if (s && s.length) {
@@ -567,9 +565,9 @@ export class StepGenerator {
         this.copy(this.initialObj, this.game, true);
     }
 
-    getStep() {
+    getStep(p = null) {
         let range = this.game.whosTurn,
-            paths = this.game.paths,
+            paths = p ? p : this.game.paths,
             bestStep = [];
 
         this.game.setNextStep();
@@ -580,10 +578,46 @@ export class StepGenerator {
             bestStep = this.formatStep(bestStep);
         } else {
             bestStep = this.game.getPosibleSteps();
+            bestStep = this.rateSteps(bestStep);
             bestStep = this.getBestStep(bestStep);
         }
         
         return {steps: bestStep, game: this.game};
+    }
+
+    rateStep(step, deep, rate, paths) {
+        const range = paths[step.from[1]][step.from[0]],
+            newQueen = this.game.detectQueen(step.to, range);
+           
+        if (newQueen) { 
+            rate.isQueen = 1;
+            paths[newQueen[1]][newQueen[0]] = range === 'w' ? 'ww' : 'bb'; 
+        } else {
+            paths[step.to[1]][step.to[0]] = paths[step.from[1]][step.from[0]];
+        }
+        paths[step.from[1]][step.from[0]] = '0';
+        this.game.whosTurn = this.game.transformRange(range) === 'w' ? 'b' : 'w';
+    }
+
+    rateSteps(bestStep) {
+        const whosTurn = this.game.whosTurn, deep = 1;
+
+        bestStep = bestStep.map(step => {
+            const rate = {hits: 0, opponentHits: 0, isQueen: 0},
+                paths = ThreeCommon.copyArray(this.game.paths);
+            this.rateStep(step.step, 1, rate, paths);
+
+            // for (let z = 0; z < deep; z++) {
+                
+            // }
+
+            step.rate = rate;
+            this.game.whosTurn = whosTurn;
+
+            return step;
+        })
+
+        return bestStep;
     }
 
     getAllHits() {
@@ -622,7 +656,19 @@ export class StepGenerator {
     }
 
     getBestStep(steps) {
-        const num = ThreeCommon.randomInteger(0, (steps.length - 1));
+        let bestIndex = [], num;
+
+        steps.forEach((step, index) => {
+            if (step.rate.isQueen) {
+                bestIndex.push(index);
+            }
+        })
+      
+        if (bestIndex.length) {
+            num = bestIndex[ThreeCommon.randomInteger(0, (bestIndex.length - 1))];
+        } else {
+            num = ThreeCommon.randomInteger(0, (steps.length - 1));
+        }
        
         return [steps[num]];
     }
