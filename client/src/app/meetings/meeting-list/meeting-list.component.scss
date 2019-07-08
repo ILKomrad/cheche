@@ -7,6 +7,18 @@
     margin-top: 1rem;
     background: rgba(255, 255, 255, .5);
 
+    &-robot {
+        .meeting__inner {
+            display: flex;
+            align-items: center;
+        }
+
+        app-select {
+            margin-left: 1rem;
+            width: 13rem;
+        }
+    }
+
     &__title {
         font: 1rem $mainFont;
         text-transform: uppercase;

@@ -10,6 +10,7 @@ import { MeetingGeneratorComponent } from './meeting-generator/meeting-generator
 import { MeetingsPipe } from 'src/app/meetings/meeting.pipe';
 import { UserRoomComponent } from 'src/app/meetings/user-room/user-room.component';
 import { AlertModule } from 'src/app/components/alert/alert.module';
+import { SelectModule } from 'src/app/components/select/select.module';
 
 @NgModule({
     imports: [
@@ -21,7 +22,8 @@ import { AlertModule } from 'src/app/components/alert/alert.module';
                 component: MeetingsComponent
             }
         ]),
-        AlertModule
+        AlertModule,
+        SelectModule
     ],
     declarations: [
         MeetingsComponent,

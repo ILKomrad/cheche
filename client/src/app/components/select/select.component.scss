@@ -1,0 +1,50 @@
+@import 'vars';
+
+.app-select {
+    position: relative;
+
+    &__options {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        transition: opacity .5s;
+        background: #fff;
+
+        &.hide {
+            opacity: 0;
+            pointer-events: none;
+        }
+    }
+
+    &__title {
+        padding: 1rem 3.4rem 1rem .8rem;
+        border: 1px solid rgba(255, 255, 255, .8);
+        text-transform: uppercase;
+        font: 1rem $mainFont;
+
+        &::after {
+            content: '';
+            border-left: .5rem solid transparent;
+            border-right: .5rem solid transparent;
+            border-top: .5rem solid #fff;
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+    }
+}
+
+.option {
+    padding: 1rem .8rem;
+    color: #000;
+    font: .8rem $mainFont;
+    text-align: left;
+    text-transform: uppercase;
+    border-bottom: 1px solid #000;
+
+    &:last-child {
+        border-bottom: none;
+    }
+}

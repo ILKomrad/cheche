@@ -58,7 +58,9 @@ export class MeetingsComponent {
         this.authService.leaveMeeting();
     }
 
-    selectMeeting(meetingId) {
+    selectMeeting(meeting) {
+        const meetingId = meeting.id;
+
         if (this.selectedMeeting === null) { 
             this.selectedMeeting = meetingId; 
         } else {
@@ -66,6 +68,7 @@ export class MeetingsComponent {
         }
 
         if (this.isLogin || meetingId === 'robot') {
+            this.meetingsService.setBotLevel(meeting.botLevel);
             this.meetingsService.selectMeeting(this.authService.getTocken(), meetingId);
         } else {
             this.alertMessage = 'You must log in to play with other users';

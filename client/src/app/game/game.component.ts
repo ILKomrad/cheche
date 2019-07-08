@@ -243,7 +243,7 @@ export class GameComponent {
                    
                     if (!this.currentGame.whoWin) {
                         setTimeout(() => {
-                            let gen = new StepGenerator();
+                            let gen = new StepGenerator(this.meetingsService.getBotLevel());
                             gen.init(this.currentGame);
                             let data = gen.getStep();
                             data.steps.forEach(step => {

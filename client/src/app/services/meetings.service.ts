@@ -7,10 +7,19 @@ import { Observable, of, BehaviorSubject } from 'rxjs';
 })
 export class MeetingsService {
     step$ = new BehaviorSubject<any>({});
+    botLevel;
     
     constructor(
         private httpService: HttpService
     ) {}
+
+    setBotLevel(level) {
+        this.botLevel = level;
+    }
+
+    getBotLevel() {
+        return this.botLevel;
+    }
 
     createMeeting(type, user) {
         this.httpService.sendMessage('createMeeting', {type, user});

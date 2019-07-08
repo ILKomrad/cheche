@@ -1,3 +1,6 @@
-<p>
-  select works!
-</p>
+<div class="app-select">
+  <h5 (click)="toggleOptions()" class="app-select__title">{{selected.val}}</h5>
+  <div class="app-select__options" [ngClass]="{hide: selectClose}" *ngIf="options">
+      <div (click)="select(i.key)" class="option" *ngFor="let i of options">{{i.key}}</div>
+  </div>
+</div>

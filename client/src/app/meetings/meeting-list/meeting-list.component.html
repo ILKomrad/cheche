@@ -1,7 +1,10 @@
 <div class="meeting-list">
-  <div class="flex flex-center flex-around meeting">
+  <div class="flex flex-center flex-around meeting meeting-robot">
     <div class="meeting__inner">
       <h5 class="meeting__title">play with bot</h5>
+      <app-select (onSelect)="selectBotLevel($event)">
+        <app-select-option *ngFor="let i of botLevels" [key]="i.val" [val]="i.key"></app-select-option>
+      </app-select>
     </div>
     <button (click)="select('robot')" class="btn btn_md btn_default">start</button>
   </div>
