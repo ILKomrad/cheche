@@ -400,7 +400,7 @@ export class CheckersGame {
         let nextStep = [], paths = fakePaths ? fakePaths : this.paths;
         
         if (step) {
-            let hits = this.getPosibleHits(step.to);
+            let hits = this.getPosibleHits(step.to, paths);
                        
             if (hits && hits.length) {
                 nextStep = nextStep.concat(hits);
@@ -598,7 +598,8 @@ export class StepGenerator {
         if (this.game.nextStep.length) { 
             let nextStep = this.game.nextStep.slice();
             let hitsStep = this.getAllHits(nextStep);
-            bestStep = this.getBestHitStep(hitsStep);
+            bestStep = this.rateHitSteps(hitsStep);
+            bestStep = this.getBestHitStep(bestStep);
             bestStep = this.formatStep(bestStep);
         } else {
             // bestStep = this.game.getPosibleSteps();
@@ -609,26 +610,41 @@ export class StepGenerator {
         return {steps: bestStep, game: this.game};
     }
 
-    // rateStep(step, deep, rate, paths) {
-    //     const range = paths[step.from[1]][step.from[0]],
-    //         newQueen = this.game.detectQueen(step.to, range);
+    rateHitStep(step, rate, range, paths) {
+        step.forEach(h => {
+            this.makeFakeStep(range, h, null, paths);
+        });
+        const nextStep = this.game.setNextStep(null, paths);
+        let hitsStep = this.getAllHits(nextStep);
+        rate.opponentHits += hitsStep.length;
+    }
+
+    rateHitSteps(steps) {
+        steps = steps.map(step => {
+            const paths = ThreeCommon.copyArray(this.game.paths),
+                range = this.game.transformRange(paths[step[0].from[1]][step[0].from[0]]),
+                rate = {opponentHits: 0};
+
+            for (let z = 0; z < this.deep; z++) {
+                this.rateHitStep(step, rate, range, paths);
+            }
+            this.game.whosTurn = range;
            
-    //     if (newQueen) { 
-    //         rate.isQueen = 1;
-    //         paths[newQueen[1]][newQueen[0]] = range === 'w' ? 'ww' : 'bb'; 
-    //     } else {
-    //         paths[step.to[1]][step.to[0]] = paths[step.from[1]][step.from[0]];
-    //     }
-    //     paths[step.from[1]][step.from[0]] = '0';
-    //     this.game.whosTurn = this.game.transformRange(range) === 'w' ? 'b' : 'w';
-    // }
+            return {
+                hits: step.length,
+                steps: step,
+                opponentHits: rate.opponentHits
+            }
+        })
+        return steps;
+    }
 
     makeFakeStep(range, step, rate = null, paths) {
         let newQueen = this.game.detectQueen(step.to, range);
 
         if (step.hits) {
             const h = step.hits[0];
-            paths[h[1]][h[0]] = 'h';
+            paths[h[1]][h[0]] = '0';
         }
 
         if (newQueen) { 
@@ -770,22 +786,28 @@ export class StepGenerator {
         let maxLength = 0;
         
         steps.forEach(step => {
-            if (step && step.length && (best.length <= step.length)) {
-                if (step.length >= maxLength) {
-                    maxLength = step.length;
+            console.log( 'step', step )
+            // if (step && step.hits && (best.length <= step.hits)) {
+            if (step && step.hits) {
+                if ((step.hits - step.opponentHits) >= maxLength) {
+                    maxLength = (step.hits - step.opponentHits);
                 }
 
                 best.push(step);
             }
         });
-
+       
         if (best.length === 0) {
-            best = steps[ThreeCommon.randomInteger(0, steps.length - 1)];
+            best = steps[ThreeCommon.randomInteger(0, steps.length - 1)].steps;
+        } else if (best.length === 1) {
+            best = best.map(b => b.steps);
+            best = best[ThreeCommon.randomInteger(0, best.length - 1)];
         } else {
-            best = best.filter(s => (s.length >= maxLength));
+            best = best.filter(s => ((s.hits - s.opponentHits) >= maxLength));
+            best = best.map(b => b.steps);
             best = best[ThreeCommon.randomInteger(0, best.length - 1)];
         }
-        
+        console.log( 'best', best )
         return best;
     }
 
