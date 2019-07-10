@@ -604,6 +604,7 @@ export class StepGenerator {
         } else {
             // bestStep = this.game.getPosibleSteps();
             bestStep = this.rateSteps();
+            console.log( 'bestStep', bestStep )
             bestStep = this.getBestStep(bestStep);
         }
         
@@ -660,7 +661,8 @@ export class StepGenerator {
     }
 
     rateStep(step, paths, rate, range) {
-        const newQueen = this.makeFakeStep(range, step, rate, paths);
+        console.log( this.game.whosTurn, range, step )
+        const newQueen = this.makeFakeStep(this.game.whosTurn, step, rate, paths);
         const nextStep = this.game.setNextStep(null, paths);
         let hitsStep = this.getAllHits(nextStep, paths);
         
@@ -671,10 +673,20 @@ export class StepGenerator {
                 rate.hits += hitsStep[0].length;
             }
 
-            // hitsStep[0].forEach(h => {
-            //     this.makeFakeStep(this.game.whosTurn, h, rate, paths);
-            // });
-            // console.log( 'hitsStep', hitsStep[0], paths )
+            hitsStep[0].forEach(h => {
+                this.makeFakeStep(this.game.whosTurn, h, rate, paths);
+            });
+
+            const nextStep = this.game.setNextStep(null, paths);
+            let _hitsStep = this.getAllHits(nextStep, paths);
+            
+            if (_hitsStep.length) { 
+                if (this.game.whosTurn !== range) {
+                    rate.opponentHits += _hitsStep[0].length;
+                } else {
+                    rate.hits += _hitsStep[0].length;
+                }
+            }
         } else {
             // let startPossibleSteps = this.game.getPosibleSteps(paths);
             // console.log( 'startPossibleSteps', this.game.whosTurn, startPossibleSteps, paths )
@@ -701,23 +713,6 @@ export class StepGenerator {
        
         return startPossibleSteps;
     }
-
-    // rateSteps(bestStep) {
-    //     const whosTurn = this.game.whosTurn, deep = 1;
-
-    //     bestStep = bestStep.map(step => {
-    //         const rate = {hits: 0, opponentHits: 0, isQueen: 0},
-    //             paths = ThreeCommon.copyArray(this.game.paths);
-    //         this.rateStep(step.step, 1, rate, paths);
-
-    //         step.rate = rate;
-    //         this.game.whosTurn = whosTurn;
-
-    //         return step;
-    //     })
-
-    //     return bestStep;
-    // }
 
     getAllHits(nextStep, p = null) {
         const paths = p ? p : this.game.paths;
@@ -758,6 +753,7 @@ export class StepGenerator {
         let bestIndex = [], num;
 
         steps.forEach((step, index) => {
+            console.log( 'step', step )
             if (step.rate.isQueen) {
                 bestIndex.push(index);
             }
@@ -765,19 +761,20 @@ export class StepGenerator {
 
         if (bestIndex.length === 0) {
             steps.forEach((step, index) => {
+                // if ((step.rate.opponentHits === 0) || (step.rate.opponentHits < step.rate.hits)) {
                 if (step.rate.opponentHits === 0) {
                     bestIndex.push(index);
-                }
+                } 
             });
     
         }
-      
+     
         if (bestIndex.length) {
             num = bestIndex[ThreeCommon.randomInteger(0, (bestIndex.length - 1))];
         } else {
             num = ThreeCommon.randomInteger(0, (steps.length - 1));
         }
-       
+        
         return [steps[num]];
     }
 

@@ -72,7 +72,14 @@ export class GameComponent {
             console.log( 'currentGame', currentGame )
             if (currentGame && currentGame.paths) {
                 this.currentGame = this.checkers.getGame(currentGame);
-                if (this.currentGame.bot) { this.isBot = true; }
+
+                if (this.currentGame.bot) { 
+                    this.isBot = true; 
+
+                    if (this.currentGame.whoWin) {
+                        this.setState();
+                    }
+                }
 
                 if (!this.currentGame.nextStep) { this.currentGame.setNextStep(); }
                 const range = this.getRange();
@@ -99,13 +106,10 @@ export class GameComponent {
         });
         this.meetingsService.removeSteps();
         this.meetingsService$ = this.meetingsService.stepHandler().subscribe(async(data) => {
-            console.log( data )
             if (this.currentGame && this.currentGame.whoWin && data.steps !== 'w' && data.steps !== 'b') { return; } // Opponent took a step before you clicked a new game
             
             if (data.steps && data.steps !== 'w' && data.steps !== 'b' && !data.steps.whoWin) { //opponents step
                 this.stepHandler(data.steps);
-            } else if (data.steps === 'w' || data.steps === 'b') { // you win after your step
-                this.setState();
             } else if (data.steps && data.steps.whoWin) { // opponent push NewGame
                 this.currentGame = this.checkers.getGame(data.steps);
                 this.setState();
