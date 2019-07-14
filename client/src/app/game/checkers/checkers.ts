@@ -59,7 +59,7 @@ export class CheckersGame {
         } else {
             hitChips = this.getHitChips(from, to, paths);
 
-            if (!this.checkFarAndDirection(from, to, hitChips, isQueen)) { return; }
+            if (!this.checkFarAndDirection(from, to, hitChips, isQueen, paths)) { return; }
         }
 
         return hitChips;
@@ -129,8 +129,9 @@ export class CheckersGame {
         ((from[1] - Math.abs(deltaX)) === to[1]);
     }
 
-    checkFarAndDirection(from, to, hitChips, isQueen) {
-        let range = this.paths[from[1]][from[0]],
+    checkFarAndDirection(from, to, hitChips, isQueen, paths = null) {
+        const _paths = paths ? paths : this.paths;
+        let range = _paths[from[1]][from[0]],
             deltaX = Math.abs(from[0] - to[0]),
             deltaY = from[1] - to[1];
         
@@ -396,8 +397,10 @@ export class CheckersGame {
         }
     }
 
-    setNextStep(step = null, fakePaths = null) {
+    setNextStep(step = null, fakePaths = null, whosTurn = null) {
         let nextStep = [], paths = fakePaths ? fakePaths : this.paths;
+        const turn = this.whosTurn;
+        this.whosTurn = whosTurn ? whosTurn : turn;
         
         if (step) {
             let hits = this.getPosibleHits(step.to, paths);
@@ -420,6 +423,7 @@ export class CheckersGame {
                 })
             });
         }
+        this.whosTurn = turn;
 
         if (!fakePaths) {
             this.nextStep = nextStep;
@@ -487,7 +491,7 @@ export class CheckersGame {
         paths.forEach((row, rowIndex) => {
             row.forEach((col, colIndex) => {
                 let range = this.transformRange(paths[rowIndex][colIndex]);
-
+                
                 if ((paths[rowIndex][colIndex] !== 0) && (range === this.whosTurn)) {     
                     const s = this.getPossibleStep([colIndex, rowIndex], paths);
                     
@@ -553,7 +557,7 @@ export class StepGenerator {
                 this.deep = 0;
                 break;
             case 'beginner':
-                this.deep = 1;
+                this.deep = 6;
                 break;
         }
     }
@@ -598,114 +602,182 @@ export class StepGenerator {
         if (this.game.nextStep.length) { 
             let nextStep = this.game.nextStep.slice();
             let hitsStep = this.getAllHits(nextStep);
+            console.log( 'bestStep', hitsStep, bestStep, ThreeCommon.copyArray(paths) )
             bestStep = this.rateHitSteps(hitsStep);
             bestStep = this.getBestHitStep(bestStep);
             bestStep = this.formatStep(bestStep);
         } else {
             // bestStep = this.game.getPosibleSteps();
             bestStep = this.rateSteps();
-            console.log( 'bestStep', bestStep )
+            console.log( 'bestStep', bestStep, ThreeCommon.copyArray(paths) )
             bestStep = this.getBestStep(bestStep);
         }
         
         return {steps: bestStep, game: this.game};
     }
 
-    rateHitStep(step, rate, range, paths) {
-        step.forEach(h => {
-            this.makeFakeStep(range, h, null, paths);
-        });
-        const nextStep = this.game.setNextStep(null, paths);
-        let hitsStep = this.getAllHits(nextStep);
-        rate.opponentHits += hitsStep.length;
+    rateAllHitSteps() {
+        
     }
 
-    rateHitSteps(steps) {
+    rateHitStep(step, rate, range, paths, ) {        
+        let newQueen, danger = 0;
+
+        if (step) {
+            step.forEach(h => {
+                const d = this.rateDanger( h.hits, ThreeCommon.copyArray(paths) ),
+                    _newQueen = this.makeFakeStep(range, h, null, paths);
+                
+                if (!newQueen) { newQueen = _newQueen; }
+
+                if (d) {
+                    danger = d;
+                }
+            });
+        }
+        const nextStep = this.game.setNextStep(null, paths);
+        let hitsStep = this.getAllHits(nextStep, paths);
+        let maxLength = 0;
+        hitsStep.forEach(steps => {
+            if (steps.length > maxLength) {
+                maxLength = steps.length;
+            }
+        });
+        rate.opponentHits += (maxLength - danger);
+        rate.isQueen = newQueen ? 1 : 0;
+    }
+
+    rateHitSteps(steps, p = null) {
         steps = steps.map(step => {
-            const paths = ThreeCommon.copyArray(this.game.paths),
+            const paths = p ? ThreeCommon.copyArray(p) : ThreeCommon.copyArray(this.game.paths),
                 range = this.game.transformRange(paths[step[0].from[1]][step[0].from[0]]),
                 rate = {opponentHits: 0};
-
-            for (let z = 0; z < this.deep; z++) {
-                this.rateHitStep(step, rate, range, paths);
-            }
+            this.rateHitStep(step, rate, range, paths);
             this.game.whosTurn = range;
-           
+            const isQueen = rate.isQueen ? 3 : 0;
+            
             return {
                 hits: step.length,
                 steps: step,
-                opponentHits: rate.opponentHits
+                opponentHits: rate.opponentHits,
+                coef: (step.length - rate.opponentHits + isQueen),
             }
         })
+      
         return steps;
     }
 
-    makeFakeStep(range, step, rate = null, paths) {
+    rateDanger(hits, paths) {
+        let coef = 0;
+        hits.forEach(hit => {
+            const range = paths[hit[1]][hit[0]];
+            const _hit = this.game.getPosibleHits(hit, paths);
+            _hit.forEach(posHit => {
+                let newQueen = this.game.detectQueen(posHit.to, range);
+                
+                if (newQueen) {
+                    coef = 3;
+                }
+            });
+
+            if (this.game.isQueen(hit, paths)) { coef = 3;}
+            
+            let startPossibleSteps = this.game.getPossibleStep(hit, paths);
+            startPossibleSteps.forEach(p => {
+                let newQueen = this.game.detectQueen(p.step.to, range);
+
+                if (newQueen) {
+                    coef = 3;
+                }
+            })
+        });
+
+        return coef;
+    }
+
+    makeFakeStep(range, step, rate = null, paths, isOpponent = null) {
         let newQueen = this.game.detectQueen(step.to, range);
 
         if (step.hits) {
             const h = step.hits[0];
             paths[h[1]][h[0]] = '0';
         }
-
+        
         if (newQueen) { 
-            if (rate) { rate.isQueen = 1; }
+            if (rate && !isOpponent) { 
+                rate.isQueen = 1; 
+                rate.hits += 3;
+            }
             paths[newQueen[1]][newQueen[0]] = range === 'w' ? 'ww' : 'bb'; 
         } else {
             paths[step.to[1]][step.to[0]] = paths[step.from[1]][step.from[0]];
         }
         paths[step.from[1]][step.from[0]] = '0';
-        this.game.whosTurn = this.game.transformRange(range) === 'w' ? 'b' : 'w';
+       
+        if (this.game.whosTurn === range) {
+            this.game.whosTurn = this.game.transformRange(range) === 'w' ? 'b' : 'w';
+        }
 
         return newQueen;
     }
 
-    rateStep(step, paths, rate, range) {
-        console.log( this.game.whosTurn, range, step )
-        const newQueen = this.makeFakeStep(this.game.whosTurn, step, rate, paths);
-        const nextStep = this.game.setNextStep(null, paths);
+    makeHitSteps(nextStep, paths, rate, range, isOpponent) {
         let hitsStep = this.getAllHits(nextStep, paths);
+        hitsStep = this.rateHitSteps(hitsStep, paths);
+        hitsStep = this.getBestHitStep(hitsStep);
         
-        if (hitsStep[0]) {
-            if (this.game.whosTurn !== range) {
-                rate.opponentHits += hitsStep[0].length;
-            } else {
-                rate.hits += hitsStep[0].length;
-            }
-
-            hitsStep[0].forEach(h => {
-                this.makeFakeStep(this.game.whosTurn, h, rate, paths);
-            });
-
-            const nextStep = this.game.setNextStep(null, paths);
-            let _hitsStep = this.getAllHits(nextStep, paths);
-            
-            if (_hitsStep.length) { 
-                if (this.game.whosTurn !== range) {
-                    rate.opponentHits += _hitsStep[0].length;
-                } else {
-                    rate.hits += _hitsStep[0].length;
-                }
-            }
+        if (this.game.whosTurn !== range) {
+            rate.opponentHits += hitsStep.length;
+            isOpponent = true;
         } else {
-            // let startPossibleSteps = this.game.getPosibleSteps(paths);
-            // console.log( 'startPossibleSteps', this.game.whosTurn, startPossibleSteps, paths )
+            rate.hits += hitsStep.length;
+            isOpponent = false;
+        }
+        
+        let _r = this.game.whosTurn;
+        hitsStep.forEach(h => {
+            this.makeFakeStep(_r, h, rate, paths, isOpponent);
+        }); 
+    }
+
+    rateStep(step, paths, rate, range, deep) {
+        let _l = null, isOpponent;
+        if (deep === 0) { return; } else { deep -= 1; }
+        if (step) { isOpponent = false; this.makeFakeStep(this.game.whosTurn, step, rate, paths, isOpponent); }
+      
+        const nextStep = this.game.setNextStep(null, paths),
+            possibleAttack = this.game.setNextStep(null, paths, range);
+       
+        if (nextStep.length) {
+            this.makeHitSteps(nextStep, paths, rate, range, isOpponent);
+            this.rateStep(null, paths, rate, range, deep);
+        } else if (possibleAttack.length) {
+            this.makeHitSteps(possibleAttack, paths, rate, range, isOpponent);
+            // console.log( 'possibleAttack', step, possibleAttack )
+        } else { 
+            let startPossibleSteps = this.game.getPosibleSteps(paths);
+            const whosTurn = this.game.whosTurn;
+            startPossibleSteps.forEach((possibleStep, index) => {
+                const rate = {hits: 0, opponentHits: 0, isQueen: 0},
+                    range = paths[possibleStep.step.from[1]][possibleStep.step.from[0]],
+                    p = ThreeCommon.copyArray(paths);
+                this.makeFakeStep(range, possibleStep.step, rate, p, isOpponent);
+                // console.log( 'dsd', p, rate, possibleStep.step )
+            });
         }
     }
 
-    rateSteps() {
-        const whosTurn = this.game.whosTurn, paths = ThreeCommon.copyArray(this.game.paths);
+    rateSteps(deep = null, p = null) {
+        const whosTurn = this.game.whosTurn, paths = p ? p : ThreeCommon.copyArray(this.game.paths);
         let startPossibleSteps = this.game.getPosibleSteps(paths);
-        // console.log( 'startPossibleSteps', startPossibleSteps )
         startPossibleSteps = startPossibleSteps.map((possibleStep, index) => {
             const rate = {hits: 0, opponentHits: 0, isQueen: 0},
-                paths = ThreeCommon.copyArray(this.game.paths),
-                range = paths[possibleStep.step.from[1]][possibleStep.step.from[0]];
+                _paths = ThreeCommon.copyArray(paths),
+                range = _paths[possibleStep.step.from[1]][possibleStep.step.from[0]];
             this.game.whosTurn = whosTurn;
-
-            for (let i = 0; i < this.deep; i++) {
-                this.rateStep(possibleStep.step, paths, rate, range);
-            }
+            const deep = this.deep;
+            this.rateStep(possibleStep.step, _paths, rate, range, deep);
+            rate['coef'] = rate.hits - rate.opponentHits;
             possibleStep.rate = rate;
 
             return possibleStep;
@@ -750,61 +822,50 @@ export class StepGenerator {
     }
 
     getBestStep(steps) {
-        let bestIndex = [], num;
-
+        let bestIndex = [], num, maxCoef = 0;
+        
         steps.forEach((step, index) => {
-            console.log( 'step', step )
-            if (step.rate.isQueen) {
-                bestIndex.push(index);
-            }
+            if (maxCoef <= step.rate.coef) {
+                bestIndex.push(step);
+                maxCoef = step.rate.coef;
+            } 
         });
-
-        if (bestIndex.length === 0) {
-            steps.forEach((step, index) => {
-                // if ((step.rate.opponentHits === 0) || (step.rate.opponentHits < step.rate.hits)) {
-                if (step.rate.opponentHits === 0) {
-                    bestIndex.push(index);
-                } 
-            });
-    
-        }
-     
+       
         if (bestIndex.length) {
+            bestIndex = bestIndex.filter(step => (maxCoef === step.rate.coef))
             num = bestIndex[ThreeCommon.randomInteger(0, (bestIndex.length - 1))];
         } else {
-            num = ThreeCommon.randomInteger(0, (steps.length - 1));
+            num = steps[ThreeCommon.randomInteger(0, (steps.length - 1))];
         }
         
-        return [steps[num]];
+        return [num];
     }
 
     getBestHitStep(steps) {
         let best = [];
-        let maxLength = 0;
-        
+        let maxLength;
+       
         steps.forEach(step => {
-            console.log( 'step', step )
-            // if (step && step.hits && (best.length <= step.hits)) {
             if (step && step.hits) {
-                if ((step.hits - step.opponentHits) >= maxLength) {
-                    maxLength = (step.hits - step.opponentHits);
+                if ((maxLength === undefined) || (step.coef >= maxLength)) {
+                    maxLength = step.coef;
                 }
 
                 best.push(step);
             }
         });
-       
+        
         if (best.length === 0) {
             best = steps[ThreeCommon.randomInteger(0, steps.length - 1)].steps;
         } else if (best.length === 1) {
             best = best.map(b => b.steps);
             best = best[ThreeCommon.randomInteger(0, best.length - 1)];
         } else {
-            best = best.filter(s => ((s.hits - s.opponentHits) >= maxLength));
+            best = best.filter(s => (s.coef >= maxLength));
             best = best.map(b => b.steps);
             best = best[ThreeCommon.randomInteger(0, best.length - 1)];
         }
-        console.log( 'best', best )
+
         return best;
     }
 

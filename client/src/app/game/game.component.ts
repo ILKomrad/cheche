@@ -69,16 +69,11 @@ export class GameComponent {
     ngOnInit() {
         this.dataService$ = this.dataService.getCurrentGame()
         .subscribe(currentGame => {
-            console.log( 'currentGame', currentGame )
             if (currentGame && currentGame.paths) {
                 this.currentGame = this.checkers.getGame(currentGame);
 
                 if (this.currentGame.bot) { 
                     this.isBot = true; 
-
-                    if (this.currentGame.whoWin) {
-                        this.setState();
-                    }
                 }
 
                 if (!this.currentGame.nextStep) { this.currentGame.setNextStep(); }
@@ -112,8 +107,9 @@ export class GameComponent {
                 this.stepHandler(data.steps);
             } else if (data.steps && data.steps.whoWin) { // opponent push NewGame
                 this.currentGame = this.checkers.getGame(data.steps);
-                this.setState();
             }
+            
+            if (this.currentGame && this.currentGame.whoWin) { this.setState(); }
         });
         this.soundService.getState().subscribe(state => {
             this.soundState = state;

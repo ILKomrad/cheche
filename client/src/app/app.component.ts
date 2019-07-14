@@ -92,8 +92,8 @@ export class AppComponent {
 
         this.httpService.listen('makeStep')
         .subscribe((data: any) => {
-          this.meetingService.opponentStep(data.whoWin);
           this.dataService.setCurrentGame(data); // if you made step and go to the list
+          this.meetingService.opponentStep(data.whoWin);
         });
 
         this.httpService.listen('opponentStep')
